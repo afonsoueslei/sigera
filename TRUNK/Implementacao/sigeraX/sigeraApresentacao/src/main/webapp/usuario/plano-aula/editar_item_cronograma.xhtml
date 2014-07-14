@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"  
+                xmlns:f="http://java.sun.com/jsf/core">  
+
+    <ui:param name="funcao" value="plano_aula" />
+    <ui:param name="nomeImagem" value="plano.png" />
+    <ui:param name="paginaAtual" value="Editar Item Cronograma" />
+
+    <ui:define name="conteudo">
+        <div class="row">
+            <div class="span10 offset1">
+                <p:messages id="mensagem" closable="true" />
+
+                <h:form id="form">
+
+                    <h:panelGroup rendered="#{planoBean.itemEditavel.id != 0}">
+                        <h:outputLabel value="Id:" for="id" />
+                        <h:inputText id="id" styleClass="input-block-level" disabled="true"
+                                     value="#{planoBean.itemEditavel.id}" />                        
+                    </h:panelGroup>
+
+                    <h:outputLabel value="Início:" for="inicio" />
+                    <p:calendar id="inicio" value="#{planoBean.itemEditavel.inicio}" 
+                                locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" 
+                                required="true" requiredMessage="Data de início é obrigatório."/>  
+
+                    <h:outputLabel value="Procedimentos Didático" for="procedimento"/>
+                    <p:inputText id="procedimento" styleClass="input-block-level"
+                                 value="#{planoBean.itemEditavel.procedimentoDidatico}"                                    
+                                 placeholder="Procedimentos didáticos separados por virgula. Exemplo: AEX, RE, TG, AP, ED, SE, OTR"
+                                 required="true" requiredMessage="Pelo menos um procedimento é obrigatório." />
+
+                    <h:outputLabel value="Número de Horas/Aula:" for="numeroAulas" />                    
+                    <h:inputText id="numeroAulas" styleClass="input-block-level"
+                                 value="#{planoBean.itemEditavel.numeroAulas}"
+                                 required="true" requiredMessage="Número de horas/aula é obrigatório."
+                                 onkeypress="return ehNumero(event);"/>                    
+
+                    <h:outputLabel value="Tópico" for="topico" />
+                    <h:inputTextarea id="topico" styleClass="input-block-level"
+                                     value="#{planoBean.itemEditavel.topico}"                                 
+                                     required="true" requiredMessage="Tópico é obrigatório." />                            
+
+                    <div class="form-actions" >                            
+                        <h:commandButton styleClass="btn btn-primary botao-com-margem-direita" value="Salvar" action="#{planoBean.salvarItemSelecionado}" />
+                        <h:commandButton styleClass="btn botao-com-margem-direita" value="Cancelar" action="#{planoBean.cancelarItemCronograma}" />
+                        <h:commandButton styleClass="btn" immediate="true" value="Voltar" action="#{planoBean.voltarItemCronograma}" />                        
+                    </div>
+                </h:form>
+
+                <ul class="nav nav-list nav-list-modificado2 procedimentos-didaticos">
+                    <li class="nav-header active active-modificado2 ">            
+                        <h:link >
+                            <i  class="#{'icon-white icon-warning-sign' }"></i> Procedimentos Didáticos
+                        </h:link>            
+                    </li>
+                    <h:panelGroup style="margin-left: 2px; ">
+                        <li> <pre class="pre-modificado2"> <b style="color: #003bb3"> AEX </b> - Aula Teórica </pre> </li>
+                        <li> <pre class="pre-modificado2"> <b style="color: #003bb3"> RE  </b> - Resolução de Exercícios </pre> </li>                        
+                        <li> <pre class="pre-modificado2"> <b style="color: #003bb3"> TG  </b> - Trabalho de Grupo </pre> </li>
+                        <li> <pre class="pre-modificado2"> <b style="color: #003bb3"> AP  </b> - Aula Prática </pre> </li>
+                        <li> <pre class="pre-modificado2"> <b style="color: #003bb3"> ED  </b> - Estudo Dirigido </pre> </li>
+                        <li> <pre class="pre-modificado2"> <b style="color: #003bb3"> SE  </b> - Seminários </pre> </li>
+                        <li> <pre class="pre-modificado2"> <b style="color: #003bb3"> OTR </b> - Outros </pre> </li>                        
+                    </h:panelGroup>
+                </ul>
+
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

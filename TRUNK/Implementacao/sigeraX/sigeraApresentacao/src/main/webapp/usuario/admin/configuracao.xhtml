@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:param name="funcao" value="config" />
+    <ui:param name="nomeImagem" value="config.png" />
+    <ui:param name="paginaAtual" value="Painel de Configuração" />
+
+    <ui:define name="conteudo">        
+        <div class="row ">
+            <div class="span12 deslocar-40-direita">
+
+                <p:messages closable="true" />
+
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <h:link outcome="config">Painel principal</h:link>
+                    </li>
+                    <li>
+                        <h:link outcome="importacao">Importação de Dados</h:link>
+                    </li>            
+                </ul>                
+
+                <h:form>
+
+                    <strong> Ativar o envio de email: </strong>                    
+                    <p:selectBooleanButton value="#{calendarioBean.enviarEmail}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"/>                                              
+                    
+                    <hr/>
+                    
+                    <fieldset>
+                        <strong><legend>Período para acréscimo e cancelamento de disciplinas</legend></strong>
+
+                        <h:outputLabel for="data_inicial_ajustes_matricula" value="Início: "/>
+                        <p:calendar value="#{calendarioBean.dataInicial}" id="data_inicial_ajustes_matricula" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" />                                                  
+
+
+                        <h:outputLabel for="data_final_ajustes_matricula" value="Fim:" />
+                        <p:calendar value="#{calendarioBean.dataFinal}" id="data_final_ajustes_matricula" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" /> 
+
+                    </fieldset>
+
+                    <fieldset>
+                        <strong><legend>Semestre Letivo</legend></strong>
+
+                        <h:outputLabel for="data_inicial_semestre" value="Início: "/>
+                        <p:calendar value="#{calendarioBean.dataInicialSemestre}" id="data_inicial_semestre" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" /> 
+
+                        <h:outputLabel for="data_final_semestre" value="Fim:" />
+                        <p:calendar value="#{calendarioBean.dataFinalSemestre}" id="data_final_semestre" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" /> 
+                        <br/>
+                        <h:outputLabel for="ano_corrente" value="Ano corrente: " />
+                        <h:inputText styleClass="input-block-level-modificado" id="ano_corrente" value="#{calendarioBean.anoCorrente}" />
+
+                        <h:outputLabel for="semestre_corrente" value="Semestre corrente:"/>
+                        <h:inputText styleClass="input-block-level-modificado" id="semestre_corrente" value="#{calendarioBean.semestreCorrente}" />
+
+                    </fieldset>
+
+                    <div class="form-actions" >                            
+                        <h:commandLink styleClass="btn btn-primary botao-com-margem-direita" value="Salvar" action="#{calendarioBean.salvar}" />
+                        <h:commandButton styleClass="btn" value="Cancelar" action="#{calendarioBean.cancelar}" />
+                    </div>            
+
+                </h:form>
+
+            </div>
+        </div>
+
+    </ui:define>    
+</ui:composition>

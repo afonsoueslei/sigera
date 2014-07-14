@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:param name="funcao" value="segunda_chamada" />
+    <ui:param name="nomeImagem" value="segunda_chamada.png" />
+    <ui:param name="paginaAtual" value="Segunda Chamada de Prova" />
+
+    <ui:define name="conteudo">
+        <div class="row">
+            <div class="span8 offset2">                
+                <div class="text-center">
+                    
+                    <div class='spacer100'></div>
+                    
+                    <p class="mensagem-documento"><h:outputText value="#{msgs['MT.204']}" /></p>
+                    
+                    <div class='spacer50'></div>
+
+                    <h:form>                    
+                        <h:commandButton styleClass="btn btn-primary botao-req-documento" value="Prosseguir com requerimento" action="#{segundaChamadaBean.prosseguir}" />
+                        <h:commandButton styleClass="btn" value="Voltar à página inicial" action="#{segundaChamadaBean.voltar}" />   
+                    </h:form>                
+                </div>
+            </div> 
+        </div>
+    </ui:define>    
+</ui:composition>

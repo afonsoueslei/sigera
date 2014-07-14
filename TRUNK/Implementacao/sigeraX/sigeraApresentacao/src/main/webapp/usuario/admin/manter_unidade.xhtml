@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"  
+                xmlns:f="http://java.sun.com/jsf/core">  
+
+    <ui:param name="funcao" value="manter_unidade" />
+    <ui:param name="nomeImagem" value="unidade.png" />
+    <ui:param name="paginaAtual" value="Manter Unidades" />    
+
+    <ui:define name="conteudo">
+        <div class="row">
+            <div class="span12">
+
+                <h:form id="form">
+
+                    <p:messages closable="true"/>
+
+                    <p:dataTable styleClass="largura-minima-tabela"
+                                 id="dataTable" var="unidade" value="#{unidadeBean.dataModel}"
+                                 paginator="true" rows="10"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} [{currentPage}/{totalPages}]"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                 rowsPerPageTemplate="10,20,30,#{unidadeBean.unidadesTela.size() > 30 ? unidadeBean.unidadesTela.size() : ''}"
+                                 filteredValue="#{unidadeBean.unidadesFiltradas}"
+                                 emptyMessage="#{msgs['MT.401']}"> 
+                        <f:facet name="header">
+                            Lista de Unidades
+                        </f:facet>                     
+
+
+                        <p:column sortBy="#{unidade.id}"
+                                  filterBy="#{unidade.id}"
+                                  filterMatchMode="startsWith"
+                                  width="6%"
+                                  colspan="1"  styleClass="centralizar-texto"> 
+                            <f:facet name="header">  
+                                <h:outputText value="Nº" />
+                            </f:facet> 
+                            <h:outputText value="#{unidade.id}" />  
+                        </p:column> 
+
+                        <p:column sortBy="#{unidade.nome}"
+                                  filterBy="#{unidade.nome}"
+                                  filterMatchMode="contains"
+                                  width="84%"
+                                  colspan="1" >  
+                            <f:facet name="header">  
+                                <h:outputText value="Nome" />
+                            </f:facet> 
+                            <h:outputText value="#{unidade.nome}" />  
+                        </p:column> 
+
+
+                        <p:column styleClass="centralizar-texto"  colspan ="2" headerText="Ações" width="6%" exportable="false" >
+                            <p:tooltip for="btnEditar" value="Visualizar detalhes"/>
+                            <h:commandLink id="btnEditar" 
+                                           action="#{unidadeBean.editar}">
+                                <h:graphicImage value="/resources/img/detalhes.png" />
+                                <f:setPropertyActionListener target="#{unidadeBean.unidadeSelecionada}" 
+                                                             value="#{unidade.unidade}" />
+                            </h:commandLink>                               
+                            <p:tooltip for="btnExcluir" value="Excluir"/>
+                            <th style="width:4%">    
+                                <p:commandLink id="btnExcluir"                                
+                                               oncomplete="exibirConfirmacao('Deseja realmente excluir a unidade #{unidade.nome} ?', 'form:botao-excluir')">
+                                    <h:graphicImage value="/resources/img/excluir2.png" />
+                                    <f:setPropertyActionListener target="#{unidadeBean.unidadeExcluir}"
+                                                                 value="#{unidade.unidade}" />                                
+                                </p:commandLink>                                
+                            </th>
+                        </p:column>        
+                    </p:dataTable>
+
+                    <row>
+                        <div class="span4 ">
+                            <div class="form-actions" >                            
+                                <h:commandLink styleClass="btn btn-primary" value="Incluir nova unidade" action="#{unidadeBean.editar}">                            
+                                    <f:setPropertyActionListener target="#{unidadeBean.unidadeSelecionada}" 
+                                                                 value="#{null}" />
+                                </h:commandLink>
+                                <h:commandLink styleClass="botao-escondido" id="botao-excluir" action="#{unidadeBean.remover}" />                  
+                            </div>                    
+                        </div>
+                        <div class="span3">
+                            <div class="form-actions" >                            
+                                <label class="label-selecione-perfil">Exportar atual:</label>
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/excel.png" />  
+                                    <p:dataExporter type="xls" target="dataTable" fileName="ManterUnidades" pageOnly="true" />  
+                                </h:commandLink>  
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/csv.png" />  
+                                    <p:dataExporter type="csv" target="dataTable" fileName="ManterUnidades" />  
+                                </h:commandLink>  
+
+                                <h:commandLink >  
+                                    <p:graphicImage value="/resources/img/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="dataTable" fileName="ManterUnidades" pageOnly="true" preProcessor="#{atribuirPerfilBean.preProcess}"/>  
+                                </h:commandLink>  
+
+                            </div>      
+                        </div>
+                        <div class="span3" >
+                            <div class="form-actions" >                            
+                                <label class="label-selecione-perfil">Exportar todas:</label>
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/excel.png" />  
+                                    <p:dataExporter type="xls" target="dataTable" fileName="ManterUnidades"/>
+                                </h:commandLink>  
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/csv.png" />  
+                                    <p:dataExporter type="csv" target="dataTable" fileName="ManterUnidades"/>
+                                </h:commandLink>                                  
+
+                                <h:commandLink >  
+                                    <p:graphicImage value="/resources/img/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="dataTable" fileName="ManterUnidades" preProcessor="#{atribuirPerfilBean.preProcess}"/>  
+                                </h:commandLink>  
+
+                            </div>                                  
+                        </div>                        
+                        <div class="span2">
+                            <div class="form-actions" >                            
+                                <label class="label-selecione-perfil">Imprimir:</label>
+                                <h:commandButton value="Print" type="button" image="/resources/img/printer.png">  
+                                    <p:printer target="dataTable"/>  
+                                </h:commandButton>
+                            </div>
+                        </div>
+                    </row>                    
+                </h:form>
+            </div>
+        </div>
+
+    </ui:define>    
+</ui:composition>

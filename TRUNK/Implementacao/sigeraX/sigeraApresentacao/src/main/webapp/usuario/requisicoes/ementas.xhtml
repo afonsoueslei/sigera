@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:param name="funcao" value="ementas" />
+    <ui:param name="nomeImagem" value="ementas.png" />
+    <ui:param name="paginaAtual" value="Ementas de Disciplinas" />
+
+    <ui:define name="conteudo">
+        <div class="row">
+            <div class="span12 deslocar-40-direita">
+                <h:form id="form">
+                    <p:messages id="mensagem" closable="true" />
+
+                    <p:dataTable styleClass="largura-minima-tabela"
+                                 id="dataTable" var="disciplina" value="#{ementasBean.dataModelDisciplinas}"
+                                 paginator="true" rows="5"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} [{currentPage}/{totalPages}]"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,#{ementasBean.disciplinasTela.size() > 15 ? ementasBean.disciplinasTela.size() : ''}"
+                                 filteredValue="#{ementasBean.disciplinasFiltradas}"
+                                 selection="#{ementasBean.disciplinasSelecionadas}"
+                                 emptyMessage="#{msgs['MT.401']}">
+
+                        <f:facet name="header">                            
+                            Selecione as disciplinas                            
+                        </f:facet>
+
+                        <p:column selectionMode="multiple" />
+
+                        <p:column sortBy="#{disciplina.nome}"
+                                  filterBy="#{disciplina.nome}"
+                                  filterMatchMode="contains"
+                                  colspan="1" >
+                            <f:facet name="header">  
+                                <h:outputText value="Nome" />
+                            </f:facet> 
+                            <h:outputText value="#{disciplina.nome}" />
+                        </p:column> 
+
+                        <p:column sortBy="#{disciplina.nomeCurso}"
+                                  filterBy="#{disciplina.nomeCurso}"
+                                  filterMatchMode="contains"
+                                  colspan="1" >
+                            <f:facet name="header">  
+                                <h:outputText value="Curso" />
+                            </f:facet> 
+                            <h:outputText value="#{disciplina.nomeCurso}" />
+                        </p:column>       
+                    </p:dataTable>
+                    <div class="spacer15"></div>
+
+                    <h:commandButton styleClass="btn btn-inverse botao-com-margem-direita" value="Adicionar disciplinas selecionadas" action="#{ementasBean.adicionar}" />
+                    <h:commandButton styleClass="btn botao-com-margem-direita" value="Limpar seleção" action="#{ementasBean.limparSelecao()}" />                        
+                </h:form>
+
+                <div class="spacer30"></div>
+
+                <h:form id="form2">
+                    <p:dataTable styleClass="largura-minima-tabela " 
+                                 id="dataTableEscolhidas" 
+                                 var="disciplinaEscolhida" 
+                                 value="#{ementasBean.dataModelEscolhidas}"
+                                 emptyMessage="#{msgs['MT.402']}">
+
+                        <f:facet name="header">                            
+                            Disciplinas adicionadas ao requerimento
+                        </f:facet>
+
+                        <p:column sortBy="#{disciplinaEscolhida.nome}">
+                            <f:facet name="header">  
+                                <h:outputText value="Nome" />
+                            </f:facet> 
+                            <h:outputText value="#{disciplinaEscolhida.nome}" />
+                        </p:column> 
+
+                        <p:column sortBy="#{disciplinaEscolhida.nomeCurso}">
+                            <f:facet name="header">  
+                                <h:outputText value="Curso" />
+                            </f:facet> 
+                            <h:outputText value="#{disciplinaEscolhida.nomeCurso}" />
+                        </p:column>       
+
+                        <p:column width="4%" styleClass="centralizar-texto">
+                            <f:facet name="header">  
+                                <h:outputText value="Ação" />
+                            </f:facet>
+
+                            <p:commandLink title="Remover disciplina" id="btnExcluir" action="#{ementasBean.remover}" update="dataTableEscolhidas">
+                                <h:graphicImage value="/resources/img/excluir2.png" />
+                                <f:setPropertyActionListener target="#{ementasBean.disciplinaExcluir}"
+                                                             value="#{disciplinaEscolhida}" /> 
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                    <div class="spacer15"></div>
+                    
+                    <h:outputLabel value="Justificativa/Observações:" for="justificativa" />                    
+                    <h:inputTextarea  id="justificativa" class="area-justificativa"  value="#{ementasBean.justificativa}" pt:placeholder="Breve justificativa/observação para requisição de ementas."/> 
+
+                    <div class="spacer15"></div>
+
+                    <div class="form-actions">
+                        <h:commandButton styleClass="btn btn-primary botao-com-margem-direita" value="Confirmar requerimento" action="#{ementasBean.salvar}" />
+                        <h:commandButton styleClass="btn" value="Voltar à página inicial" action="#{ementasBean.voltar}" /> 
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>    
+</ui:composition>

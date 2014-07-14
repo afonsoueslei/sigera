@@ -1,0 +1,154 @@
+<mockup version="1.0" skin="sketch" fontFace="Balsamiq Sans" measuredW="1150" measuredH="770" mockupW="1140" mockupH="757">
+  <controls>
+    <control controlID="68" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="289" y="13" w="861" h="371" measuredW="450" measuredH="400" zOrder="0" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>SIGERA%20-%20Sistema%20Gerenciador%20de%20Requerimento%20Acad%EAmico%0Ahttps%3A//www.sigera.inf.ufg.br</text>
+      </controlProperties>
+    </control>
+    <control controlID="69" controlTypeID="com.balsamiq.mockups::Label" x="908" y="104" w="213" h="-1" measuredW="193" measuredH="21" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <align>center</align>
+        <color>545684</color>
+        <text>Eduardo%20Sim%F5es%20de%20Albuquerque</text>
+      </controlProperties>
+    </control>
+    <control controlID="70" controlTypeID="com.balsamiq.mockups::HRule" x="295" y="138" w="847" h="-1" measuredW="100" measuredH="10" zOrder="2" locked="false" isInGroup="-1"/>
+    <control controlID="71" controlTypeID="com.balsamiq.mockups::ColorPicker" x="882" y="100" w="-1" h="-1" measuredW="26" measuredH="28" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>10470904</color>
+      </controlProperties>
+    </control>
+    <control controlID="72" controlTypeID="com.balsamiq.mockups::TextInput" x="1118" y="103" w="-1" h="-1" measuredW="19" measuredH="22" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>false</bold>
+        <borderColor>545684</borderColor>
+        <size>8</size>
+        <state>disabled</state>
+        <text>v</text>
+      </controlProperties>
+    </control>
+    <control controlID="73" controlTypeID="com.balsamiq.mockups::Label" x="892" y="102" w="-1" h="-1" measuredW="10" measuredH="21" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <color>0</color>
+        <text>3</text>
+      </controlProperties>
+    </control>
+    <control controlID="74" controlTypeID="com.balsamiq.mockups::Label" x="304" y="104" w="362" h="-1" measuredW="193" measuredH="24" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <size>16</size>
+        <text>Acompanhar%20Requisi%E7%F5es</text>
+      </controlProperties>
+    </control>
+    <control controlID="75" controlTypeID="com.balsamiq.mockups::Accordion" x="295" y="148" w="133" h="144" measuredW="150" measuredH="213" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>2</selectedIndex>
+        <text>Principal...%0ARequerimentos...%0A-%20-%20Abertos%0A-%20-%20Fechados%0AMeu%20Perfil</text>
+      </controlProperties>
+    </control>
+    <control controlID="76" controlTypeID="com.balsamiq.mockups::DataGrid" x="434" y="150" w="699" h="142" measuredW="678" measuredH="141" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <align>center</align>
+        <selectedIndex>2</selectedIndex>
+        <text>Nome%20Usu%E1rio%20%5Ev%2C%20Tipo%20Requerimento%20%5Ev%2C%20Data%20Abertura%20%5Ev%2C%20Data%20Fechamento%20%5Ev%2C%20Abrir%20%5Ev%0AAfonso%20Ueslei%20%2C%20Segunda%20Chamada%2C%2015/05/2013%2C%20....%2C%20Abrir%0ARomeu%20Gomes%2C%20Ementas%2C%2004/03/2013%2C%20....%2C%20Abrir%0AJose%20da%20Silva%2C%20Assinatura%20de%20contrato/relat%F3rio%20de%20est%E1gio%2C%2004/03/2012%2C%2006/03/2013%2C%20Abrir%0AAfonso%20Ueslei%20%2CExtrato%20Acad%EAmico%2C%2008/04/2013%2C%2009/04/2013%2C%20Abrir</text>
+        <verticalScrollbar>true</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="77" controlTypeID="com.balsamiq.mockups::BrowserWindow" x="10" y="307" w="872" h="463" measuredW="450" measuredH="400" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>SIGERA%20-%20Sistema%20Gerenciador%20de%20Requerimento%20Acad%EAmico%0Ahttps%3A//www.sigera.inf.ufg.br</text>
+      </controlProperties>
+    </control>
+    <control controlID="78" controlTypeID="com.balsamiq.mockups::Label" x="627" y="400" w="206" h="-1" measuredW="193" measuredH="21" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <align>center</align>
+        <color>545684</color>
+        <text>Eduardo%20Sim%F5es%20de%20Albuquerque</text>
+      </controlProperties>
+    </control>
+    <control controlID="79" controlTypeID="com.balsamiq.mockups::HRule" x="16" y="432" w="847" h="-1" measuredW="100" measuredH="10" zOrder="11" locked="false" isInGroup="-1"/>
+    <control controlID="80" controlTypeID="com.balsamiq.mockups::ColorPicker" x="600" y="396" w="-1" h="-1" measuredW="26" measuredH="28" zOrder="12" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>10470904</color>
+      </controlProperties>
+    </control>
+    <control controlID="81" controlTypeID="com.balsamiq.mockups::TextInput" x="836" y="399" w="-1" h="-1" measuredW="19" measuredH="22" zOrder="13" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>false</bold>
+        <borderColor>545684</borderColor>
+        <size>8</size>
+        <state>disabled</state>
+        <text>v</text>
+      </controlProperties>
+    </control>
+    <control controlID="82" controlTypeID="com.balsamiq.mockups::Label" x="610" y="398" w="-1" h="-1" measuredW="10" measuredH="21" zOrder="14" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <color>0</color>
+        <text>3</text>
+      </controlProperties>
+    </control>
+    <control controlID="83" controlTypeID="com.balsamiq.mockups::Label" x="25" y="398" w="362" h="-1" measuredW="227" measuredH="24" zOrder="15" locked="false" isInGroup="-1">
+      <controlProperties>
+        <bold>true</bold>
+        <italic>true</italic>
+        <size>16</size>
+        <text>Deferir%20/%20Indeferir%20Requisi%E7%E3o</text>
+      </controlProperties>
+    </control>
+    <control controlID="84" controlTypeID="com.balsamiq.mockups::Accordion" x="25" y="442" w="133" h="144" measuredW="150" measuredH="213" zOrder="16" locked="false" isInGroup="-1">
+      <controlProperties>
+        <selectedIndex>2</selectedIndex>
+        <text>Principal...%0ARequerimentos...%0A-%20-%20Abertos%0A-%20-%20Fechados%0AMeu%20Perfil</text>
+      </controlProperties>
+    </control>
+    <control controlID="85" controlTypeID="com.balsamiq.mockups::Accordion" x="165" y="445" w="678" h="138" measuredW="262" measuredH="213" zOrder="17" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Assinatura%20de%20contrato/relat%F3rio%20de%20est%E1gio%0ARequisi%E7%E3o%20%23257%20%28feita%20em%2004/03/2012%29%20%0ANome%20do%20Estudante%3A%20Jos%E9%20da%20Silva%0AMatr%EDcula%3A%20123456%0ACurso%3A%20Ci%EAncias%20da%20Computa%E7%E3o</text>
+      </controlProperties>
+    </control>
+    <control controlID="86" controlTypeID="com.balsamiq.mockups::ModalScreen" x="165" y="594" w="678" h="25" measuredW="320" measuredH="240" zOrder="18" locked="false" isInGroup="-1"/>
+    <control controlID="87" controlTypeID="com.balsamiq.mockups::IconLabel" x="173" y="594" w="-1" h="-1" measuredW="68" measuredH="24" zOrder="19" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderStyle>none</borderStyle>
+        <color>16777215</color>
+        <icon>Number0Icon%7Csmall</icon>
+        <labelPosition>right</labelPosition>
+        <text>Deferir</text>
+      </controlProperties>
+    </control>
+    <control controlID="88" controlTypeID="com.balsamiq.mockups::IconLabel" x="759" y="594" w="82" h="-1" measuredW="78" measuredH="24" zOrder="20" locked="false" isInGroup="-1">
+      <controlProperties>
+        <color>16777215</color>
+        <icon>DotHollowIcon%7Csmall</icon>
+        <labelPosition>right</labelPosition>
+        <state>up</state>
+        <text>Indeferir</text>
+      </controlProperties>
+    </control>
+    <control controlID="89" controlTypeID="com.balsamiq.mockups::Label" x="165" y="622" w="-1" h="-1" measuredW="153" measuredH="21" zOrder="21" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Justificativa%2C%20coment%E1rios%3A</text>
+      </controlProperties>
+    </control>
+    <control controlID="90" controlTypeID="com.balsamiq.mockups::TextArea" x="165" y="643" w="678" h="58" measuredW="200" measuredH="140" zOrder="22" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Sem%20ressalvas%2C%20retirar%20seu%20documento%20na%20secretaria%20das%208h%20%E0s%2022h.</text>
+        <verticalScrollbar>true</verticalScrollbar>
+      </controlProperties>
+    </control>
+    <control controlID="91" controlTypeID="com.balsamiq.mockups::Button" x="175" y="709" w="-1" h="-1" measuredW="132" measuredH="27" zOrder="23" locked="false" isInGroup="-1">
+      <controlProperties>
+        <state>selected</state>
+        <text>Confirmar%20parecer</text>
+      </controlProperties>
+    </control>
+    <control controlID="92" controlTypeID="com.balsamiq.mockups::Button" x="693" y="709" w="132" h="27" measuredW="77" measuredH="27" zOrder="24" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Cancelar</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
