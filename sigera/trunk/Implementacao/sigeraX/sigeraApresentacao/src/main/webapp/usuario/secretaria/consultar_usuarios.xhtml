@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"  
+                xmlns:f="http://java.sun.com/jsf/core">  
+
+    <ui:param name="funcao" value="atribuir_perfil" />
+    <ui:param name="nomeImagem" value="atribuir_perfil.png" />
+    <ui:param name="paginaAtual" value="Lista de usuários" />    
+
+    <ui:define name="conteudo">
+
+        <div class="row">
+            <div class="span12 margin-top-11px">
+                <p:messages closable="true"/>                        
+
+                <p:outputPanel deferred="true">
+
+                    <h:form id="form">                        
+                        <p:dataTable styleClass="largura-minima-tabela-atribuir-perfil"
+                                     id="dataTable" var="usuario" value="#{atribuirPerfilBean.dataModel}"
+                                     paginator="true" rows="10"                                   
+                                     currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} [{currentPage}/{totalPages}]"
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                     rowsPerPageTemplate="10,20,30,#{atribuirPerfilBean.usuariosTela.size() > 30 ? atribuirPerfilBean.usuariosTela.size() : ''}"
+                                     filteredValue="#{atribuirPerfilBean.usuariosFiltrados}"   
+                                     selection="#{atribuirPerfilBean.usuarioEditado}"
+                                     emptyMessage="Nenhum registro encontrado.">
+
+                            <f:facet name="header">
+                                Lista de usuários cadastrados no Instituto de Informática
+                            </f:facet>
+
+
+                            <p:column sortBy="#{usuario.nome}"
+                                      filterBy="#{usuario.nome}" 
+                                      filterMatchMode="contains">
+                                <f:facet name="header">  
+                                    <h:outputText value="Nome completo" styleClass="cabecalho-atribuir-perfil" />
+                                </f:facet>
+                                <h:outputText  value="#{usuario.nome}" styleClass="conteudo-tabela-atribuir-perfil" />  
+                            </p:column>                         
+
+                            <p:column sortBy="#{usuario.username}" styleClass="centralizar-texto"                                                                           
+                                      filterBy="#{usuario.username}"                                      
+                                      filterMatchMode="contains">  
+                                <f:facet name="header">  
+                                    <h:outputText value="Usuário" styleClass="cabecalho-atribuir-perfil" />
+                                </f:facet>
+                                <h:outputText  value="#{usuario.username}" styleClass="conteudo-tabela-atribuir-perfil" />  
+                            </p:column>  
+
+                            <p:column sortBy="#{usuario.telefoneCelular}" styleClass="centralizar-texto"                                                                           
+                                      filterBy="#{usuario.telefoneCelular}"                                      
+                                      filterMatchMode="contains">  
+                                <f:facet name="header">  
+                                    <h:outputText value="Fone Celular" styleClass="cabecalho-atribuir-perfil" />
+                                </f:facet>
+                                <h:outputText  value="#{usuario.telefoneCelular}" styleClass="conteudo-tabela-atribuir-perfil" />  
+                            </p:column>  
+
+                            <p:column sortBy="#{usuario.telefoneResidencial}" styleClass="centralizar-texto"                                                                           
+                                      filterBy="#{usuario.telefoneResidencial}"
+                                      filterMatchMode="contains">  
+                                <f:facet name="header">  
+                                    <h:outputText value="Fone Residencial" styleClass="cabecalho-atribuir-perfil" />
+                                </f:facet>
+                                <h:outputText  value="#{usuario.telefoneResidencial}" styleClass="conteudo-tabela-atribuir-perfil" />  
+                            </p:column>  
+
+                            <p:column sortBy="#{usuario.telefoneComercial}" styleClass="centralizar-texto"                                                                           
+                                      filterBy="#{usuario.telefoneComercial}"
+                                      filterMatchMode="contains">  
+                                <f:facet name="header">  
+                                    <h:outputText value="Fone Comercial" styleClass="cabecalho-atribuir-perfil" />
+                                </f:facet>
+                                <h:outputText  value="#{usuario.telefoneComercial}" styleClass="conteudo-tabela-atribuir-perfil" />  
+                            </p:column>  
+
+                            <p:column sortBy="#{usuario.email}" styleClass="centralizar-texto"                                                                           
+                                      filterBy="#{usuario.email}"                                      
+                                      filterMatchMode="contains">  
+                                <f:facet name="header">  
+                                    <h:outputText value="E-mail" styleClass="cabecalho-atribuir-perfil" />
+                                </f:facet>
+                                <h:outputText  value="#{usuario.email}" styleClass="conteudo-tabela-atribuir-perfil"/>  
+                            </p:column>  
+
+                            <p:column sortBy="#{usuario.emailAlternativo}" styleClass="centralizar-texto"                                                                           
+                                      filterBy="#{usuario.emailAlternativo}"                                      
+                                      filterMatchMode="contains">  
+                                <f:facet name="header">  
+                                    <h:outputText value="E-mail alternativo" styleClass="cabecalho-atribuir-perfil" />
+                                </f:facet>
+                                <h:outputText  value="#{usuario.emailAlternativo}" styleClass="conteudo-tabela-atribuir-perfil"/>  
+                            </p:column>  
+
+                            <p:column headerText="Ações" styleClass="centralizar-texto" width="3%" exportable="false">
+                                <p:tooltip for="btnEditar" value="Editar perfil"/>                               
+                                <h:link id="btnEditar" outcome="#{editarPerfilBean.editarPerfil(usuario.id)}">
+                                    <h:graphicImage value="/resources/img/edit-validated.png" />
+                                    <f:param name="uid" value="#{usuario.id}" />
+                                </h:link>                               
+                            </p:column>  
+                            
+                        </p:dataTable>   
+
+                        <row>                         
+                            <div class="span3">
+                                <div class="form-actions" >                            
+                                    <label class="label-selecione-perfil">Exportar atual:</label>
+
+                                    <h:commandLink styleClass="espacar-item-10px-direita">  
+                                        <p:graphicImage value="/resources/img/excel.png" />  
+                                        <p:dataExporter type="xls" target="dataTable" fileName="AtribuirPerfil" pageOnly="true" />  
+                                    </h:commandLink>  
+
+                                    <h:commandLink styleClass="espacar-item-10px-direita">  
+                                        <p:graphicImage value="/resources/img/csv.png" />  
+                                        <p:dataExporter type="csv" target="dataTable" fileName="AtribuirPerfil" />  
+                                    </h:commandLink>  
+
+                                    <h:commandLink >  
+                                        <p:graphicImage value="/resources/img/pdf.png" />  
+                                        <p:dataExporter type="pdf" target="dataTable" fileName="AtribuirPerfil" pageOnly="true" preProcessor="#{atribuirPerfilBean.preProcess}"/>  
+                                    </h:commandLink>  
+
+                                </div>      
+                            </div>
+                            <div class="span3" >
+                                <div class="form-actions" >                            
+                                    <label class="label-selecione-perfil">Exportar todas:</label>
+
+                                    <h:commandLink styleClass="espacar-item-10px-direita">  
+                                        <p:graphicImage value="/resources/img/excel.png" />  
+                                        <p:dataExporter type="xls" target="dataTable" fileName="AtribuirPerfil"/>
+                                    </h:commandLink>  
+
+                                    <h:commandLink styleClass="espacar-item-10px-direita">  
+                                        <p:graphicImage value="/resources/img/csv.png" />  
+                                        <p:dataExporter type="csv" target="dataTable" fileName="AtribuirPerfil"/>
+                                    </h:commandLink>                                  
+
+                                    <h:commandLink >  
+                                        <p:graphicImage value="/resources/img/pdf.png" />  
+                                        <p:dataExporter type="pdf" target="dataTable" fileName="AtribuirPerfil" preProcessor="#{atribuirPerfilBean.preProcess}"/>  
+                                    </h:commandLink>  
+
+                                </div>                                  
+                            </div>                        
+                            <div class="span2">
+                                <div class="form-actions" >                            
+                                    <label class="label-selecione-perfil">Imprimir:</label>
+                                    <h:commandButton value="Print" type="button" image="/resources/img/printer.png">  
+                                        <p:printer target="dataTable"/>  
+                                    </h:commandButton>
+                                </div>
+                            </div>
+                        </row>
+
+                    </h:form>
+                </p:outputPanel>
+            </div>
+        </div>
+    </ui:define>    
+</ui:composition>

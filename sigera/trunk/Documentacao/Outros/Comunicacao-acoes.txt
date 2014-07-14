@@ -1,0 +1,34 @@
+Atividades:
+
+12.06.13 - Divisão das tarefas
+Afonso - 1-4 funções
+Romeu  - 9-12  funções
+silvio - 5-8 funções
+
+Romeu diz: =) 
+*Acessar o sistema
+1_Atualizar usuário
+2_Manter perfil
+3_Atribuir perfil
+4_Requerer Acréscimo de Disciplina
+5_Requerer Segunda Chamada de Prova
+6_Requerer Declaração de Matrícula
+7_Requerer Cancelamento de Disciplina
+8_Requerer Extrato Acadêmico
+9_Requerer Ementas
+10_Solicitar assinatura de contratos/relatórios de estágios
+11_Acompanhar requisições
+*Gerar
+12_Configurar Sistema
+
+Pessoal, confirmem a ordem dos requisitos por favor, é essa mesmo?
+
+
+15/06/2013 - Grupo
+Validação das telas junto ao Leandro
+
+
+21/06/13 - Afonso
+Acréscimo Modelagem do processo abertura de requerimento
+processo-SIGERA-requerimento.bpm
+processo-SIGERA-requerimento.png

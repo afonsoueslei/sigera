@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"  
+                xmlns:f="http://java.sun.com/jsf/core">  
+
+    <ui:param name="funcao" value="consultar_turma" />
+    <ui:param name="nomeImagem" value="turma.png" />
+    <ui:param name="paginaAtual" value="Editar Unidade" />
+
+    <ui:define name="conteudo">
+        <div class="row">
+            <div class="span10 offset1">
+                <p:messages id="mensagem" closable="true" />
+                
+                <h:form id="form">
+                    <h:panelGroup rendered="#{unidadeBean.unidadeEditavel.id != 0}">
+                        <h:outputLabel value="Id:" for="id" />
+                        <h:inputText id="id" styleClass="input-block-level" disabled="true"
+                                     value="#{unidadeBean.unidadeEditavel.id}" />                        
+                    </h:panelGroup>
+                                                          
+                    <h:outputLabel value="Nome:" for="nome" />
+                    <h:inputText id="nome" styleClass="input-block-level"
+                                 value="#{unidadeBean.unidadeEditavel.nome}"                                 
+                                 required="true" requiredMessage="Nome é obrigatório." />                                                                    
+                    
+                    <div class="form-actions" >                            
+                        <h:commandButton styleClass="btn btn-primary botao-com-margem-direita" value="Salvar" action="#{unidadeBean.salvar}" />
+                        <h:commandButton styleClass="btn botao-com-margem-direita" value="Cancelar" action="#{unidadeBean.cancelar}" />
+                        <h:commandButton styleClass="btn" immediate="true" value="Voltar à lista de unidades" action="#{unidadeBean.voltarListaUnidades}" />
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
