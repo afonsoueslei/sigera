@@ -250,7 +250,7 @@
     <navigation-rule> 
         <navigation-case>
             <from-outcome>consultar_usuarios</from-outcome>
-            <to-view-id>/usuario/consultar_usuarios.xhtml</to-view-id>
+            <to-view-id>/usuario/secretaria/consultar_usuarios.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>    
@@ -306,7 +306,7 @@
     <navigation-rule> 
         <navigation-case>
             <from-outcome>plano_aula</from-outcome>
-            <to-view-id>/usuario/plano_aula.xhtml</to-view-id>
+            <to-view-id>/usuario/plano-aula/plano_aula.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>   
@@ -314,7 +314,7 @@
     <navigation-rule> 
         <navigation-case>
             <from-outcome>editar_plano</from-outcome>
-            <to-view-id>/usuario/editar_plano.xhtml</to-view-id>
+            <to-view-id>/usuario/plano-aula/editar_plano.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>   
@@ -338,7 +338,7 @@
     <navigation-rule> 
         <navigation-case>
             <from-outcome>editar_item_cronograma</from-outcome>
-            <to-view-id>/usuario/editar_item_cronograma.xhtml</to-view-id>
+            <to-view-id>/usuario/plano-aula/editar_item_cronograma.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
     </navigation-rule>                
