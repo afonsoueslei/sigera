@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="planoAula" pageWidth="595" pageHeight="1000" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="cb72e38f-bbab-4ca9-91ab-566fd66b4e66">
+	<property name="ireport.zoom" value="1.6105100000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="662"/>
+	<parameter name="nomeProfessor" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{nomeProfessor}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="planoId" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[$P{planoId}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="rep0" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="rep3" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="rep2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="rep1" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="caminhoImagem" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     curso.`id` AS curso_id,
+     curso.`prefixo` AS curso_prefixo,
+     curso.`cod_matriz_curricular` AS curso_cod_matriz_curricular,
+     curso.`nome` AS curso_nome,
+     curso.`unidade_id` AS curso_unidade_id,
+     disciplina.`id` AS disciplina_id,
+     disciplina.`carga_horaria_pratica` AS disciplina_carga_horaria_pratica,
+     disciplina.`carga_horaria_teorica` AS disciplina_carga_horaria_teorica,
+     disciplina.`ementa` AS disciplina_ementa,
+     disciplina.`nome` AS disciplina_nome,
+     disciplina.`curso_id` AS disciplina_curso_id,
+     disciplina.`bibliografia_basica` AS disciplina_bibliografia_basica,
+     disciplina.`bibliografia_complementar` AS disciplina_bibliografia_complementar,
+     disciplina.`objetivo_geral` AS disciplina_objetivo_geral,
+     disciplina.`codigo` AS disciplina_codigo,
+     plano.`id` AS plano_id,
+     plano.`criterioavaliacao` AS plano_criterioavaliacao,
+     plano.`datarealizacaoprovas` AS plano_datarealizacaoprovas,
+     plano.`objetivosespecificos` AS plano_objetivosespecificos,
+     plano.`programa` AS plano_programa,
+     plano.`relacaooutrasdisciplinas` AS plano_relacaooutrasdisciplinas,
+     plano.`turma_id` AS plano_turma_id,
+     plano.`bibliografiasugerida` AS plano_bibliografiasugerida,
+     turma.`id` AS turma_id,
+     turma.`ano` AS turma_ano,
+     turma.`nome` AS turma_nome,
+     turma.`semestre` AS turma_semestre,
+     turma.`disciplina_id` AS turma_disciplina_id,
+     turma.`professor_id` AS turma_professor_id,
+     unidade.`id` AS unidade_id,
+     unidade.`nome` AS unidade_nome
+FROM
+     `curso` curso INNER JOIN `disciplina` disciplina ON curso.`id` = disciplina.`curso_id`
+     INNER JOIN `turma` turma ON disciplina.`id` = turma.`disciplina_id`
+     INNER JOIN `plano` plano ON turma.`id` = plano.`turma_id`
+     INNER JOIN `unidade` unidade ON curso.`unidade_id` = unidade.`id`
+WHERE
+     plano.`id` = $P{planoId}]]>
+	</queryString>
+	<field name="curso_id" class="java.lang.Long"/>
+	<field name="curso_prefixo" class="java.lang.String"/>
+	<field name="curso_cod_matriz_curricular" class="java.lang.String"/>
+	<field name="curso_nome" class="java.lang.String"/>
+	<field name="curso_unidade_id" class="java.lang.Long"/>
+	<field name="disciplina_id" class="java.lang.Long"/>
+	<field name="disciplina_carga_horaria_pratica" class="java.lang.Long"/>
+	<field name="disciplina_carga_horaria_teorica" class="java.lang.Long"/>
+	<field name="disciplina_ementa" class="java.lang.String"/>
+	<field name="disciplina_nome" class="java.lang.String"/>
+	<field name="disciplina_curso_id" class="java.lang.Long"/>
+	<field name="disciplina_bibliografia_basica" class="java.lang.String"/>
+	<field name="disciplina_bibliografia_complementar" class="java.lang.String"/>
+	<field name="disciplina_objetivo_geral" class="java.lang.String"/>
+	<field name="disciplina_codigo" class="java.lang.String"/>
+	<field name="plano_id" class="java.lang.Long"/>
+	<field name="plano_criterioavaliacao" class="java.lang.String"/>
+	<field name="plano_datarealizacaoprovas" class="java.lang.String"/>
+	<field name="plano_objetivosespecificos" class="java.lang.String"/>
+	<field name="plano_programa" class="java.lang.String"/>
+	<field name="plano_relacaooutrasdisciplinas" class="java.lang.String"/>
+	<field name="plano_turma_id" class="java.lang.Long"/>
+	<field name="plano_bibliografiasugerida" class="java.lang.String"/>
+	<field name="turma_id" class="java.lang.Long"/>
+	<field name="turma_ano" class="java.lang.Integer"/>
+	<field name="turma_nome" class="java.lang.String"/>
+	<field name="turma_semestre" class="java.lang.Integer"/>
+	<field name="turma_disciplina_id" class="java.lang.Long"/>
+	<field name="turma_professor_id" class="java.lang.Long"/>
+	<field name="unidade_id" class="java.lang.Long"/>
+	<field name="unidade_nome" class="java.lang.String"/>
+	<group name="plano_id">
+		<groupExpression><![CDATA[$F{plano_id}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="623" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="59" width="535" height="18" uuid="6141aa13-e78d-4f07-a9c9-9f3aaca484ae"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Universidade Federal de Goiás]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="76" width="535" height="18" uuid="d825744b-f369-4ab6-a847-1385f453674b"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidade_nome}.trim()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="93" width="535" height="18" uuid="6f019e8b-458f-44f4-807e-3e13a700a66f"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{curso_nome}.trim()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="157" y="111" width="164" height="18" uuid="b49fa7ff-2e3e-4db4-927e-511cc271f1ca"/>
+				<textElement textAlignment="Right">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Código da Matriz Curricular:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="136" width="535" height="16" uuid="0891949d-838a-451f-89cf-aed5af3d7dfd"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plano de Disciplina]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="173" y="157" width="71" height="16" uuid="32b811f5-fd93-4a25-a2e7-a68ee32e34d8"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ano Letivo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="273" y="157" width="12" height="16" uuid="4afb50b6-0c17-48db-a082-99c1a134a938"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[-]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="295" y="157" width="100" height="16" uuid="63501393-4b58-4482-9eda-f1328715f433"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[º Semestre]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="246" y="157" width="33" height="16" uuid="34f57120-d223-46d3-90be-4e6cc06ac897"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{turma_ano}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="284" y="157" width="11" height="16" uuid="fc7ccd1d-1e19-4de4-bf2d-8bed3e90e395"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{turma_semestre}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-8" x="473" y="215" width="62" height="16" uuid="a0b27ffd-f247-42c5-96f5-cba5b01baf61"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Prática]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-5" x="411" y="215" width="62" height="16" uuid="46135132-2616-45e7-88d0-f6831a4b3f5e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Teórica]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-11" x="0" y="199" width="101" height="32" uuid="029bfb5b-c196-4b74-a72d-30cd2fea0526"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Código Disc.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-10" x="101" y="199" width="310" height="32" uuid="4a885a81-0826-4015-960e-2c64b23945f1"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-9" x="411" y="199" width="124" height="16" uuid="681d998c-8805-4669-8248-23676004f38c"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Carga Horária]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-12" x="0" y="183" width="535" height="16" uuid="9cb01493-0d03-4cd8-9708-ac8e861cfe4b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Dados da Disciplina]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="231" width="101" height="16" uuid="1679797b-e231-410e-81c3-14c29086ba1c"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{disciplina_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="231" width="310" height="16" uuid="266883d9-e55c-4d47-a06e-28b186bd7c0d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<paragraph leftIndent="4"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{disciplina_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="411" y="231" width="62" height="16" uuid="865c43c2-7517-46ba-867f-febcd199c2cd"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{disciplina_carga_horaria_pratica}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="473" y="231" width="62" height="16" uuid="17909267-935b-4b01-964f-5790d4a20891"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{disciplina_carga_horaria_teorica}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-13" x="0" y="255" width="46" height="16" uuid="ce696d8a-20c8-405c-a667-2604f1a79821"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<text><![CDATA[Prof(a):]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-14" x="0" y="274" width="46" height="16" uuid="6504156e-cb37-43a8-bb3b-566bd58961a3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica"/>
+				</textElement>
+				<text><![CDATA[Turma:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="46" y="274" width="100" height="16" uuid="6c19fd53-293a-4b19-b9a0-4c68253ab1c1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{turma_nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText-15" positionType="Float" x="0" y="298" width="535" height="16" uuid="16957075-a10d-40d5-bf12-a2ec1250c969"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Ementa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-18" positionType="Float" x="0" y="429" width="535" height="16" uuid="20af25e1-e252-483d-b2d7-7e8b86fd949c"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Relação com Outras Disciplinas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-21" positionType="Float" x="0" y="478" width="535" height="16" uuid="54c2297c-7863-4d94-b986-10381e372f66"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Programa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-17" positionType="Float" x="0" y="383" width="535" height="16" uuid="7da7de86-0b1d-4db8-9b87-051f23e6438b"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Objetivos Específicos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement key="staticText-16" positionType="Float" x="0" y="342" width="535" height="16" uuid="06804c51-c661-4ecb-85cc-6b443e1bc600"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Objetivo Geral]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-11" positionType="Float" x="0" y="314" width="535" height="19" uuid="9926b532-662d-454e-9163-8a0ee15670b4"/>
+				<box leftPadding="3" bottomPadding="4" rightPadding="3">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="12" isBold="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{disciplina_ementa}.trim()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-14" positionType="Float" x="0" y="445" width="535" height="19" uuid="b551bdca-9078-4f75-88cf-57636eef619f"/>
+				<box leftPadding="3" bottomPadding="4" rightPadding="3">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="12" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{plano_relacaooutrasdisciplinas}.trim()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-12" positionType="Float" x="0" y="358" width="535" height="19" uuid="7801bef6-b69b-453c-97be-3ee916995f83"/>
+				<box leftPadding="3" bottomPadding="4" rightPadding="3">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="12" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{disciplina_objetivo_geral}.trim()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-16" positionType="Float" x="0" y="494" width="535" height="19" uuid="adb9de72-f23c-409b-ae88-64d36b4fb3a2"/>
+				<box leftPadding="3" bottomPadding="4" rightPadding="3">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="12" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{plano_programa}.trim()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-13" positionType="Float" x="0" y="399" width="535" height="19" uuid="fe3fc05d-f0d2-49f4-86b7-aac8630c0805"/>
+				<box leftPadding="3" bottomPadding="4" rightPadding="3">
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.5" lineStyle="Solid"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="12" isBold="false" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{plano_objetivosespecificos}.trim()]]></textFieldExpression>
+			</textField>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-2" positionType="Float" x="0" y="519" width="535" height="16" uuid="ae868276-3b62-401d-8b33-edc05f67a03a"/>
+				<subreportParameter name="planoId">
+					<subreportParameterExpression><![CDATA[$P{planoId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{rep0}]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement key="staticText-19" positionType="Float" x="0" y="544" width="535" height="16" uuid="cf48269e-ea80-4eab-9efe-e5a9a2ecb347"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Conteúdo Programático / Cronograma]]></text>
+			</staticText>
+			<subreport isUsingCache="true">
+				<reportElement key="subreport-3" positionType="Float" x="0" y="560" width="535" height="17" uuid="3b41581a-5c64-4dbc-be0e-ef53c6eb0f94"/>
+				<subreportParameter name="planoId">
+					<subreportParameterExpression><![CDATA[$P{planoId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{rep1}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="46" y="255" width="489" height="16" uuid="69cf00dc-a248-41fe-a406-bb8078e2c234"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nomeProfessor}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement key="subreport-5" positionType="Float" x="0" y="603" width="535" height="18" uuid="c74f6d33-5470-48fe-9be1-2fc974b7fa4d"/>
+				<subreportParameter name="nomeProfessor">
+					<subreportParameterExpression><![CDATA[$P{nomeProfessor}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{rep3}]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement key="subreport-4" positionType="Float" x="0" y="582" width="535" height="16" uuid="2ced52ce-99ff-4f53-9983-a831838276f3"/>
+				<subreportParameter name="planoId">
+					<subreportParameterExpression><![CDATA[$P{planoId}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{rep2}]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement x="322" y="109" width="163" height="20" uuid="3de88865-5e04-480d-8048-e8d056650e6e"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{curso_cod_matriz_curricular}.trim()]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="237" y="-1" width="60" height="60" uuid="b1134606-068d-4bf5-8c9d-de393a08e64a"/>
+				<imageExpression><![CDATA[$P{caminhoImagem}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>

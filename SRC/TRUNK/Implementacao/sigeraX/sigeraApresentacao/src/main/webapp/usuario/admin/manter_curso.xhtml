@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:param name="funcao" value="manter_curso" />
+    <ui:param name="nomeImagem" value="curso.png" />
+    <ui:param name="paginaAtual" value="Manter Cursos" />
+
+    <ui:define name="conteudo">
+
+        <div class="row">
+            <div class="span12" >                
+
+                <p:messages id="mensagem" closable="true"/>
+                <h:form id="form">
+
+                    <p:dataTable styleClass="largura-minima-tabela"
+                                 id="dataTable" var="curso" value="#{cursoBean.dataModel}" 
+                                 paginator="true" rows="10"  
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} [{currentPage}/{totalPages}]"                         
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                 rowsPerPageTemplate="10,20,30,#{cursoBean.cursosTela.size() > 30 ? cursoBean.cursosTela.size() : ''}"
+                                 filteredValue="#{cursoBean.cursosFiltrados}"
+                                 emptyMessage="#{msgs['MT.401']}">
+
+                        <f:facet name="header">  
+                            Lista de Cursos
+                        </f:facet> 
+
+                        <p:column width="8%" styleClass="centralizar-texto"                                  
+                                  sortBy="#{curso.numero}" 
+                                  filterBy="#{curso.numero}"
+                                  filterMatchMode="startsWith">  
+                            <f:facet name="header">  
+                                <h:outputText value="Nº" />
+                            </f:facet> 
+                            <h:outputText value="#{curso.numero}" />  
+                        </p:column>  
+
+                        <p:column width="8%" styleClass="centralizar-texto"
+                                  sortBy="#{curso.prefixo}" 
+                                  filterBy="#{curso.prefixo}"
+                                  filterMatchMode="startsWith">  
+                            <f:facet name="header">  
+                                <h:outputText value="Prefixo" />
+                            </f:facet> 
+                            <h:outputText value="#{curso.prefixo}" style="text-transform: uppercase"/>  
+                        </p:column>  
+
+                        <p:column width="10%" styleClass="centralizar-texto"
+                                  sortBy="#{curso.codMatriz}" 
+                                  filterBy="#{curso.codMatriz}"
+                                  filterMatchMode="startsWith">  
+                            <f:facet name="header">  
+                                <h:outputText value="Cod.Matriz" />
+                            </f:facet> 
+                            <h:outputText value="#{curso.codMatriz}" />  
+                        </p:column>  
+
+                        <p:column width="34%" 
+                                  sortBy="#{curso.nome}"
+                                  filterBy="#{curso.nome}"
+                                  filterMatchMode="contains">  
+                            <f:facet name="header">  
+                                <h:outputText value="Nome" />
+                            </f:facet> 
+                            <h:outputText value="#{curso.nome}" />  
+                        </p:column> 
+
+                        <p:column width="34%" 
+                                  sortBy="#{curso.unidade.nome}"
+                                  filterBy="#{curso.unidade.nome}"
+                                  filterMatchMode="contains">  
+                            <f:facet name="header">  
+                                <h:outputText value="Unidade" />
+                            </f:facet> 
+                            <h:outputText value="#{curso.unidade.nome}" />  
+                        </p:column> 
+
+                        <p:column styleClass="centralizar-texto" colspan ="2" headerText="Ações" width="6%" exportable="false">
+                            <p:tooltip for="btnEditar" value="Visualizar detalhes"/>
+                            <h:commandLink  id="btnEditar" 
+                                           action="#{cursoBean.editar}" >
+                                <h:graphicImage value="/resources/img/detalhes.png" />
+                                <f:setPropertyActionListener target="#{cursoBean.cursoSelecionado}" 
+                                                             value="#{curso.curso}" />
+                            </h:commandLink>                                
+                            <p:tooltip for="msgExcluir" value="Excluir"/>
+                            <th style="width:4%">    
+                                <p:commandLink id="msgExcluir" 
+                                               oncomplete="exibirConfirmacao('Deseja realmente excluir o curso #{curso.nome} ?', 'form:botao-excluir')">
+                                    <h:graphicImage value="/resources/img/excluir2.png" />                                    
+                                    <f:setPropertyActionListener target="#{cursoBean.curso}" value="#{curso.curso}"  />
+                                </p:commandLink>                                
+                            </th>
+                        </p:column>  
+
+                    </p:dataTable>
+
+                    <row>
+                        <div class="span4 ">
+                            <div class="form-actions" >                            
+                                <h:commandLink styleClass="btn btn-primary" value="Incluir novo curso" action="#{cursoBean.editar}">
+                                    <f:setPropertyActionListener target="#{cursoBean.cursoSelecionado}"
+                                                                 value="#{null}" />
+                                </h:commandLink>
+                                <h:commandLink styleClass="botao-escondido" id="botao-excluir" action="#{cursoBean.remover}" />
+                            </div> 
+                        </div>
+                        <div class="span3">
+                            <div class="form-actions" >                            
+                                <label class="label-selecione-perfil">Exportar atual:</label>
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/excel.png" />  
+                                    <p:dataExporter type="xls" target="dataTable" fileName="ManterDisciplinas" pageOnly="true" />  
+                                </h:commandLink>  
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/csv.png" />  
+                                    <p:dataExporter type="csv" target="dataTable" fileName="ManterDisciplinas" />  
+                                </h:commandLink>  
+
+                                <h:commandLink >  
+                                    <p:graphicImage value="/resources/img/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="dataTable" fileName="ManterDisciplinas" pageOnly="true" preProcessor="#{atribuirPerfilBean.preProcess}"/>  
+                                </h:commandLink>  
+
+                            </div>      
+                        </div>
+                        <div class="span3" >
+                            <div class="form-actions" >                            
+                                <label class="label-selecione-perfil">Exportar todas:</label>
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/excel.png" />  
+                                    <p:dataExporter type="xls" target="dataTable" fileName="ManterDisciplinas"/>
+                                </h:commandLink>  
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/csv.png" />  
+                                    <p:dataExporter type="csv" target="dataTable" fileName="ManterDisciplinas"/>
+                                </h:commandLink>                                  
+
+                                <h:commandLink >  
+                                    <p:graphicImage value="/resources/img/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="dataTable" fileName="ManterDisciplinas" preProcessor="#{atribuirPerfilBean.preProcess}"/>  
+                                </h:commandLink>  
+
+                            </div>                                  
+                        </div>                        
+                        <div class="span2">
+                            <div class="form-actions" >                            
+                                <label class="label-selecione-perfil">Imprimir:</label>
+                                <h:commandButton value="Print" type="button" image="/resources/img/printer.png">  
+                                    <p:printer target="dataTable"/>  
+                                </h:commandButton>
+                            </div>
+                        </div>
+                    </row>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

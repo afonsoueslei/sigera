@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:param name="funcao" value="extrato"/>
+    <ui:param name="nomeImagem" value="extrato.png" />
+    <ui:param name="paginaAtual" value="Extrato Acadêmico > Finalização" />
+
+    <ui:define name="conteudo">
+        <div class="row">
+            <div class="span12">                
+                <div >
+
+                    <div class='spacer20'></div>
+                    <div class="centralizar-texto">
+                        <p class="mensagem-documento"><h:outputText escape="false" value="#{msgs['MT.021']}" /></p>
+                    </div>
+
+
+                    <div class='spacer50'></div>
+                    <h:form>
+                        <h:outputLabel value="Justificativa/Observações:" for="justificativa" />                    
+                        <h:inputTextarea  id="justificativa" class="area-justificativa"  value="#{extratoAcademicoBean.justificativa}" pt:placeholder="Breve justificativa/observação para requisição do extrato acadêmico."/> 
+
+                        <div class="form-actions">
+                            <h:commandButton styleClass="btn btn-primary botao-req-documento" value="Confirmar requerimento" action="#{extratoAcademicoBean.salvar}" />
+                            <h:commandButton styleClass="btn" value="Voltar à página inicial" action="#{extratoAcademicoBean.voltar}" />   
+                        </div>
+                    </h:form>
+                </div>
+            </div> 
+        </div>
+    </ui:define>    
+</ui:composition>

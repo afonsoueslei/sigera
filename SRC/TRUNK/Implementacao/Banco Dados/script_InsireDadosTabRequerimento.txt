@@ -1,0 +1,6 @@
+INSERT INTO `sigerax`.`requerimento` (`id`, `usuario_id`, `data_abertura`, `status_req`, `data_fechamento`, `justificativa`) 
+VALUES ('1', '1002', '2013-10-01', 'Aberto', NULL, 'Teste 1'), 
+('2', '1002', '2013-10-01', 'Fechado', '2013-10-31', 'Teste 2'), 
+('3', '1004', '2013-10-15', 'Aberto', NULL, 'Teste 3'), 
+('4', '1007', '2013-10-01', 'Fechado', '2013-10-01', 'Teste 4'), 
+('5', '1005', '2013-10-05', 'Fechado', '2013-10-18', 'Teste 5');

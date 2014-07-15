@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>cupertino</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Production</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>faces/login.xhtml</welcome-file>
+    </welcome-file-list>
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/faces/login.xhtml</location>
+    </error-page>
+    <error-page>
+        <exception-type>javax.servlet.ServletException</exception-type>
+        <location>/faces/login.xhtml</location>
+    </error-page>
+    
+    <filter>
+        <filter-name>ValidacaoUrl</filter-name>
+        <filter-class>br.ufg.inf.sigera.controle.filtro.FiltroUrl</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ValidacaoUrl</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <filter>
+        <filter-name>Autenticacao</filter-name>
+        <filter-class>br.ufg.inf.sigera.controle.filtro.VerificadorAutenticacao</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>Autenticacao</filter-name>
+        <url-pattern>/faces/usuario/*</url-pattern>
+    </filter-mapping>
+    
+    <filter>
+        <filter-name>AutorizacaoFazerRequerimento</filter-name>
+        <filter-class>br.ufg.inf.sigera.controle.filtro.AutorizacaoFazerRequerimento</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AutorizacaoFazerRequerimento</filter-name>
+        <url-pattern>/faces/usuario/requisicoes/*</url-pattern>
+    </filter-mapping>
+    
+    <filter>
+        <filter-name>AutorizacaoAcertoMatricula</filter-name>
+        <filter-class>br.ufg.inf.sigera.controle.filtro.AutorizacaoAcertoMatricula</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AutorizacaoAcertoMatricula</filter-name>
+        <url-pattern>/faces/usuario/requisicoes/acerto_matricula/*</url-pattern>
+    </filter-mapping>
+    
+    <filter>
+        <filter-name>AutorizacaoPlanoAula</filter-name>
+        <filter-class>br.ufg.inf.sigera.controle.filtro.AutorizacaoPlanoAula</filter-class>
+    </filter>   
+    <filter-mapping>
+        <filter-name>AutorizacaoPlanoAula</filter-name>
+        <url-pattern>/faces/usuario/plano-aula/*</url-pattern>
+    </filter-mapping>    
+    
+    <filter>
+        <filter-name>FiltroSegundaChamada</filter-name>
+        <filter-class>br.ufg.inf.sigera.controle.filtro.FiltroSegundaChamada</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>FiltroSegundaChamada</filter-name>
+        <url-pattern>/faces/usuario/requisicoes/segunda_chamada_finalizacao.xhtml</url-pattern>
+    </filter-mapping>
+    
+    <!--permissao para manter usuarios-->
+    <filter>
+        <filter-name>AutorizacaoManterUsuarios</filter-name>
+        <filter-class>br.ufg.inf.sigera.controle.filtro.AutorizacaoManterUsuarios</filter-class>
+    </filter>    
+    <filter-mapping>
+        <filter-name>AutorizacaoManterUsuarios</filter-name>
+        <url-pattern>/faces/usuario/secretaria/*</url-pattern>
+    </filter-mapping>
+    
+    <filter>
+        <filter-name>AutorizacaoAdmin</filter-name>
+        <filter-class>br.ufg.inf.sigera.controle.filtro.AutorizacaoAdministrador</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AutorizacaoAdmin</filter-name>
+        <url-pattern>/faces/usuario/admin/*</url-pattern>
+    </filter-mapping>
+       
+    <!--permissao para manter turma-->
+    <filter>
+        <filter-name>AutorizacaoManterTurma</filter-name>
+        <filter-class>br.ufg.inf.sigera.controle.filtro.AutorizacaoManterTurma</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AutorizacaoManterTurma</filter-name>
+        <url-pattern>/faces/usuario/coord-curso/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>primeUploadFilter</filter-name>
+        <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>primeUploadFilter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+    
+    <context-param>
+        <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    
+</web-app>

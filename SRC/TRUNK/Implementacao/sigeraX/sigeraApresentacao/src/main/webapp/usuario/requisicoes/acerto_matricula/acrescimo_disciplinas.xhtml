@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:param name="funcao" value="acrescimo" />
+    <ui:param name="nomeImagem" value="acrescimo.png" />
+    <ui:param name="paginaAtual" value="Acréscimo de Disciplinas" />
+
+    <ui:define name="conteudo">
+        <div class="row">
+            <div class="span12 deslocar-40-direita">
+                <h:form id="form">
+                    <p:messages id="mensagem" closable="true" />
+
+                    <p:dataTable styleClass="largura-minima-tabela"
+                                 id="dataTable" var="turma" value="#{acertoMatriculaBean.dataModelTurmas}"
+                                 paginator="true" rows="5"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} [{currentPage}/{totalPages}]"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,#{acertoMatriculaBean.turmasTela.size() > 15 ? acertoMatriculaBean.turmasTela.size() : ''}"
+                                 filteredValue="#{acertoMatriculaBean.turmasFiltradas}"
+                                 selection="#{acertoMatriculaBean.turmasSelecionadas}"
+                                 emptyMessage="#{msgs['MT.401']}">
+
+                        <f:facet name="header">                            
+                            Selecione as turmas                            
+                        </f:facet>
+
+                        <p:column selectionMode="multiple" width="4%"/>
+
+                        <p:column sortBy="#{turma.nomeDisciplina}"
+                                  filterBy="#{turma.nomeDisciplina}"
+                                  filterMatchMode="contains"
+                                  colspan="1" 
+                                  width="39%">
+                            <f:facet name="header">  
+                                <h:outputText value="Disciplina" />
+                            </f:facet> 
+                            <h:outputText value="#{turma.nomeDisciplina}" />
+                        </p:column>       
+
+                        <p:column sortBy="#{turma.nomeCurso}"
+                                  filterBy="#{turma.nomeCurso}"
+                                  filterMatchMode="contains"
+                                  colspan="1" 
+                                  width="27%">
+                            <f:facet name="header">  
+                                <h:outputText value="Curso" />
+                            </f:facet> 
+                            <h:outputText value="#{turma.nomeCurso}" />
+                        </p:column>       
+
+                        <p:column sortBy="#{turma.nomeProfessor}"
+                                  filterBy="#{turma.nomeProfessor}"
+                                  filterMatchMode="contains"
+                                  colspan="1" 
+                                  width="20%">
+                            <f:facet name="header">  
+                                <h:outputText value="Professor" />
+                            </f:facet> 
+                            <h:outputText value="#{turma.nomeProfessor}" />
+                        </p:column>       
+
+                        <p:column sortBy="#{turma.nome}" styleClass="centralizar-texto"
+                                  filterBy="#{turma.nome}"
+                                  filterMatchMode="contains"
+                                  colspan="1"
+                                  width="10%">
+                            <f:facet name="header">  
+                                <h:outputText value="Turma" />
+                            </f:facet> 
+                            <h:outputText value="#{turma.nome}" />
+                        </p:column> 
+
+                    </p:dataTable>
+
+                    <div class="spacer15"></div>
+
+                    <h:commandButton styleClass="btn btn-inverse botao-com-margem-direita" value="Adicionar turmas selecionadas" action="#{acertoMatriculaBean.adicionar}" />
+                    <h:commandButton styleClass="btn botao-com-margem-direita" value="Limpar seleção" action="#{acertoMatriculaBean.limparSelecao()}" />                        
+                </h:form>
+
+                <div class="spacer30"></div>
+
+                <h:form id="form2">
+                    <p:dataTable styleClass="largura-minima-tabela " 
+                                 id="dataTableEscolhidas" 
+                                 var="turmaEscolhida" 
+                                 value="#{acertoMatriculaBean.dataModelEscolhidas}"
+                                 emptyMessage="#{msgs['MT.403']}">
+
+                        <f:facet name="header">                            
+                            Turmas adicionadas ao requerimento de Acréscimo
+                        </f:facet>
+
+                        <p:column sortBy="#{turmaEscolhida.nomeDisciplina}">
+                            <f:facet name="header">  
+                                <h:outputText value="Disciplina" />
+                            </f:facet> 
+                            <h:outputText value="#{turmaEscolhida.nomeDisciplina}" />
+                        </p:column>       
+
+                        <p:column sortBy="#{turmaEscolhida.nomeCurso}"
+                                  filterBy="#{turmaEscolhida.nomeCurso}"
+                                  filterMatchMode="contains"
+                                  colspan="1" 
+                                  width="20%">
+                            <f:facet name="header">  
+                                <h:outputText value="Curso" />
+                            </f:facet> 
+                            <h:outputText value="#{turmaEscolhida.nomeCurso}" />
+                        </p:column>       
+                        
+                        <p:column sortBy="#{turmaEscolhida.nomeProfessor}">
+                            <f:facet name="header">  
+                                <h:outputText value="Professor" />
+                            </f:facet> 
+                            <h:outputText value="#{turmaEscolhida.nomeProfessor}" />
+                        </p:column>       
+
+                        <p:column sortBy="#{turmaEscolhida.nome}" width="10%" styleClass="centralizar-texto">
+                            <f:facet name="header">  
+                                <h:outputText value="Turma" />
+                            </f:facet> 
+                            <h:outputText value="#{turmaEscolhida.nome}" />
+                        </p:column> 
+
+
+                        <p:column width="4%" styleClass="centralizar-texto">
+                            <f:facet name="header">  
+                                <h:outputText value="Ação" />
+                            </f:facet>
+
+                            <p:commandLink title="Remover turma" id="btnExcluir" action="#{acertoMatriculaBean.remover}" update="dataTableEscolhidas">
+                                <h:graphicImage value="/resources/img/excluir2.png" />
+                                <f:setPropertyActionListener target="#{acertoMatriculaBean.turmaExcluir}"
+                                                             value="#{turmaEscolhida}" /> 
+                            </p:commandLink>
+                        </p:column>
+                    </p:dataTable>
+                    
+                    <div class="spacer20"></div>
+                    
+                    <h:outputLabel value="Justificativa:" for="justificativa" />                    
+                    <h:inputTextarea  id="justificativa" class="area-justificativa"  value="#{acertoMatriculaBean.justificativa}" pt:placeholder ="Breve justificativa para o acréscimo da(s) disciplina(s)."/> 
+
+                    <div class="spacer15"></div>
+
+                    <div class="form-actions">
+                        <h:commandButton styleClass="btn btn-primary botao-com-margem-direita" value="Confirmar requerimento" action="#{acertoMatriculaBean.salvar}" >
+                            <f:setPropertyActionListener value="#{acertoMatriculaBean.tipoAcrescimo}" target="#{acertoMatriculaBean.tipoRequerimento}"/>
+                        </h:commandButton>
+                        <h:commandButton styleClass="btn" value="Voltar à página inicial" action="#{acertoMatriculaBean.voltar}" /> 
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>    
+</ui:composition>
