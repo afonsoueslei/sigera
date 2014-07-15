@@ -1,1 +1,0 @@
-Versão 1.0 Liberada em 13 de Novembro de 2013 sobre Revision: 234
