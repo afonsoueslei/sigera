@@ -1,3 +1,0 @@
-CATALOGO LDAP NO BROWSER IE
-
-ldap://200.137.197.3:389/ou=Users,dc=inf, dc=ufg, dc=br??one?(objectclass=*)
