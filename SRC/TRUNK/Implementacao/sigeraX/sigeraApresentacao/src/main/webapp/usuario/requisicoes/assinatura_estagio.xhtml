@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
+    <ui:param name="funcao" value="assinatura" />
+    <ui:param name="nomeImagem" value="assinatura.png" />
+    <ui:param name="paginaAtual" value="Assinatura de Contratos/Relatórios de Estágio" />
+
+    <ui:define name="conteudo">
+       <div class="row">
+            <div class="span12">                
+                <div class="text-center">
+                    
+                    <div class='spacer100'></div>
+                    
+                    <p class="mensagem-documento"><h:outputText value="#{msgs['MT.013']}" /></p>
+                    
+                    <div class='spacer50'></div>
+
+                    <h:form>                    
+                        <h:commandButton styleClass="btn btn-primary botao-req-documento" value="Prosseguir com requerimento" action="#{assinaturaEstagioBean.prosseguir}" />
+                        <h:commandButton styleClass="btn" value="Voltar à página inicial" action="#{assinaturaEstagioBean.voltar}" />   
+                    </h:form>                
+                </div>
+            </div> 
+        </div>
+    </ui:define>    
+</ui:composition>

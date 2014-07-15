@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"  
+                xmlns:f="http://java.sun.com/jsf/core">  
+
+    <ui:param name="funcao" value="manter_turma" />
+    <ui:param name="nomeImagem" value="turma.png" />
+    <ui:param name="paginaAtual" value="Manter Turmas" />    
+
+    <ui:define name="conteudo">
+        <div class="row">
+            <div class="span12">
+
+                <h:form id="form">
+
+                    <p:messages closable="true"/>
+
+                    <p:dataTable styleClass="largura-minima-tabela"
+                                 id="dataTable" var="turma" value="#{turmaBean.dataModel}"
+                                 paginator="true" rows="10"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} [{currentPage}/{totalPages}]"
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                                 rowsPerPageTemplate="10,20,30,#{turmaBean.turmasTela.size() > 30 ? turmaBean.turmasTela.size() : ''}"
+                                 filteredValue="#{turmaBean.turmasFiltradas}"
+                                 emptyMessage="#{msgs['MT.401']}">
+
+                        <f:facet name="header">
+                            Lista de Turmas
+                        </f:facet>  
+
+                        <p:column sortBy="#{turma.numero}"
+                                  filterBy="#{turma.numero}"
+                                  filterMatchMode="startsWith"
+                                  width="8%"
+                                  colspan="1"  styleClass="centralizar-texto"> 
+                            <f:facet name="header">  
+                                <h:outputText value="Nº" />
+                            </f:facet> 
+                            <h:outputText value="#{turma.numero}" />  
+                        </p:column> 
+
+                        <p:column sortBy="#{turma.ano}"
+                                  filterBy="#{turma.ano}"
+                                  filterMatchMode="startsWith"
+                                  width="8%"
+                                  colspan="1" styleClass="centralizar-texto">  
+                            <f:facet name="header">  
+                                <h:outputText value="Ano" />
+                            </f:facet> 
+                            <h:outputText value="#{turma.ano}" />  
+                        </p:column>   
+
+                        <p:column sortBy="#{turma.semestre}"
+                                  filterBy="#{turma.semestre}"
+                                  filterMatchMode="contains"
+                                  width="8%"
+                                  colspan="1" styleClass="centralizar-texto">  
+                            <f:facet name="header">  
+                                <h:outputText value="Semestre" />
+                            </f:facet> 
+                            <h:outputText value="#{turma.semestre}" />  
+                        </p:column>  
+
+                        <p:column sortBy="#{turma.nome}"
+                                  filterBy="#{turma.nome}"
+                                  filterMatchMode="contains"
+                                  filterMaxLength="5"
+                                  width="8%"
+                                  colspan="1" styleClass="centralizar-texto">  
+                            <f:facet name="header">  
+                                <h:outputText value="Nome" />
+                            </f:facet> 
+                            <h:outputText value="#{turma.nome}" />  
+                        </p:column>  
+
+                        <p:column sortBy="#{turma.nomeDisciplina}"
+                                  filterBy="#{turma.nomeDisciplina}"
+                                  filterMatchMode="contains"
+                                  width="29%"
+                                  colspan="1" >  
+                            <f:facet name="header">  
+                                <h:outputText value="Disciplina" />
+                            </f:facet> 
+                            <h:outputText value="#{turma.nomeDisciplina}" />  
+                        </p:column>
+
+                        <p:column sortBy="#{turma.prefixoCurso}"
+                                  filterBy="#{turma.prefixoCurso}"
+                                  filterMatchMode="contains" 
+                                  styleClass="centralizar-texto"
+                                  colspan="1" >  
+                            <f:facet name="header">  
+                                <h:outputText value="Curso" />
+                            </f:facet> 
+                            <h:outputText title="#{turma.nomeCurso}" value="#{turma.prefixoCurso}" styleClass="caixa-alta" />  
+                        </p:column>
+
+                        <p:column sortBy="#{turma.nomeProfessor}"
+                                  filterBy="#{turma.nomeProfessor}"
+                                  filterMatchMode="contains"
+                                  width="29%"
+                                  colspan="1" >  
+                            <f:facet name="header">  
+                                <h:outputText value="Professor" />
+                            </f:facet> 
+                            <h:outputText value="#{turma.nomeProfessor}" />  
+                        </p:column> 
+
+                        <p:column styleClass="centralizar-texto"  colspan ="2" headerText="Ações" width="6%" exportable="false">
+
+                            <p:tooltip for="btnEditar" value="Visualizar detalhes"/>
+                            <h:commandLink id="btnEditar"                                               
+                                           action="#{turmaBean.editar}">
+                                <h:graphicImage value="/resources/img/detalhes.png" />
+                                <f:setPropertyActionListener target="#{turmaBean.turmaSelecionada}" 
+                                                             value="#{turma.turma}" />
+                            </h:commandLink>                               
+
+                            <p:tooltip for="btnExcluir" value="Excluir"/>
+                            <th style="width:4%">    
+                                <p:commandLink id="btnExcluir"                                
+                                               oncomplete="exibirConfirmacao('Deseja realmente excluir a turma #{turma.nome} ?', 'form:botao-excluir')">
+                                    <h:graphicImage value="/resources/img/excluir2.png" />
+                                    <f:setPropertyActionListener target="#{turmaBean.turmaExcluir}"
+                                                                 value="#{turma.turma}" />                                
+                                </p:commandLink>                                
+                            </th>
+
+                        </p:column>        
+                    </p:dataTable>
+
+                    <row>
+                        <div class="span4 ">
+                            <div class="form-actions" >                            
+                                <h:commandLink styleClass="btn btn-primary" value="Incluir nova turma" action="#{turmaBean.editar}">                            
+                                    <f:setPropertyActionListener target="#{turmaBean.turmaSelecionada}" 
+                                                                 value="#{null}" />
+                                </h:commandLink>
+                                <h:commandLink styleClass="botao-escondido" id="botao-excluir" action="#{turmaBean.remover}" />                  
+                            </div>                    
+                        </div>
+                        <div class="span3">
+                            <div class="form-actions" >                            
+                                <label class="label-selecione-perfil">Exportar atual:</label>
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/excel.png" />  
+                                    <p:dataExporter type="xls" target="dataTable" fileName="ManterDisciplinas" pageOnly="true" />  
+                                </h:commandLink>  
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/csv.png" />  
+                                    <p:dataExporter type="csv" target="dataTable" fileName="ManterDisciplinas" />  
+                                </h:commandLink>  
+
+                                <h:commandLink >  
+                                    <p:graphicImage value="/resources/img/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="dataTable" fileName="ManterDisciplinas" pageOnly="true" preProcessor="#{atribuirPerfilBean.preProcess}"/>  
+                                </h:commandLink>  
+
+                            </div>      
+                        </div>
+                        <div class="span3" >
+                            <div class="form-actions" >                            
+                                <label class="label-selecione-perfil">Exportar todas:</label>
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/excel.png" />  
+                                    <p:dataExporter type="xls" target="dataTable" fileName="ManterDisciplinas"/>
+                                </h:commandLink>  
+
+                                <h:commandLink styleClass="espacar-item-10px-direita">  
+                                    <p:graphicImage value="/resources/img/csv.png" />  
+                                    <p:dataExporter type="csv" target="dataTable" fileName="ManterDisciplinas"/>
+                                </h:commandLink>                                  
+
+                                <h:commandLink >  
+                                    <p:graphicImage value="/resources/img/pdf.png" />  
+                                    <p:dataExporter type="pdf" target="dataTable" fileName="ManterDisciplinas" preProcessor="#{atribuirPerfilBean.preProcess}"/>  
+                                </h:commandLink>  
+
+                            </div>                                  
+                        </div>                        
+                        <div class="span2">
+                            <div class="form-actions" >                            
+                                <label class="label-selecione-perfil">Imprimir:</label>
+                                <h:commandButton value="Print" type="button" image="/resources/img/printer.png">  
+                                    <p:printer target="dataTable"/>  
+                                </h:commandButton>
+                            </div>
+                        </div>
+                    </row>                    
+                </h:form>
+            </div>
+        </div>
+
+    </ui:define>    
+</ui:composition>

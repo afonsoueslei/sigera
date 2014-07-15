@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="usuario/template/template_login.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="conteudo">
+        <h:outputLabel for="perfil" value="Escolha o perfil:" />
+        <h:selectOneMenu styleClass="input-block-level" id="perfil" value="#{loginBean.codigoPerfil}">
+            <f:selectItems value="#{loginBean.usuario.perfis}" 
+                           var="p" 
+                           itemLabel="#{p.perfil.nome}"
+                           itemValue="#{p.perfil.id}" />
+        </h:selectOneMenu>
+
+        <h:commandButton styleClass="btn btn-primary input-block-level" value="OK" action="#{loginBean.definaPerfil}" />
+    </ui:define>                
+</ui:composition>

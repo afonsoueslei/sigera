@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:param name="funcao" value="plano_aula" />
+    <ui:param name="nomeImagem" value="plano.png" />
+    <ui:param name="paginaAtual" value="Plano de Ensino" />
+
+    <ui:define name="conteudo">
+        <h:panelGroup >
+            
+            <div class="row" >
+                <div class="span12">                
+                    <div class="text-center">
+
+                        <div class='spacer100'></div>
+
+                        <p class="mensagem-documento"><h:outputText escape="false" value="#{msgs['MT.009']}" /></p>
+
+                        <div class='spacer50'></div>
+
+                        <h:form>                    
+                            <h:commandButton styleClass="btn btn-primary botao-req-documento" value="Sim, solicitar preenchimento." action="#{planoBean.solitarPreenchimento}" />
+                            <h:commandButton styleClass="btn" value="Não solicitar preenchimento agora." action="#{planoBean.listarPlanos}" />   
+                        </h:form>                
+                    </div>
+                </div> 
+            </div>
+            
+        </h:panelGroup>
+
+    </ui:define>    
+</ui:composition>

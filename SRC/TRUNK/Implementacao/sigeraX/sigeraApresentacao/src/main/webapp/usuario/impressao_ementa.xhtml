@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"          
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>SIGERA 2.0 - Sistema Gerenciador de Requerimento Acadêmico</title>
+        <meta name="description" content="Sistema Gerenciador de Requerimento Acadêmico do Instituto de Informática da UFG." />  
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/img/favicon.ico" />
+        <h:outputStylesheet library="css" name="bootstrap.css" />
+        <h:outputStylesheet library="css" name="estilo.css" />
+        <h:outputStylesheet library="css" name="impressao-ementa.css" />
+        <h:outputStylesheet library="css" name="bootstrap-responsive.css" />
+    </h:head>
+    <h:body>
+        <h:form>
+            <div class="container">
+
+                <div class="row">                    
+                    <div class="span2 centralizado">
+                        <div class="form-actions" >                            
+                            <label class="label-selecione-perfil">Imprimir:</label>
+                            <h:commandButton value="Print" type="button" image="/resources/img/printer.png">  
+                                <p:printer target="conteudo-ementa"/>  
+                            </h:commandButton>
+                        </div>
+                    </div>                    
+                </div>
+                
+                <div class="spacer20"></div>
+
+                <h:panelGroup id="conteudo-ementa">
+                    <div class="row">                    
+                        <div class="span8 centralizado">
+
+                            <div class="text-center">
+                                <p class="negrito cabecalho">Universidade Federal de Goiás</p>
+                                <p class="negrito cabecalho">Instituto de Informática</p>
+                                <p class="negrito cabecalho"><h:outputText value="#{ementaImpressaoBean.disciplina.curso.nome}"/></p>
+                                <p>Código da Matriz Curricular: <h:outputText value="#{ementaImpressaoBean.disciplina.curso.codMatriz}"/></p>
+                                <br/>
+                                <p class="negrito">Plano de Disciplina</p>
+                                <p class="negrito">Ano Letivo: 
+                                    <h:outputText value="#{loginBean.configuracao.anoCorrente}"/>
+                                    - 
+                                    <h:outputText value="#{loginBean.configuracao.semestreCorrente}"/>&#186; Semestre
+                                </p>
+                            </div>
+
+                            <p class="negrito">Dados da Disciplina</p>
+
+                            <table>
+                                <tr>
+                                    <th rowspan="2">Nome</th>
+                                    <th colspan="2">Carga Horária</th>
+                                </tr>
+
+                                <tr>
+                                    <th>Teórica</th>
+                                    <th>Prática</th>
+                                </tr>
+
+                                <tr>
+                                    <td>#{ementaImpressaoBean.disciplina.nome}</td>
+                                    <td class="text-center">#{ementaImpressaoBean.disciplina.horaTeorica}</td>
+                                    <td class="text-center">#{ementaImpressaoBean.disciplina.horaPratica}</td>
+                                </tr>
+                            </table>
+
+                            <br />
+                            <p class="negrito">Ementa</p>
+                            <p class="quadro-ementa">#{ementaImpressaoBean.disciplina.ementa}</p>
+
+                            <h:panelGroup rendered="#{!empty ementaImpressaoBean.objetivoGeral}">
+                                <br />
+                                <p class="negrito">Objetivo Geral</p>
+                                <p class="quadro-ementa">#{ementaImpressaoBean.objetivoGeral}</p>
+                            </h:panelGroup>
+
+
+                            <h:panelGroup rendered="#{ !empty ementaImpressaoBean.bibliografiaBasica}">
+                                <br />
+                                <p class="negrito">Bibliografia Básica</p>                        
+                                <p class="quadro-ementa">#{ementaImpressaoBean.bibliografiaBasica}</p>
+                            </h:panelGroup>
+
+                            <h:panelGroup  rendered="#{ !empty ementaImpressaoBean.bibliografiaComplementar}">
+                                <br />
+                                <p class="negrito">Bibliografia Complementar</p>
+                                <p class="quadro-ementa">#{ementaImpressaoBean.bibliografiaComplementar}</p>
+                            </h:panelGroup>
+
+                        </div>
+                    </div>
+                </h:panelGroup>
+            </div>            
+        </h:form>
+    </h:body>
+</html>
