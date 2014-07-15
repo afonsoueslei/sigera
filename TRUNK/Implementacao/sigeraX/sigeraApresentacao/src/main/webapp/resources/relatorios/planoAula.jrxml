@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="planoAula" pageWidth="595" pageHeight="1000" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20" uuid="cb72e38f-bbab-4ca9-91ab-566fd66b4e66">
 	<property name="ireport.zoom" value="1.6105100000000008"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="69"/>
+	<property name="ireport.y" value="662"/>
 	<parameter name="nomeProfessor" class="java.lang.String">
 		<defaultValueExpression><![CDATA[$P{nomeProfessor}]]></defaultValueExpression>
 	</parameter>
@@ -10,16 +10,16 @@
 		<defaultValueExpression><![CDATA[$P{planoId}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rep0" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:/Users/auf/Desktop/SIGERA/SRC/TRUNK/Implementacao/sigeraX/sigeraApresentacao/src/main/webapp/resources/relatorios/PlanoAula_subreport0.jasper"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rep3" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:/Users/auf/Desktop/SIGERA/SRC/TRUNK/Implementacao/sigeraX/sigeraApresentacao/src/main/webapp/resources/relatorios/PlanoAula_subreport3.jasper"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rep2" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:/Users/auf/Desktop/SIGERA/SRC/TRUNK/Implementacao/sigeraX/sigeraApresentacao/src/main/webapp/resources/relatorios/PlanoAula_subreport2.jasper"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="rep1" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:/Users/auf/Desktop/SIGERA/SRC/TRUNK/Implementacao/sigeraX/sigeraApresentacao/src/main/webapp/resources/relatorios/PlanoAula_subreport1.jasper"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="caminhoImagem" class="java.lang.String"/>
 	<queryString>
