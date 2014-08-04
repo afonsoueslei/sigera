@@ -121,11 +121,7 @@ public class Configuracao {
     public void salvar() {
         EntityManager em = criarManager();
         em.getTransaction().begin();
-        if (this.id == 0) {
-            em.persist(this);
-        } else {
-            em.merge(this);
-        }
+        em.merge(this);        
         em.getTransaction().commit();
     }
 

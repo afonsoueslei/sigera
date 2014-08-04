@@ -33,8 +33,8 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     private String telefoneCelular;
     @Column(name = "telefone_residencial")
     private String telefoneResidencial;
-    @Column(name = "telefone_comercial")    
-    private String telefoneComercial;   
+    @Column(name = "telefone_comercial")
+    private String telefoneComercial;
     @Column(name = "primeiro_acesso")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date primeiroAcesso;
@@ -120,7 +120,6 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
         this.ultimoAcesso = ultimoAcesso;
     }
 
-    
     public UsuarioLdap getUsuarioLdap() {
         return usuarioLdap;
     }
@@ -145,33 +144,30 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     }
 
     public void salvar() {
-         EntityManager em = criarManager();
+        EntityManager em = criarManager();
         em.getTransaction().begin();
 
-		tratePerfilProfessor(em);
+        tratePerfilProfessor(em);
 
-        if (this.id == 0) {
-            em.persist(this);
-        } else {
-            em.merge(this);
-        }
+        em.merge(this);
+
         em.getTransaction().commit();
     }
 
     private void tratePerfilProfessor(EntityManager em) {
         boolean possuiPerfilProfessor = false;
-        
+
         if (this.perfis != null && this.perfis.size() > 0) {
-        
+
             for (AssociacaoPerfilCurso infoPerfil : this.perfis) {
                 if (infoPerfil.getPerfil().getId() == EnumPerfil.PROFESSOR.getCodigo()) {
                     possuiPerfilProfessor = true;
                     break;
                 }
             }
-            
+
         }
-        
+
         if (possuiPerfilProfessor) {
             Professor prof = Professor.obtenhaProfessorPorIdUsuario(this.id);
 

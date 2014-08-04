@@ -373,7 +373,7 @@ legend {
 #tudo{
     min-height: 95% !important;
     position: relative !important;
-    margin-top: 4%  !important;
+    margin-top: 3%  !important;
 }
 
 #tudo2{
@@ -614,9 +614,7 @@ legend {
     background: url("../resources/img/bg-wall.png") repeat-x scroll left top #e3effa;
     font-family: "Trebuchet MS","Helvetica neue",Helvetica,Arial,Verdana,sans-serif;
     font-size: 13px;
-    margin: 0 !important;
-    /*    padding-top: 25px !important;    */
-
+    margin: 0 !important;    
 }
 
 #logo{
@@ -701,7 +699,7 @@ legend {
     background-color: #002755;       
     color: white;
     font-size: 0.9em;
-    line-height: 15px !important;
+    line-height: 16px !important;
 }
 
 #cabecalho-inf{
@@ -794,14 +792,9 @@ legend {
     width: 100% !important;
     -moz-box-sizing: border-box;
     display: block;
-    width: 100%;   
-    /*  font-size: 14px !important;
-        transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
-        height: 20px !important;
-        min-height: 30px;
-        vertical-align: middle !important;
-        line-height: 20px !important;*/
+    width: 100%;  
 }
+
 .link_turmas{
     border-radius: 0 !important;
     color: #0088CC !important;

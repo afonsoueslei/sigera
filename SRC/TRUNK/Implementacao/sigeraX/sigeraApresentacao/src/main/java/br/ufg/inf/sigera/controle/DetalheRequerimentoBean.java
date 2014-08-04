@@ -71,7 +71,7 @@ public class DetalheRequerimentoBean {
     @PostConstruct
     public void init() {
         obtenhaRequerimento();
-        if (requerimento == null) {
+        if (requerimento == null || !usuarioPodeVerRequerimento()) {
             redirecioneParaPaginaConsulta();
         }
     }
@@ -86,7 +86,8 @@ public class DetalheRequerimentoBean {
     private void redirecioneParaPaginaConsulta() {
         try {
             ExternalContext contexto = FacesContext.getCurrentInstance().getExternalContext();
-            contexto.dispatch(Paginas.getConsultar());
+            contexto.redirect("consultar_requerimento.xhtml");
+            //contexto.dispatch(Paginas.getConsultar());
         } catch (IOException ex) {
             Logger.getLogger(DetalheRequerimentoBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception iex) {
@@ -191,20 +192,29 @@ public class DetalheRequerimentoBean {
     private void obtenhaRequerimento() {
         requerimento = null;
         String param = null;
+        Integer id = 0;
         try {
             param = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("numero");
         } catch (Exception ex) {
-            Logger.getLogger(Requerimento.class.getName()).log(Level.WARNING, null, ex);
+            Logger.getLogger(Requerimento.class.getName()).log(Level.WARNING, "Paramêtro não pode ser recuperado", ex);
         }
 
         if (param != null) {
             try {
-                Integer id = Integer.valueOf(param);
-                requerimento = Requerimento.obtenha(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), id);
+                id = Integer.valueOf(param);
             } catch (NumberFormatException ex) {
-                Logger.getLogger(Requerimento.class.getName()).log(Level.WARNING, null, ex);
+                Logger.getLogger(Requerimento.class.getName()).log(Level.WARNING, "Paramêtro passado não é um número válido.", ex);
             }
         }
+        requerimento = Requerimento.obtenha(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), id);
+    }
+
+    public Boolean usuarioPodeVerRequerimento() {
+        UsuarioSigera usuarioLogado = loginBean.getUsuario();
+        //somente o próprio usuário o administrador e aqueles que podem dar parecer podem ver o requerimento
+        return usuarioLogado.getId() == requerimento.getUsuario().getId()
+                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo()
+                || requerimento.perfilPermiteDarParecer(usuarioLogado);
     }
 
     public LoginBean getLoginBean() {

@@ -11,6 +11,7 @@ import br.ufg.inf.sigera.modelo.ldap.EnumGrupo;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
 import br.ufg.inf.sigera.modelo.perfil.Perfil;
 import br.ufg.inf.sigera.modelo.perfil.PerfilAluno;
+import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.servico.SenhaAleatoria;
 import java.io.Serializable;
 import java.util.logging.Level;
@@ -78,16 +79,27 @@ public class EditarPerfilBean implements Serializable {
     }
 
     public UsuarioSigera getUsuarioEdicao() {
-        String uid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("uid");
+        String uid = null;
         Integer uidInteiro;
+        try {
+            uid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("uid");
+        } catch (Exception ex) {
+            Logger.getLogger(Requerimento.class.getName()).log(Level.WARNING, "Paramêtro não pode ser recuperado", ex);
+        }
+
         try {
             uidInteiro = Integer.parseInt(uid);
         } catch (NumberFormatException nfe) {
             uidInteiro = loginBean.getUsuario().getId();
             Logger.getLogger(EditarPerfilBean.class.getName()).log(Level.INFO, "Paramêtro passado não é um número válido.", nfe);
         }
-        if ((uid != null) && (this.usuarioEdicao == null || this.usuarioEdicao.getId() != uidInteiro)) {
-            construirUsuarioEdicao(uidInteiro);
+
+        //verifica se o usuário tem permissão para editar o usuario passado como parametro (uid)
+        if (loginBean.getUsuario().getPerfilAtual().getPerfil().permiteManterUsuarios() || loginBean.getUsuario().getId() == uidInteiro) {
+
+            if ((uid != null) && (this.usuarioEdicao == null || this.usuarioEdicao.getId() != uidInteiro)) {
+                construirUsuarioEdicao(uidInteiro);
+            }
         }
         return this.usuarioEdicao;
     }
