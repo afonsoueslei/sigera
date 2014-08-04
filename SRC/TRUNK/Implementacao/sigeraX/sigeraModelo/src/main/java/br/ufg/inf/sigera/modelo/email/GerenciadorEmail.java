@@ -59,7 +59,7 @@ public class GerenciadorEmail {
                     mensagem = MessageFormat.format(prop.getProperty("ME.001.Plano.Concluir"),
                             nomeUsuario,
                             professor,
-                            descricaoTurma,                            
+                            descricaoTurma,
                             linkRequerimento);
                 } else {
                     mensagem = MessageFormat.format(prop.getProperty("ME.001.Corpo"),
@@ -97,7 +97,6 @@ public class GerenciadorEmail {
             String nomeCurso = requerimento.getCurso().getNome();
             String linkRequerimento = CAMINHO_SIGERA + "faces/usuario/requerimento.xhtml?numero=" + requerimento.getId();
 
-
             String emailDestinatario = destinatario.getUsuarioLdap().getEmail();
             String nomeUsuario = destinatario.getUsuarioLdap().getCn();
 
@@ -108,9 +107,9 @@ public class GerenciadorEmail {
                 String nomeDisciplina = requerimento.getPlano().getTurma().getDisciplina().getNome();
                 String descricaoTurma = nomeDisciplina.concat(" - [" + requerimento.getPlano().getTurma().getNome() + " ]");
 
-                mensagem = MessageFormat.format(prop.getProperty("ME.001.Plano.Reabrir"),                        
+                mensagem = MessageFormat.format(prop.getProperty("ME.001.Plano.Reabrir"),
                         professor,
-                        descricaoTurma,                        
+                        descricaoTurma,
                         linkRequerimento);
             } else {
                 mensagem = MessageFormat.format(prop.getProperty("ME.001.Corpo"),
@@ -146,18 +145,18 @@ public class GerenciadorEmail {
             String linkRequerimento = CAMINHO_SIGERA + "faces/usuario/requerimento.xhtml?numero=" + requerimento.getId();
             String emailDestinatario;
             String nomeProfessor;
-            String mensagem;
-            String nomeDisciplina = requerimento.getPlano().getTurma().getDisciplina().getNome();
-            String descricaoTurma = nomeDisciplina.concat(" - [" + requerimento.getPlano().getTurma().getNome() + " ]");
+            String mensagem;            
 
-            
             if (requerimento.getTipo() == EnumTipoRequerimento.PLANO.getCodigo()) {
                 
+                String nomeDisciplina = requerimento.getPlano().getTurma().getDisciplina().getNome();
+                String descricaoTurma = nomeDisciplina.concat(" - [" + requerimento.getPlano().getTurma().getNome() + " ]");
+
                 //recuperar usuarioLdap
-                UsuarioLdap user = buscadorLdap.obtenhaUsuarioLdap(requerimento.getPlano().getTurma().getProfessor().getUsuario().getId());                
-                emailDestinatario = user.getEmail();                
+                UsuarioLdap user = buscadorLdap.obtenhaUsuarioLdap(requerimento.getPlano().getTurma().getProfessor().getUsuario().getId());
+                emailDestinatario = user.getEmail();
                 nomeProfessor = user.getCn();
-                                
+
                 mensagem = MessageFormat.format(prop.getProperty("ME.002.Corpo.Plano"),
                         nomeProfessor,
                         requerimento.getDescricaoTipo(),
@@ -245,12 +244,11 @@ public class GerenciadorEmail {
             Logger.getLogger(GerenciadorEmail.class.getName()).log(Level.WARNING, null, ex);
         }
     }
-    
+
     /*
      Mensagem de e-mail ME.500
      */
     public void adicionarEmailSenhaResetada(UsuarioSigera usuario, String novaSenha) {
-       
 
         try {
             Properties prop = new Properties();
@@ -261,7 +259,7 @@ public class GerenciadorEmail {
             String assunto = prop.getProperty("ME.004");
 
             String nomeUsuario = usuario.getUsuarioLdap().getCn();
-            
+
             String linkSigera = CAMINHO_SIGERA;
             String mensagem = MessageFormat.format(prop.getProperty("ME.004.Corpo"), nomeUsuario, novaSenha, linkSigera);
 
@@ -291,6 +289,6 @@ public class GerenciadorEmail {
     public void enviarEmails() {
         RemetenteEmail remetenteEmail = new RemetenteEmail(this.emailsEnviar);
         Thread threadEmail = new Thread(remetenteEmail);
-        threadEmail.start();        
+        threadEmail.start();
     }
 }

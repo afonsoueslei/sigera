@@ -78,10 +78,11 @@ public class Autenticacao {
             if (usuario == null) {
                 //crie um novo usuarioSigera se ainda não existe no banco
                 usuario = new UsuarioSigera();
-                usuario.setPrimeiroAcesso(new Date()); //Grava primeiro acesso no Sigera 2.0 
+                usuario.setPrimeiroAcesso(new Date()); //Grava primeiro acesso no Sigera 2.0
+                usuario.setUsuarioLdap(usuarioLdap);
                 usuario.setId(Integer.valueOf(usuarioLdap.getUidNumber()));
                 
-
+                
                 if (usuarioLdap.getGrupo().equals(EnumGrupo.ALUNO)) {
                     Collection<AssociacaoPerfilCurso> perfis = new ArrayList<AssociacaoPerfilCurso>();
                     AssociacaoPerfilCurso perfilEstudante = GerenciadorPerfil.criePerfilAluno(usuario);
@@ -90,14 +91,15 @@ public class Autenticacao {
                 }
                 usuario.salvar();
             }
-            //Grava primeiro acesso no Sigera 2.0 
+            //Grava primeiro acesso no Sigera 2.0
             if(usuario.getPrimeiroAcesso()==null){
-                usuario.setPrimeiroAcesso(new Date());
+                usuario.setPrimeiroAcesso(new Date());            
+                usuario.setUsuarioLdap(usuarioLdap);
                 usuario.salvar();                
-            }
-
+            }            
             usuario.setUsuarioLdap(usuarioLdap);
             return usuario;
+            
         } catch (javax.persistence.PersistenceException ex) {
             Logger.getLogger(Autenticacao.class.getName()).log(Level.SEVERE, null, ex);
             usuario = new UsuarioSigera();

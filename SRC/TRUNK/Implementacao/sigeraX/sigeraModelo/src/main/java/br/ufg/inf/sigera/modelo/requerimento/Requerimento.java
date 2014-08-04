@@ -171,22 +171,24 @@ public abstract class Requerimento implements Serializable {
 
     public static Requerimento obtenha(BuscadorLdap buscadorLdap, Integer id) {
         EntityManager em = criarManager();
+
         Requerimento req = em.find(Requerimento.class, id);
         if (req != null) {
             req.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(req.getUsuario().getId()));
         }
 
-        return em.find(Requerimento.class, id);
+        return req;
+
     }
 
     public void salvar() {
-         EntityManager em = criarManager();
+        EntityManager em = criarManager();
         em.getTransaction().begin();
-        if (this.id == 0){
-            em.persist(this);        
-        }else{
+        if (this.getId() > 0) {
             em.merge(this);
-		}
+        } else {
+            em.persist(this);
+        }
         em.getTransaction().commit();
     }
 
@@ -342,4 +344,5 @@ public abstract class Requerimento implements Serializable {
 
     public void setTurmasComStatus(List<TurmaComStatus> turmasComStatus) {
     }
+
 }
