@@ -1,10 +1,13 @@
 package br.ufg.inf.sigera.modelo;
 
+import br.ufg.inf.sigera.modelo.ldap.EnumGrupo;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
+import br.ufg.inf.sigera.modelo.perfil.GerenciadorPerfil;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -140,6 +143,14 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
         setTelefoneCelular(telefoneCelular);
         setTelefoneResidencial(telefoneResidencial);
         setTelefoneComercial(telefoneComercial);
+                 
+        //Ao atualizar um usuário que é aluno e que ainda não foi setado esse perfil (estudante) para ele
+        if (this.getUsuarioLdap().getGrupo().equals(EnumGrupo.ALUNO) && this.getPerfis().isEmpty()) {
+            Collection<AssociacaoPerfilCurso> meusPerfis = new ArrayList<AssociacaoPerfilCurso>();
+            AssociacaoPerfilCurso perfilEstudante = GerenciadorPerfil.criePerfilAluno(this);
+            meusPerfis.add(perfilEstudante);            
+            this.setPerfis(meusPerfis);                
+        }
         salvar();
     }
 
