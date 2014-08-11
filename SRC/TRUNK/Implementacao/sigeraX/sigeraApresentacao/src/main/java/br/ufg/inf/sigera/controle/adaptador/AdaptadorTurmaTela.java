@@ -55,4 +55,11 @@ public class AdaptadorTurmaTela implements TurmaTela {
     public String getPrefixoCurso() {
         return this.turma.getDisciplina().getCurso().getPrefixo();
     }
+
+    @Override
+    public String getAnoSemestre() {
+        return Integer.toString(this.turma.getAno()) + "/" + Integer.toString(this.turma.getSemestre()) ;
+    }
+    
+    
 }

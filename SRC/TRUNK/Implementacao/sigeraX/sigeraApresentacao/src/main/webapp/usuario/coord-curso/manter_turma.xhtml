@@ -44,33 +44,22 @@
                             <h:outputText value="#{turma.numero}" />  
                         </p:column> 
 
-                        <p:column sortBy="#{turma.ano}"
-                                  filterBy="#{turma.ano}"
-                                  filterMatchMode="startsWith"
-                                  width="8%"
-                                  colspan="1" styleClass="centralizar-texto">  
-                            <f:facet name="header">  
-                                <h:outputText value="Ano" />
-                            </f:facet> 
-                            <h:outputText value="#{turma.ano}" />  
-                        </p:column>   
-
-                        <p:column sortBy="#{turma.semestre}"
-                                  filterBy="#{turma.semestre}"
+                        <p:column sortBy="#{turma.anoSemestre}"
+                                  filterBy="#{turma.anoSemestre}"
                                   filterMatchMode="contains"
                                   width="8%"
                                   colspan="1" styleClass="centralizar-texto">  
                             <f:facet name="header">  
-                                <h:outputText value="Semestre" />
+                                <h:outputText value="Ano/Sem" />
                             </f:facet> 
-                            <h:outputText value="#{turma.semestre}" />  
-                        </p:column>  
-
+                            <h:outputText value="#{turma.anoSemestre}" />  
+                        </p:column> 
+                        
                         <p:column sortBy="#{turma.nome}"
                                   filterBy="#{turma.nome}"
                                   filterMatchMode="contains"
                                   filterMaxLength="5"
-                                  width="8%"
+                                  width="6%"
                                   colspan="1" styleClass="centralizar-texto">  
                             <f:facet name="header">  
                                 <h:outputText value="Nome" />
@@ -111,18 +100,18 @@
                             <h:outputText value="#{turma.nomeProfessor}" />  
                         </p:column> 
 
-                        <p:column styleClass="centralizar-texto"  colspan ="2" headerText="Ações" width="6%" exportable="false">
+                        <p:column styleClass="centralizar-texto"  colspan ="2" headerText="Ações" width="8%" exportable="false">
 
                             <p:tooltip for="btnEditar" value="Visualizar detalhes"/>
                             <h:commandLink id="btnEditar"                                               
                                            action="#{turmaBean.editar}">
-                                <h:graphicImage value="/resources/img/detalhes.png" />
+                                <h:graphicImage value="/resources/img/detalhes.png"  styleClass="ce"/>
                                 <f:setPropertyActionListener target="#{turmaBean.turmaSelecionada}" 
                                                              value="#{turma.turma}" />
                             </h:commandLink>                               
 
                             <p:tooltip for="btnExcluir" value="Excluir"/>
-                            <th style="width:4%">    
+                            <th style="min-width:25px">
                                 <p:commandLink id="btnExcluir"                                
                                                oncomplete="exibirConfirmacao('Deseja realmente excluir a turma #{turma.nome} ?', 'form:botao-excluir')">
                                     <h:graphicImage value="/resources/img/excluir2.png" />

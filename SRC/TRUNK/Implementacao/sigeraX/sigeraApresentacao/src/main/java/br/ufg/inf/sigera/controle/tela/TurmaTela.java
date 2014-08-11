@@ -9,6 +9,7 @@ public interface TurmaTela {
     int getAno();
     int getSemestre();
     
+    String getAnoSemestre();    
     String getNome();        
     String getNomeDisciplina();
     String getNomeCurso();
