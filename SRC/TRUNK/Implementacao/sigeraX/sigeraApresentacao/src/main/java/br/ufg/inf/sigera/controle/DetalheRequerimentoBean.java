@@ -211,10 +211,12 @@ public class DetalheRequerimentoBean {
 
     public Boolean usuarioPodeVerRequerimento() {
         UsuarioSigera usuarioLogado = loginBean.getUsuario();
-        //somente o próprio usuário o administrador e aqueles que podem dar parecer podem ver o requerimento
+        //somente o próprio usuário, o administrador, o coordenador Geral e aqueles que podem dar parecer podem ver o requerimento
         return usuarioLogado.getId() == requerimento.getUsuario().getId()
                 || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo()
-                || requerimento.perfilPermiteDarParecer(usuarioLogado);
+                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo()
+                || requerimento.perfilPermiteDarParecer(usuarioLogado) 
+                || requerimento.usuarioPodeConferirDocumentos(usuarioLogado);
     }
 
     public LoginBean getLoginBean() {
@@ -337,7 +339,8 @@ public class DetalheRequerimentoBean {
             gerenciadorEmail.adicionarEmailParecer(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), requerimento);
             gerenciadorEmail.enviarEmails();
         }
-
+        //Limpar o bean para atualizar a lista de requerimentos
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
         mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT004), Paginas.getDetalheRequerimento());
         return enderecoRedirecionamento();
     }

@@ -25,18 +25,18 @@
                                      value="#{cursoBean.cursoEditavel.id}" />                        
                     </h:panelGroup>
 
-                    <h:outputText value="Prefixo:" />
-                    <p:inputText value="#{cursoBean.cursoEditavel.prefixo}"
+                    <h:outputLabel value="Prefixo:" for="prefixo"/>
+                    <h:inputText id="prefixo" value="#{cursoBean.cursoEditavel.prefixo}"
                                  styleClass="input-block-level"
                                  required="true" requiredMessage="Prefixo é obrigatório." />
-                    <h:outputText value="Cod. Matriz Curricular:" />
-                    <p:inputText value="#{cursoBean.cursoEditavel.codMatriz}"
+                    <h:outputLabel value="Cod. Matriz Curricular:" for="matriz-curricular"/>
+                    <h:inputText id="matriz-curricular" value="#{cursoBean.cursoEditavel.codMatriz}"
                                  styleClass="input-block-level"/>
-                    <h:outputText value="Nome:" />
-                    <p:inputText value="#{cursoBean.cursoEditavel.nome}" 
+                    <h:outputLabel value="Nome:" for="nome-curso"/>
+                    <h:inputText id="nome-curso" value="#{cursoBean.cursoEditavel.nome}" 
                                  styleClass="input-block-level"
                                  required="true" requiredMessage="Nome é obrigatório." /> 
-                    <h:outputText value="Unidade:" />
+                    <h:outputLabel value="Unidade:" for="cursos"/>
                     <h:selectOneMenu styleClass="input-block-level" id="cursos"  
                                      value="#{cursoBean.codigoUnidade}" >
                         <f:selectItems value="#{cursoBean.listaUnidades}" 

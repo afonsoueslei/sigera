@@ -3,6 +3,7 @@ package br.ufg.inf.sigera.controle.tela;
 import br.ufg.inf.sigera.modelo.Curso;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.perfil.Perfil;
+import java.util.Date;
 
 public interface UsuarioTelaAtribuirPerfil {
 
@@ -15,6 +16,10 @@ public interface UsuarioTelaAtribuirPerfil {
     String getTelefoneResidencial();
     String getTelefoneComercial();
     boolean teveAlteracoes();
+    Date getPrimeiroAcesso();
+    String getPrimeiroAcessoParaFiltro();
+    Date getUltimoAcesso();
+    String getUltimoAcessoParaFiltro();
     
     String getNomeCursoAluno();
     String getNomeCursoCoordenadorCurso();

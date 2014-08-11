@@ -18,13 +18,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
 
 @ManagedBean
-@RequestScoped
+@SessionScoped
 public class ConsultarRequerimentoBean {
 
     @ManagedProperty(value = "#{loginBean}")
@@ -35,7 +35,7 @@ public class ConsultarRequerimentoBean {
     private static final String[] TIPOS_REQUERIMENTO;
     private SelectItem[] opcoesTipoRequerimento;
     private static final String[] TIPOS_STATUS;
-    private SelectItem[] opcoesTipoStatus;
+    private SelectItem[] opcoesTipoStatus;    
 
     static {
         TIPOS_REQUERIMENTO = new String[8];
@@ -91,12 +91,11 @@ public class ConsultarRequerimentoBean {
             List<Requerimento> requerimentos = this.loginBean.getUsuario().obtenhaRequerimentos();
             this.requerimentosTela = new ArrayList<RequerimentoTelaConsulta>();
             for (Requerimento requerimento : requerimentos) {
-                this.requerimentosTela.add(new AdaptadorRequerimentoTelaConsulta(requerimento));
+                this.requerimentosTela.add(new AdaptadorRequerimentoTelaConsulta(requerimento));                                
             }
 
             this.dataModel = new RequerimentoTelaConsultaDataModel(this.requerimentosTela);
-        }
-
+        }  
         return dataModel;
     }
 
@@ -104,8 +103,9 @@ public class ConsultarRequerimentoBean {
         SelectItem[] options = new SelectItem[data.length + 1];
 
         options[0] = new SelectItem("", "Todos");
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < data.length; i++) {            
             options[i + 1] = new SelectItem(data[i], data[i]);
+            
         }
 
         return options;

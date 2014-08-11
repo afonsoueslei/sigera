@@ -4,6 +4,7 @@ import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import static br.ufg.inf.sigera.modelo.perfil.Perfil.obtenhaEntityManager;
+import br.ufg.inf.sigera.modelo.requerimento.EnumTipoRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
 import java.util.List;
 import javax.persistence.DiscriminatorValue;
@@ -60,14 +61,23 @@ public class PerfilCoordenadorGeral extends Perfil {
 
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
         EntityManager em = obtenhaEntityManager();
-        String consulta = " SELECT r FROM Requerimento as r ORDER BY r.id DESC";
-        Query query = em.createQuery(consulta);
+        StringBuilder consulta = new StringBuilder();
+                       
+        consulta.append(" SELECT r ");
+        consulta.append(" FROM Requerimento as r ");
+        consulta.append(" WHERE r.tipo IN (:tipo1, :tipo2, :tipo3 ) ");
+        
+        Query query = em.createQuery(consulta.toString());
+        query.setParameter("tipo1", EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo());
+        query.setParameter("tipo2", EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getCodigo());
+        query.setParameter("tipo3", EnumTipoRequerimento.PLANO.getCodigo());
+        
         List<Requerimento> requerimentos = query.getResultList();
 
         for (Requerimento r : requerimentos) {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
-        }
-
+        }                             
+        
         return requerimentos;
     }
 

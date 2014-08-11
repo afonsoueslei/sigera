@@ -6,9 +6,12 @@ import br.ufg.inf.sigera.modelo.Curso;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.perfil.Perfil;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,6 +21,8 @@ public class AdaptadorUsuarioTelaAtribuirPerfil implements UsuarioTelaAtribuirPe
     private final UsuarioSigera usuario;
     private final Map<Integer, Entry<AssociacaoPerfilCurso, Boolean>> perfis;
     private boolean teveAlteracoes;
+    private String primeiroAcessoParaFiltro;
+    private String ultimoAcessoParaFiltro;
 
     public AdaptadorUsuarioTelaAtribuirPerfil(UsuarioSigera usuario) {
         this.usuario = usuario;
@@ -42,7 +47,13 @@ public class AdaptadorUsuarioTelaAtribuirPerfil implements UsuarioTelaAtribuirPe
                         new SimpleEntry<AssociacaoPerfilCurso, Boolean>(perfil, true));
             }
         }
-
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        if (this.usuario.getPrimeiroAcesso() != null) {
+            primeiroAcessoParaFiltro = dateFormat.format(this.usuario.getPrimeiroAcesso());
+        }
+        if (this.usuario.getUltimoAcesso() != null) {
+            ultimoAcessoParaFiltro = dateFormat.format(this.usuario.getUltimoAcesso());
+        }
         this.teveAlteracoes = false;
     }
 
@@ -79,6 +90,26 @@ public class AdaptadorUsuarioTelaAtribuirPerfil implements UsuarioTelaAtribuirPe
     @Override
     public int getId() {
         return Integer.parseInt(this.usuario.getUsuarioLdap().getUidNumber());
+    }
+
+    @Override
+    public Date getPrimeiroAcesso() {
+        return this.usuario.getPrimeiroAcesso();
+    }
+
+    @Override
+    public String getPrimeiroAcessoParaFiltro() {
+        return this.primeiroAcessoParaFiltro;
+    }
+
+    @Override
+    public Date getUltimoAcesso() {
+        return this.usuario.getUltimoAcesso();
+    }
+
+    @Override
+    public String getUltimoAcessoParaFiltro() {
+        return this.ultimoAcessoParaFiltro;
     }
 
     @Override

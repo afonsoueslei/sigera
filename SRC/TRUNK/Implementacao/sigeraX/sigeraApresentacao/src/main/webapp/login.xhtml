@@ -6,14 +6,44 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
-    <ui:define name="conteudo">        
-        <h:outputLabel for="username" value="Nome de usuário" />
-        <p:inputText styleClass="input-block-level" id="username" value="#{loginBean.username}" tabindex="1" placeholder="Seu login do INF"/>
+    <ui:define name="conteudo">      
+        <p:messages />
+        <h:form styleClass="form-signin">
+            <h:outputLabel for="username" value="Nome de usuário" />
 
-        <h:outputLabel for="password" value="Senha" />
-        <h:inputSecret pt:placeholder="Sua senha" styleClass="input-block-level" id="password" value="#{loginBean.password}" tabindex="2" > </h:inputSecret>
+            <p:tooltip for="username">
+                <span>                    
+                    Exemplos de nome de usuário: <br/>
+                    <b>Discentes</b>: cc00001, msc1234, etc. <br/>          
+                    <b>Servidor</b>: afonso, bruno, etc.
+                </span>
+                <!--            </p:tooltip> value="Nome de usuário é seu login do INF.  Discentes: cc00001, msc1234, etc. 
+                                       Servidor: afonso, bruno, etc."/>-->
+            </p:tooltip>
+            <p:inputText styleClass="input-block-level" id="username" value="#{loginBean.username}" tabindex="1" placeholder="Seu login do INF"/>
 
-        <h:commandButton styleClass="btn btn-primary input-block-level" value="Fazer login" action="#{loginBean.checkLogin}" tabindex="3"/>
+            <h:outputLabel for="password" value="Senha" />
+            <h:inputSecret pt:placeholder="Sua senha" styleClass="input-block-level" id="password" value="#{loginBean.password}" tabindex="2" > </h:inputSecret>
 
+            <h:commandButton style="width: 100%" styleClass="btn btn-primary input-block-level" value="Fazer login" action="#{loginBean.checkLogin}" tabindex="3"/>
+
+            <div class="email-sugestao">
+                <label style="color: #0088cc; margin-right: 18px;">
+
+                    <h:link outcome="ajuda" >
+                        Precisa de ajuda?
+                    </h:link>  
+                </label>
+            </div>
+<!--            <br/>
+            <div class="email-sugestao">
+                <label style="color: #0088cc; margin-right: 18px;">
+                    <h:link outcome="ajuda" >
+                        Esqueci meu login ou senha
+                    </h:link>  
+                </label>
+            </div>-->
+            
+        </h:form>   
     </ui:define>                
 </ui:composition>
