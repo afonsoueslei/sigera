@@ -7,6 +7,7 @@ import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
 import br.ufg.inf.sigera.modelo.requerimento.EnumTipoRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
+import br.ufg.inf.sigera.modelo.servico.Conexoes;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -20,9 +21,9 @@ import java.util.logging.Logger;
 public class GerenciadorEmail {
 
     private final List<Email> emailsEnviar;
-    private final String CAMINHO_SIGERA = "http://200.137.197.214:8080/sigera/";
-
+    
     public GerenciadorEmail() {
+        Conexoes.lerParametros();
         this.emailsEnviar = new ArrayList<Email>();
     }
 
@@ -43,7 +44,7 @@ public class GerenciadorEmail {
             String nomeRequerente = requerimento.getUsuario().getUsuarioLdap().getCn();
             String matriculaRequerente = requerimento.getUsuario().getUsuarioLdap().getMatricula();
             String nomeCurso = requerimento.getCurso().getNome();
-            String linkRequerimento = CAMINHO_SIGERA + "faces/usuario/requerimento.xhtml?numero=" + requerimento.getId();
+            String linkRequerimento = Conexoes.getURL_SIGERA() + "faces/usuario/requerimento.xhtml?numero=" + requerimento.getId();
 
             for (UsuarioSigera usuario : destinatarios) {
                 String emailDestinatario = usuario.getUsuarioLdap().getEmail();
@@ -95,7 +96,7 @@ public class GerenciadorEmail {
             String nomeRequerente = requerimento.getUsuario().getUsuarioLdap().getCn();
             String matriculaRequerente = requerimento.getUsuario().getUsuarioLdap().getMatricula();
             String nomeCurso = requerimento.getCurso().getNome();
-            String linkRequerimento = CAMINHO_SIGERA + "faces/usuario/requerimento.xhtml?numero=" + requerimento.getId();
+            String linkRequerimento = Conexoes.getURL_SIGERA() + "faces/usuario/requerimento.xhtml?numero=" + requerimento.getId();
 
             String emailDestinatario = destinatario.getUsuarioLdap().getEmail();
             String nomeUsuario = destinatario.getUsuarioLdap().getCn();
@@ -142,7 +143,7 @@ public class GerenciadorEmail {
 
             String assunto = MessageFormat.format(prop.getProperty("ME.002"), requerimento.getDescricaoTipo());
             String statusRequerimento = requerimento.getDescricaoStatus().toLowerCase();
-            String linkRequerimento = CAMINHO_SIGERA + "faces/usuario/requerimento.xhtml?numero=" + requerimento.getId();
+            String linkRequerimento = Conexoes.getURL_SIGERA() + "faces/usuario/requerimento.xhtml?numero=" + requerimento.getId();
             String emailDestinatario;
             String nomeProfessor;
             String mensagem;            
@@ -198,7 +199,7 @@ public class GerenciadorEmail {
             String nomeCurso = requerimento.getPlano().getTurma().getDisciplina().getCurso().getNome();
             String nomeRequerente = requerimento.getUsuario().getUsuarioLdap().getCn();
 
-            String linkRequerimento = CAMINHO_SIGERA + "faces/usuario/requerimento.xhtml?numero=" + requerimento.getId();
+            String linkRequerimento = Conexoes.getURL_SIGERA() + "faces/usuario/requerimento.xhtml?numero=" + requerimento.getId();
 
             String emailDestinatario = destinatario.getUsuarioLdap().getEmail();
             String nomeProfessor = destinatario.getUsuarioLdap().getCn();
@@ -234,9 +235,8 @@ public class GerenciadorEmail {
             String assunto = prop.getProperty("ME.101");
 
             String nomeUsuario = usuario.getUsuarioLdap().getCn();
-            String nomesPerfis = formateNomesPerfis(usuario.getPerfis());
-            String linkSigera = CAMINHO_SIGERA;
-            String mensagem = MessageFormat.format(prop.getProperty("ME.101.Corpo"), nomeUsuario, nomesPerfis, linkSigera);
+            String nomesPerfis = formateNomesPerfis(usuario.getPerfis());            
+            String mensagem = MessageFormat.format(prop.getProperty("ME.101.Corpo"), nomeUsuario, nomesPerfis, Conexoes.getURL_SIGERA());
 
             adicionarEmail(emailDestinatario, assunto, mensagem);
 
@@ -259,9 +259,10 @@ public class GerenciadorEmail {
             String assunto = prop.getProperty("ME.004");
 
             String nomeUsuario = usuario.getUsuarioLdap().getCn();
+            
+            String login = usuario.getUsuarioLdap().getUid();
 
-            String linkSigera = CAMINHO_SIGERA;
-            String mensagem = MessageFormat.format(prop.getProperty("ME.004.Corpo"), nomeUsuario, novaSenha, linkSigera);
+            String mensagem = MessageFormat.format(prop.getProperty("ME.004.Corpo"), nomeUsuario, login, novaSenha, Conexoes.getURL_SIGERA());
 
             adicionarEmail(emailDestinatario, assunto, mensagem);
 

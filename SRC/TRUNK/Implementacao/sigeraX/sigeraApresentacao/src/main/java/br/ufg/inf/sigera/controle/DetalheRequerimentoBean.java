@@ -215,7 +215,7 @@ public class DetalheRequerimentoBean {
         return usuarioLogado.getId() == requerimento.getUsuario().getId()
                 || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo()
                 || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo()
-                || requerimento.perfilPermiteDarParecer(usuarioLogado) 
+                || requerimento.perfilPermiteDarParecer(usuarioLogado)
                 || requerimento.usuarioPodeConferirDocumentos(usuarioLogado);
     }
 
@@ -405,6 +405,7 @@ public class DetalheRequerimentoBean {
             gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
             gerenciadorEmail.enviarEmails();
         }
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
         mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.018"), Paginas.getDetalheRequerimento());
         return enderecoRedirecionamento();
     }
@@ -446,7 +447,7 @@ public class DetalheRequerimentoBean {
             gerenciadorEmail.adicionarEmailParecer(null, requerimento);
             gerenciadorEmail.enviarEmails();
         }
-
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
         mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT004), Paginas.getDetalheRequerimento());
         return enderecoRedirecionamento();
     }
