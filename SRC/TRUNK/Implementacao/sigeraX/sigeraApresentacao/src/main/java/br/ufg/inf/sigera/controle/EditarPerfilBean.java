@@ -138,6 +138,8 @@ public class EditarPerfilBean implements Serializable {
             gerenciadorEmail.adicionarEmailSenhaResetada(this.getUsuarioEdicao(), novaSenha);
             gerenciadorEmail.enviarEmails();
         }
+        //atualiza o usuario para caso ele seja aluno e ainda não tenha este perfil associado lhe seja atribuido
+        this.usuarioEdicao.atualizar(telefoneCelular, telefoneResidencial, telefoneComercial);
 
         //3. mostra mensagem na tela que resetar senha foi efetivado com sucesso.
         mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.007", nomeCompletoUsuarioEditado), Paginas.getEditarPerfil());

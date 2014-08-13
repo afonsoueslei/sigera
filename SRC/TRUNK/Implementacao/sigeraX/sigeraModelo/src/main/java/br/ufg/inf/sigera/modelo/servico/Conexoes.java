@@ -34,6 +34,7 @@ public class Conexoes {
     private static String BASE_DN;
     private static String PASTA_PLANOS_DE_AULA;
     private static String PASTA_ANEXOS;
+    private static String URL_SIGERA;
 
     public static void lerParametros() {
         String pathSistema = System.getenv("SIGERA_CONF_PROPERTIES");
@@ -75,6 +76,7 @@ public class Conexoes {
         Conexoes.setBASE_DN(prop.getProperty("BASE_DN"));
         Conexoes.setPASTA_PLANOS_DE_AULA(prop.getProperty("PASTA_PLANOS_DE_AULA"));
         Conexoes.setPASTA_ANEXOS(prop.getProperty("PASTA_ANEXOS"));
+        Conexoes.setURL_SIGERA(prop.getProperty("URL_SIGERA"));
 
     }
 
@@ -134,6 +136,11 @@ public class Conexoes {
         Conexoes.PASTA_ANEXOS = PASTA_ANEXOS;
     }
 
+    public static void setURL_SIGERA(String URL_SIGERA) {
+        Conexoes.URL_SIGERA = URL_SIGERA;
+    }
+    
+
     public static String getSERVIDOR_BANCO() {
         return SERVIDOR_BANCO;
     }
@@ -188,6 +195,10 @@ public class Conexoes {
 
     public static String getPASTA_ANEXOS() {
         return PASTA_ANEXOS;
+    }
+
+    public static String getURL_SIGERA() {
+        return URL_SIGERA;
     }
 
 }
