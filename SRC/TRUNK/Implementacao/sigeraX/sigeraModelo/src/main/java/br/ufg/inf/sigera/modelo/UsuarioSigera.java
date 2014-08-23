@@ -44,6 +44,9 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     @Column(name = "ultimo_acesso")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date ultimoAcesso;
+    @Column(name="chave_ativacao")
+    private String chaveAtivacao;
+    
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
     @PrivateOwned
@@ -139,10 +142,19 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
         this.usuarioLdap = usuarioLdap;
     }
 
+    public String getChaveAtivacao() {
+        return chaveAtivacao;
+    }
+
+    public void setChaveAtivacao(String chaveAtivacao) {
+        this.chaveAtivacao = chaveAtivacao;
+    }
+
     public void atualizar(String telefoneCelular, String telefoneResidencial, String telefoneComercial) {
         setTelefoneCelular(telefoneCelular);
         setTelefoneResidencial(telefoneResidencial);
         setTelefoneComercial(telefoneComercial);
+        setChaveAtivacao(chaveAtivacao);
                  
         //Ao atualizar um usuário que é aluno e que ainda não foi setado esse perfil (estudante) para ele
         if (this.getUsuarioLdap().getGrupo().equals(EnumGrupo.ALUNO) && this.getPerfis().isEmpty()) {

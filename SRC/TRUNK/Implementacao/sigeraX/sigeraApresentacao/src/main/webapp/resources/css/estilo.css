@@ -644,6 +644,11 @@ legend {
     margin-right: -20px; 
     text-align: right;
 }
+
+.precisa-ajuda{    
+    margin-bottom: -20px; 
+    margin-right: -20px;     
+}
 .divider_modificado{
     margin: 3px 1px !important;
 
@@ -705,4 +710,26 @@ legend {
     background: none repeat scroll 0 0 rgba(0, 0, 0, 0) !important;
     border: medium none !important;    
     text-decoration: underline !important;
+}
+
+#form_recuperar_senha{
+    background: none repeat scroll 0 0 #f1f1f1 !important;
+    margin-bottom: -40px !important;
+    margin-top: -60px !important;
+}
+
+.mensagem-token-erro{
+    border-radius: 3px !important;    
+    color: #ff0000 !important;        
+    background: #f2dede !important;
+    margin: 0px -5px 10px -5px !important;
+    padding: 10px !important;
+}
+
+.mensagem-token-sucesso{
+    border-radius: 3px !important;    
+    color: #009900 !important;         
+    background: #ccffcc !important;
+    margin: 0px -5px 10px -5px !important;
+    padding: 10px !important;
 }

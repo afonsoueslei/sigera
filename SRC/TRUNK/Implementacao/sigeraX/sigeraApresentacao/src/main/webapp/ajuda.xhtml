@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="usuario/template/template_login.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:define name="conteudo">        
+
+        <div id =" cabecalho-ajuda" style="background: #000066; border-radius: 4px; color:#ffffff" >            
+            <label  style="margin-top:-70px;">
+                <img src="#{request.contextPath}/resources/img/ajuda.png" alt="Imagem Ajuda" style="width: 35px; height: 35px; " /> 
+                <a name="topo"></a>
+                <h:outputText value="Ajuda do Sistema" style="font-size: larger" /> 
+            </label>
+        </div>
+
+        <p:accordionPanel multiple="false" activeIndex="0">
+            <p:tab title="O que é a conta SCInf e para que serve?" titleStyle="margin-top:8px;">
+                <label style="text-align: justify">
+                    A conta do Sistema computacional do Instituto de Informática <b>(SCInf)</b> é a chave de acesso aos serviços oferecidos 
+                    pelo INF, o que inclui: 
+                    <ul>
+                        <li> Acesso a rede Wi-Fi; </li>
+                        <li> Caixa de e-mail com assinatura <b> @inf.fufg.br; </b> </li>
+                        <li> Diretório home para criação da sua página pessoal, serviço SSH; </li>
+                        <li> Acesso ao conteúdo da Intranet (wiki do INF);</li>
+                        <li> Requerimento Acadêmico e manutenção de planos de aula por meio do SIGERA;</li>
+                        <li> Serviço de CHAT<b style="color:red">*</b></li>
+                        <li> Serviço de Assistência ao Usuário<b style="color:red">*</b></li>                                                
+                        <li> EGroupWare, para manter agenda, e-mail, contatos, reserva de recursos<b style="color:red">*</b></li>
+                        <li> Criação de instância BOCA - Sistema de apoio a competições de programação<b style="color:red">*</b></li>     
+                        <li> Serviço de armazenamento e compartilhamento de arquivos em nuvem (OwnCloud)<b style="color:red">*</b></li>
+                        <li> Futuros serviços que o INF vier a oferecer.</li>
+                    </ul>
+                    <li style="color:red; font-weight: bold">
+                        * Somente para servidores
+                    </li>
+                </label>
+            </p:tab>
+            <p:tab title="Não tenho login o que fazer?" titleStyle="margin-top:8px;">
+                <label style="text-align: justify">
+                    O usuário que não tem um login deve procurar a secretária do INF, entregar o <a href="http://www.inf.ufg.br/sites/default/files/uploads/TermoCompromisso.pdf"><u style="color:#0000ff"> Termo de Compromisso</u> </a> preenchido, solicitando assim a abertura de conta no SCInf (Sistema computacional do Instituto de Informática),
+                    informar um e-mail alternativo e aguardar o envio dos dados da conta nesse e-mail.                            
+                </label>
+            </p:tab>
+
+            <p:tab title="Qual o login e a senha que devo usar?" titleStyle="margin-top:8px;">
+                <label style="text-align: justify">
+                    O login e senha usados no SIGERA é o mesmo da conta do SCInf, pros discentes essa conta é criada no ato da matrícula quando este assina o termo de compromisso.<br/>
+                    Importante lembrar que a conta SCInf não tem vínculo algum com a conta do Portal UFGNet ou Login Único da UFG, a primeira se destina somente aos ambientes e 
+                    recursos do Instituto de Informática enquanto as outras se referem aos serviços fornecidos pela universidade.<br/>
+                    Os discentes têm seu login formado pelo código do curso seguido do número da matrícula. <br/>                            
+                    Exemplos: 
+                    <ul>
+                        <li> cc000001 - Login de um aluno do curso de Ciências da Computação com matrícula 000001</li>                                
+                        <li> es000002 - Login de um aluno do curso de Engenharia de Software com matrícula 000002</li>
+                        <li> msc12345 - Login de um aluno do Mestrado com matrícula 12345</li>
+                    </ul>
+                    <br/>
+                </label>
+            </p:tab>
+
+            <p:tab title="Esqueci minha senha e agora?" titleStyle="margin-top:8px;">
+                <label style="text-align: justify">
+                    Para recuperar sua senha você deve acessar <a href="recuperarSenha.xhtml"> <u style="color:#0000ff">Esqueci minha senha do INF</u> </a>
+                    informar seu login e seu e-mail alternativo já cadastrado e aguardar o envio dos passos para criação de uma 
+                    nova senha, que chegará no seu e-mail.<br/>
+                    Lembre-se de verificar a caixa de SPAM e Lixeira pois alguns serviços de e-mail podem enviar a mensagem
+                    para estas caixas automaticamente.                            
+                </label>
+            </p:tab>
+            <p:tab title="Tentei recuperar a senha mas meu e-mail alternativo mudou ou não está cadastrado." titleStyle="margin-top:8px;">
+                <label style="text-align: justify">
+                    Você deve procurar a secretaria com um novo <a href="http://www.inf.ufg.br/sites/default/files/uploads/TermoCompromisso.pdf"><u style="color:#0000ff"> Termo de Compromisso</u> </a> 
+                    preenchido com um e-mail alternativo válido e aguardar o envio da nova senha nesse e-mail.                    
+                </label>
+            </p:tab>
+
+            <p:tab title="Preenchi o termo mais ainda não recebi os dados da conta." titleStyle="margin-top:8px;">
+                <label style="text-align: justify">
+                    Você pode tentar recuperar a senha, como descrito em "Esqueci minha senha e agora?",  
+                    para ter certeza se sua conta foi ou não criada, em caso negativo você deverá 
+                    procurar a secretaria do INF e informar-se sobre o que houve. <br/>
+                    A criação de contas leva em média 3 (três) dias, da assinatura do termo, para ser efetivada. 
+                    <br/>
+                </label>
+            </p:tab>
+            <p:tab title="Ao efetuar login sistema retorna mensagem de servidor inacessível." titleStyle="margin-top:8px;">
+                <label style="text-align: justify">
+                    Isso significa que algum dos computadores que fornece serviço ao sistema está com problemas técnicos. 
+                    Você deve aguardar até que o serviço seja normalizado, podendo se desejar, informar a secretaria do 
+                    Instituto sobre tal problema para que o mesmo seja resolvido o quanto antes.
+                    <br/>
+                </label>
+            </p:tab>
+
+            <p:tab title="Entrei no sistema e não há opção de Acréscimo e Cancelamento de disciplinas." titleStyle="margin-top:8px;">
+                <label style="text-align: justify">
+                    Acréscimos e cancelamentos de disciplinas podem ser feitos pelo SIGERA mas as datas são definidas no calendário acadêmico como:
+                    Período para os estudantes veteranos solicitarem, na <b>coordenadoria de curso</b>, acerto de matrícula do 0º semestre 0000.<br/>
+                    Essa data é diferente da definida para ajustes no portal <a href= "https://www.ufgnet.ufg.br" target="_blank"> <u style="color:#0000ff">UFGNet</u></a> que é definida no calendário acadêmico como:
+                    Período para os estudantes veteranos realizarem, via online, acréscimo e cancelamento de disciplinas do 0º semestre 0000, das 00 horas do dia 00 até às 00 horas do dia 00.<br/>
+                    Ambas datas são definidas anualmente por uma redação dada por resolução da CEPEC. 
+
+                    <br/>
+                </label>
+            </p:tab>
+            <p:tab title="Troquei de curso, o que devo fazer?" titleStyle="margin-top:8px;">
+                <label style="text-align: justify">
+                    Você deve procurar a secretaria com um novo <a href="http://www.inf.ufg.br/sites/default/files/uploads/TermoCompromisso.pdf"><u style="color:#0000ff"> Termo de Compromisso</u> </a> 
+                    preenchido para abertura de uma nova conta desse novo curso e junto ao termo colocar a observação para o cancelamento da conta referente ao antigo curso.
+
+                    <br/>
+                </label>
+            </p:tab>
+            <p:tab title="Quanto tempo leva para que um requerimento seja atendido?" titleStyle="margin-top:8px;">
+                <label style="text-align: justify">
+                    O prazo para atendimento dos requerimentos é de 2 dias úteis, mas pode variar de acordo com o tipo do requerimento ou 
+                    por razões excepcionais. No caso de seu requerimento estar com atraso anormal você deve procurar a secretaria 
+                    do seu curso e se informar sobre o que esta ocorrendo, é interessante que leve o número do requerimento.
+                </label>
+            </p:tab>
+        </p:accordionPanel>
+        <br/> <p:separator/> 
+
+        <div id ="cabecalho-ajuda-msg" style="background: #000066; border-radius: 4px; color:#ffffff" >            
+            <label  style="margin-top:-50px;">
+                <img src="#{request.contextPath}/resources/img/ajuda.png" alt="Imagem Ajuda" style="width: 35px; height: 35px; " /> 
+                <a name="topo"></a>
+                <h:outputText value="Outras dúvidas e sugestões" style="font-size: larger" /> 
+            </label>
+        </div>
+        <strong style="margin-left:15px;"> Você pode enviar uma mensagem para: <a href="mailto:sigera@inf.ufg.br?subject=Duvidas e Sugestoes Sigera">sigera@inf.ufg.br</a> </strong>        
+        <!--
+                <h:form id="form_contato" >
+                    
+                    <p:messages closable="true"/>
+                    
+                    <h:outputLabel for="nome-contato" value="Seu nome:"/>
+                    <p:inputText id ="nome-contato"  styleClass="input-block-level" size="45"
+                                 required="true" requiredMessage="Você deve informa seu nome."/>
+        
+                    <h:outputLabel for="email-contato" value="Seu email:"/>
+                    <p:inputText id="email-contato" styleClass="input-block-level"  size="45"
+                                 required="true" requiredMessage="Você deve informa seu email."/>
+        
+                    <p:outputLabel for="mensagem-contato" value="Sua mensagem:"/>
+                    <p:inputTextarea id="mensagem-contato" styleClass="input-block-level"  cols="45"
+                                     required="true" requiredMessage="Você deve digita uma mensagem."/>
+                    <br/>
+        
+                    <p:captcha label="Código de verificação" secure="true" language="pt-br"
+                               requiredMessage="Você deve informa o código de verificação!"
+                               converterMessage="Código de verificação não confere, digite novamente!"/>
+                    <br/>            
+                    <p:commandButton value="Enviar email" actionListener="#{recuperarSenhaBean.submit}" ajax="false" icon="ui-icon-mail-closed"/>
+                </h:form>
+        
+                
+                <strong>
+                    Dúvidas e Sugestões:
+                    <a href="mailto:sigera@inf.ufg.br?subject=Duvidas e Sugestoes Sigera">sigera@inf.ufg.br</a>
+                </strong>-->
+
+    </ui:define>                
+</ui:composition>

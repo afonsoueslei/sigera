@@ -50,9 +50,6 @@ public class RequerimentoEmenta extends Requerimento {
 
     @Override
     public Collection<Disciplina> getDisciplinas() {
-        if (this.disciplinas != null) {
-            Collections.sort((List<Disciplina>) this.disciplinas);
-        }
         return this.disciplinas;
     }
 

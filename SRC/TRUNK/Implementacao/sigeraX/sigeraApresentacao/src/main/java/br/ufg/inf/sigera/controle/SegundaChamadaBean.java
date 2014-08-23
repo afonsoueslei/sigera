@@ -154,7 +154,7 @@ public class SegundaChamadaBean implements Serializable {
                     loginBean.getConfiguracao().getSemestreCorrente(),
                     loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(),
                     loginBean.getUsuario().getPerfilAtual().getCurso().getId());
-            Collections.sort(turmasbuscadas);
+
             this.turmasTela = new ArrayList<TurmaTela>();
             for (Turma d : turmasbuscadas) {
                 this.turmasTela.add(new AdaptadorTurmaTela(d));

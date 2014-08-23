@@ -51,6 +51,10 @@ public class Paginas {
     private static final String TURMAS_SEM_PLANO = "turmas_sem_plano";
     private static final String ALTERAR_SENHA = "alterar_senha";
     private static final String CONSULTAR_USUARIOS = "consultar_usuarios";
+    private static final String RECUPERAR_SENHA = "recuperarSenha";
+    private static final String TROCAR_SENHA = "trocarSenha";
+    private static final String TROCAR_SENHA_FINAL = "trocarSenhaFinal";
+    private static final String AJUDA = "ajuda";
 
     private Paginas() {
     }
@@ -219,5 +223,21 @@ public class Paginas {
     public static String getConsultarUsuarios() {
         return CONSULTAR_USUARIOS;
     }    
+
+    public static String getTrocarSenha() {
+        return TROCAR_SENHA;
+    }
+
+    public static String getTrocarSenhaFinal() {
+        return TROCAR_SENHA_FINAL;
+    }
+    
+    public static String getRecuperarSenha() {
+        return RECUPERAR_SENHA;
+    }
+    
+    public static String getAjuda() {
+        return AJUDA;
+    }
     
 }

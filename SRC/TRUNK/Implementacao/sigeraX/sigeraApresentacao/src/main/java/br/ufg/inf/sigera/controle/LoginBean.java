@@ -162,7 +162,7 @@ public class LoginBean {
     }
 
     public String logout() {
-        if (temConexaoBanco()) {            
+        if (temConexaoBanco()) {
             //pegar o usuário atualizado no banco, caso este tenha sofrido alguma atualização de perfil por exemplo.
             this.usuario = UsuarioSigera.obtenhaUsuarioSigera(this.usuario.getId());
             this.usuario.setUltimoAcesso(new Date());
@@ -187,35 +187,41 @@ public class LoginBean {
 
     public String loginComSucesso() {
         this.configuracao = Configuracao.carregar();
+        //se for primeiro acesso ou não tem e-mail alternativo cadastrado
+        if (this.getUsuario().getPrimeiroAcesso() == null || this.getUsuario().getUsuarioLdap().getEmailAternativo().isEmpty()) {            
+            mensagemDeTela.criar(FacesMessage.SEVERITY_WARN, Mensagens.obtenha("MT.708"), Paginas.getEditarPerfil());
+            redirecionePaginaEditarPerfil();                       
+        } else {
 
-        // Redireciona o usuário para a URL que ele estava tentando acessar originalmente (se for o caso).
-        try {
-            ExternalContext contexto = FacesContext.getCurrentInstance().getExternalContext();
+            // Redireciona o usuário para a URL que ele estava tentando acessar originalmente (se for o caso).
+            try {
+                ExternalContext contexto = FacesContext.getCurrentInstance().getExternalContext();
 
-            Object objUrlOriginal = contexto.getSessionMap().get(URL_ORIGINAL);
-            if (objUrlOriginal != null) {
-                String urlOriginal = (String) objUrlOriginal;
-                if (urlOriginal.trim().isEmpty()) {
-                    contexto.getSessionMap().put(URL_ORIGINAL, null);
-                    contexto.redirect(urlOriginal);
+                Object objUrlOriginal = contexto.getSessionMap().get(URL_ORIGINAL);
+                if (objUrlOriginal != null) {
+                    String urlOriginal = (String) objUrlOriginal;
+                    if (urlOriginal.trim().isEmpty()) {
+                        contexto.getSessionMap().put(URL_ORIGINAL, null);
+                        contexto.redirect(urlOriginal);
+                    }
                 }
+            } catch (IOException ex) {
+                Logger.getLogger(LoginBean.class.getName()).log(Level.WARNING, null, ex);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(LoginBean.class.getName()).log(Level.WARNING, null, ex);
-        }
 
-        //Se o perfil do usuário for de secretario(a) de curso ou de Graduação, de Coordenador de Estagio ou de Diretor
-        //então já abri direto na página de consultar requerimentos.
-        if (this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA.getCodigo()
-                || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA_GRADUACAO.getCodigo()
-                || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_ESTAGIO.getCodigo() 
-                || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.DIRETOR.getCodigo() ) {
-            return Paginas.getConsultar();
+            //Se o perfil do usuário for de secretario(a) de curso ou de Graduação, de Coordenador de Estagio ou de Diretor
+            //então já abri direto na página de consultar requerimentos.
+            if (this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA.getCodigo()
+                    || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA_GRADUACAO.getCodigo()
+                    || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_ESTAGIO.getCodigo()
+                    || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.DIRETOR.getCodigo()) {
+                return Paginas.getConsultar();
+            }
         }
-
         // Por padrão, se o usuário não estava tentando acessar outra página diretamente,
         // após o login ele é redirecionado para a página principal da aplicação.        
         return Paginas.getPrincipal();
+
     }
 
     public String cancelar() {
@@ -232,8 +238,10 @@ public class LoginBean {
                     try {
                         DirContext dir = autenticadorLdap.getContext(login, password);
                         autenticadorLdap.alterarCampoUsuarioLdap(this.username, dir, "userPassword", this.novaSenha);
+
                     } catch (NamingException ex) {
-                        Logger.getLogger(AutenticacaoLdap.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(AutenticacaoLdap.class
+                                .getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
                     //senha atual e nova são iguais
@@ -258,13 +266,19 @@ public class LoginBean {
         return Paginas.getEditarPerfil();
     }
 
-    public void alterarCampoLdap(String userNameEditado, String campoQueSeraAlterado, String novoValor) {
-        AutenticacaoLdap autenticador = new AutenticacaoLdap();
+    private void redirecionePaginaEditarPerfil() {
         try {
-            DirContext dir = autenticador.getContextAdmin();
-            autenticador.alterarCampoUsuarioLdap(userNameEditado, dir, campoQueSeraAlterado, novoValor);
-        } catch (NamingException ex) {
-            Logger.getLogger(AutenticacaoLdap.class.getName()).log(Level.SEVERE, null, ex);
+            ExternalContext contexto = FacesContext.getCurrentInstance().getExternalContext();
+            contexto.redirect("usuario/atualizar_perfil.xhtml?uid="+ this.getUsuario().getUsuarioLdap().getUidNumber());
+            //contexto.dispatch(Paginas.getConsultar());
+
+        } catch (IOException ex) {
+            Logger.getLogger(LoginBean.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception iex) {
+            Logger.getLogger(LoginBean.class
+                    .getName()).log(Level.SEVERE, null, iex);
         }
     }
+
 }

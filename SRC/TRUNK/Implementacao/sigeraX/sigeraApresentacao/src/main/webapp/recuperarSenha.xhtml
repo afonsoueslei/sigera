@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="usuario/template/template_login.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:define name="conteudo">  
+
+
+        
+        <h:form id="form_recuperar_senha" styleClass="form-signin"  >
+
+            <p:messages closable="true"/>
+            <h4> Esqueceu sua senha? </h4>
+            <b> Entre com seu login e e-mail alternativo para recuperar sua senha. </b> <br/> <br/>
+            
+            <h:outputLabel for="login" value="Seu login no INF:"/>
+            <p:tooltip for="login">
+                <span style="font-size: x-small">                    
+                    <b> EXEMPLOS DE LOGIN: </b><br/>                    
+                    <b>Discentes</b>: cc00001, msc1234, etc. <br/> 
+                    <b>Servidor</b>: afonso, bruno, etc.                    
+                </span>
+            </p:tooltip>
+            <p:inputText id="login" styleClass="input-block-level"  size="45"
+                         required="true" requiredMessage="Você deve informa seu login."
+                         value="#{recuperarSenhaBean.login}"/>
+            
+            <h:outputLabel for="email-contato" value="E-mail alternativo cadastrado no INF:"/>
+            <p:tooltip for="email-contato">
+                <span style="font-size: smaller">
+                    <b> ATENÇÃO! </b><br/>
+                    Serviços como: hotmail, yahoo, terra, podem <br/>
+                    <span style="color:white; font-size: x-small; background: red; padding:2px; border-radius: 4px; ">bloquear</span>
+                    os e-mails enviados pelo INF. <br/> Verifique sempre sua caixa de SPAM e lixeira.
+                </span>
+            </p:tooltip>
+            
+            <p:inputText id="email-contato" styleClass="input-block-level"  size="45"
+                         required="true" requiredMessage="Você deve informa seu email."
+                         value="#{recuperarSenhaBean.emailAlternativo}"/>
+
+            <h:outputLabel for="codigo-seguranca" value="Verificação de segurança"/>
+            <p:captcha id="codigo-seguranca" label="Verificação de segurança" secure="true" language="pt-br" theme="white"
+                       requiredMessage="Você deve informa o código de verificação!"
+                       converterMessage="Código de verificação não confere, digite novamente!"
+                       validatorMessage="Código de verificação não confere, digite novamente!"/>
+            <br/>            
+            <h:commandButton class="btn btn-primary espacar-item-10px-direita" value="Enviar" action="#{recuperarSenhaBean.enviar}" />                                                    
+            <h:commandButton class="btn" value="Limpar" actionListener="#{recuperarSenhaBean.limpar}" />
+        </h:form>
+
+    </ui:define>                
+</ui:composition>

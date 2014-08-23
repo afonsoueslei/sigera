@@ -27,6 +27,28 @@
             <to-view-id>/ajuda.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+    </navigation-rule>
+     
+    <navigation-rule> 
+        <navigation-case>
+            <from-outcome>recuperarSenha</from-outcome>
+            <to-view-id>/recuperarSenha.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule> 
+    <navigation-rule> 
+        <navigation-case>
+            <from-outcome>trocarSenha</from-outcome>
+            <to-view-id>/trocarSenha.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule> 
+    <navigation-rule> 
+        <navigation-case>
+            <from-outcome>trocarSenhaFinal</from-outcome>
+            <to-view-id>/trocarSenhaFinal.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
     </navigation-rule> 
     
     <navigation-rule> 

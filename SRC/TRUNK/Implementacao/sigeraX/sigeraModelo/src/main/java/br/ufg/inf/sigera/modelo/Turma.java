@@ -125,7 +125,7 @@ public class Turma implements Serializable, Comparable<Turma> {
 
     public static List<Turma> buscaTodasTurmas(BuscadorLdap buscadorLdap) {
         EntityManager em = criarManager();
-        Query query = em.createQuery("select t from Turma t ORDER BY t.id DESC");
+        Query query = em.createQuery("select t from Turma t ORDER BY t.ano DESC, t.semestre DESC, t.disciplina.nome ASC");
         List<Turma> turmas = query.getResultList();
 
         for (Turma t : turmas) {
@@ -198,7 +198,7 @@ public class Turma implements Serializable, Comparable<Turma> {
             }
             consulta.append(" )");
         }
-        consulta.append(" ORDER BY t.id DESC");
+        consulta.append(" ORDER BY t.disciplina.nome ASC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("anoCorrente", anoCorrente);

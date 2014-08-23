@@ -20,6 +20,9 @@ public class Autenticacao {
     private UsuarioSigera usuario;
     private UsuarioLdap usuarioLdap;
 
+    public Autenticacao() {
+    }
+
     public Autenticacao(String nomeUsuario, String senha) {
         this.efetueLogin(nomeUsuario, senha);
     }
@@ -44,7 +47,7 @@ public class Autenticacao {
                 try {
                     usuario = em.find(UsuarioSigera.class, Integer.valueOf(usuarioLdap.getUidNumber()));
                 } catch (Exception x) {
-                    System.out.println("Registro de Usuario inválido!");
+                    System.out.println("O Registro do Usuario de uidNumber: " + usuarioLdap.getUidNumber() + " é inválido!");
                 }
                 if (usuarioLdap.getUidNumber() != null) {
                     if (usuario == null) {
@@ -62,7 +65,21 @@ public class Autenticacao {
         return null;
     }
 
-    
+    public static UsuarioSigera obtenhaUsuarioPorUidNumber(BuscadorLdap buscadorLdap, UsuarioLdap userLdap) {
+        UsuarioSigera usuarioEncontrado;
+        try {
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
+            EntityManager em = emf.createEntityManager();
+            usuarioEncontrado = em.find(UsuarioSigera.class, Integer.parseInt(userLdap.getUidNumber()));
+            usuarioEncontrado.setUsuarioLdap(userLdap);
+            return usuarioEncontrado;
+
+        } catch (javax.persistence.PersistenceException ex) {
+            Logger.getLogger(Autenticacao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
     private UsuarioSigera efetueLogin(String nomeUsuario, String senha) {
         AutenticacaoLdap autenticadorLdap = new AutenticacaoLdap();
         usuarioLdap = autenticadorLdap.efetuaLogin(nomeUsuario, senha);
@@ -81,25 +98,25 @@ public class Autenticacao {
                 usuario.setPrimeiroAcesso(new Date()); //Grava primeiro acesso no Sigera 2.0
                 usuario.setUsuarioLdap(usuarioLdap);
                 usuario.setId(Integer.valueOf(usuarioLdap.getUidNumber()));
-                
-                
+
                 if (usuarioLdap.getGrupo().equals(EnumGrupo.ALUNO)) {
                     Collection<AssociacaoPerfilCurso> perfis = new ArrayList<AssociacaoPerfilCurso>();
                     AssociacaoPerfilCurso perfilEstudante = GerenciadorPerfil.criePerfilAluno(usuario);
                     perfis.add(perfilEstudante);
-                    usuario.setPerfis(perfis);                
-                }
-                usuario.salvar();
+                    usuario.setPerfis(perfis);
+                }                
             }
-            //Grava primeiro acesso no Sigera 2.0
-            if(usuario.getPrimeiroAcesso()==null){
-                usuario.setPrimeiroAcesso(new Date());            
-                usuario.setUsuarioLdap(usuarioLdap);
-                usuario.salvar();                
-            }            
-            usuario.setUsuarioLdap(usuarioLdap);
-            return usuario;
             
+            //Grava primeiro acesso no Sigera 2.0
+            if (usuario.getPrimeiroAcesso() == null) {
+                usuario.setPrimeiroAcesso(new Date());
+            }
+
+            usuario.setUsuarioLdap(usuarioLdap);
+            usuario.salvar();
+            
+            return usuario;
+
         } catch (javax.persistence.PersistenceException ex) {
             Logger.getLogger(Autenticacao.class.getName()).log(Level.SEVERE, null, ex);
             usuario = new UsuarioSigera();

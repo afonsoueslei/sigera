@@ -7,8 +7,9 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
     <ui:define name="conteudo">      
-        <p:messages />
+
         <h:form styleClass="form-signin">
+            <p:messages closable="true" escape="false"/>
             <h:outputLabel for="username" value="Nome de usuário" />
 
             <p:tooltip for="username">
@@ -26,22 +27,24 @@
             <h:commandButton style="width: 100%" styleClass="btn btn-primary input-block-level" value="Fazer login" action="#{loginBean.checkLogin}" tabindex="3"/>
 
             <div class="email-sugestao">
-                <label style="color: #0088cc; margin-right: 18px;">
-
-                    <h:link outcome="ajuda" >
-                        Precisa de ajuda?
+                <label style="color: #cc0033; margin-right: 18px; font-weight: bold;">
+                    <h:link outcome="recuperarSenha" >
+                        Esqueci minha senha do INF
                     </h:link>  
                 </label>
             </div>
-<!--            <br/>
+            <br/>
             <div class="email-sugestao">
                 <label style="color: #0088cc; margin-right: 18px;">
+
                     <h:link outcome="ajuda" >
-                        Esqueci meu login ou senha
+                        Precisa de Ajuda?
                     </h:link>  
                 </label>
-            </div>-->
-            
+            </div>
+
+
+
         </h:form>   
     </ui:define>                
 </ui:composition>
