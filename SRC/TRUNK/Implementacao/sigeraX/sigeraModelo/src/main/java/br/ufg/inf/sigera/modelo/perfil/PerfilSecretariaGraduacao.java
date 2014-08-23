@@ -47,7 +47,7 @@ public class PerfilSecretariaGraduacao extends Perfil {
 
     @Override
     public boolean permiteManterUsuarios() {
-        return false;
+        return true;
     }
 
     @Override
