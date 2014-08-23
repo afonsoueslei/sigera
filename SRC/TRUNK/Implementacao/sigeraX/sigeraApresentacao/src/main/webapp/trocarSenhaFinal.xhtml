@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="usuario/template/template_login.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:define name="conteudo">          
+
+        <h:form id="form_recuperar_senha" styleClass="form-signin">
+                        
+            <h4> Redefinir senha </h4>
+            <strong style="color:green"> Nova senha registrada com sucesso! </strong> <br/> <br/>
+            
+            <h:outputLabel class="mensagem-token-sucesso" escape="false" 
+                           value="#{msgs['MT.707']}"/> 
+                        
+            <p:commandButton  styleClass="btn-primary" value="continuar" action="#{trocarSenhaBean.cancelar}"  />
+        </h:form>                        
+
+    </ui:define>     
+</ui:composition>

@@ -204,7 +204,7 @@ public class AutenticacaoLdap {
                 if (usuario.getUidNumber() != null) {
                     mapa.put(Integer.valueOf(usuario.getUidNumber()), usuario);
                 } else {
-                    System.out.println("Falha: Usuario" + usuario.getUid() + "não possui UidNumber");
+                    System.out.println("Falha: Usuario: " + usuario.getUid() + " não possui UidNumber");
                 }
             }
 

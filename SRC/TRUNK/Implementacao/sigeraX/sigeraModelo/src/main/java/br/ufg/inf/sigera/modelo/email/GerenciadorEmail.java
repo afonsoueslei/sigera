@@ -246,7 +246,7 @@ public class GerenciadorEmail {
     }
 
     /*
-     Mensagem de e-mail ME.500
+     Mensagem de e-mail ME.004
      */
     public void adicionarEmailSenhaResetada(UsuarioSigera usuario, String novaSenha) {
 
@@ -255,14 +255,42 @@ public class GerenciadorEmail {
             prop.load(GerenciadorEmail.class.getClassLoader().getResourceAsStream("mensagensEmail.properties"));
 
             String emailDestinatario = usuario.getUsuarioLdap().getEmailAternativo();
-
             String assunto = prop.getProperty("ME.004");
-
             String nomeUsuario = usuario.getUsuarioLdap().getCn();
-            
+            String emailINF = usuario.getUsuarioLdap().getEmail();
             String login = usuario.getUsuarioLdap().getUid();
 
-            String mensagem = MessageFormat.format(prop.getProperty("ME.004.Corpo"), nomeUsuario, login, novaSenha, Conexoes.getURL_SIGERA());
+            String mensagem = MessageFormat.format(prop.getProperty("ME.004.Corpo"), nomeUsuario, login, emailINF, novaSenha, Conexoes.getURL_SIGERA());
+
+            adicionarEmail(emailDestinatario, assunto, mensagem);
+
+        } catch (IOException ex) {
+            Logger.getLogger(GerenciadorEmail.class.getName()).log(Level.WARNING, null, ex);
+        }
+    }
+    
+    /*
+     Mensagem de e-mail ME.005
+     */
+    public void adicionarEmailRecuperarSenha(UsuarioLdap userEmail, String codigoVerificacao) {
+
+        try {
+            Properties prop = new Properties();
+            prop.load(GerenciadorEmail.class.getClassLoader().getResourceAsStream("mensagensEmail.properties"));
+
+            String emailDestinatario = userEmail.getEmailAternativo();
+
+            String assunto = prop.getProperty("ME.005");
+
+            String nomeUsuario = userEmail.getCn();
+            
+            String login = userEmail.getUid();
+            
+            String linkRecuparSenha = Conexoes.getURL_SIGERA()+"faces/trocarSenha.xhtml?token="+codigoVerificacao;
+            
+            String linkAjuda = Conexoes.getURL_SIGERA()+"faces/ajuda.xhtml";
+            
+            String mensagem = MessageFormat.format(prop.getProperty("ME.005.Corpo"), nomeUsuario, login, linkRecuparSenha,linkAjuda);
 
             adicionarEmail(emailDestinatario, assunto, mensagem);
 

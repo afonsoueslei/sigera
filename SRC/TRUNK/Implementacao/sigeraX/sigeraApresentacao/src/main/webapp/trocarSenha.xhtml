@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="usuario/template/template_login.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:define name="conteudo">          
+
+        <h:form id="form_recuperar_senha" styleClass="form-signin">
+
+            <p:messages closable="true" autoUpdate="true" escape="false" />
+
+            <h:outputLabel rendered="#{trocarSenhaBean.stringErro != null}" class="mensagem-token-erro" escape="false" value="#{trocarSenhaBean.stringErro}"/>                        
+
+            <h4> Redefinir senha </h4>
+            <strong> Crie um nova senha para sua conta do INF </strong> <br/> <br/>
+            <p:outputLabel for="usuario-nome" value="Usuário:"/>
+            <p:inputText id="usuario-nome" styleClass="input-block-level"  
+                         value = "#{trocarSenhaBean.login}"
+                         required="true" disabled="true" />
+
+            <p:outputLabel for="nova-senha" value="Nova Senha:"/>
+            <h:inputSecret id="nova-senha" styleClass="input-block-level"  size="45"
+                           required="true" requiredMessage="Digite a sua nova senha!"
+                           value="#{trocarSenhaBean.novaSenha}"/>
+
+
+            <p:outputLabel for="confirma-senha" value ="Confirme Nova Senha:"/>
+            <h:inputSecret id="confirma-senha" styleClass="input-block-level"  size="45"
+                           required="true" requiredMessage="Digite a confirmação da sua nova senha!"
+                           value="#{trocarSenhaBean.novaSenhaConfirmada}"/>
+            <br/>
+
+            <p:commandButton  styleClass="espacar-item-10px-direita btn-primary" value="Enviar" action="#{trocarSenhaBean.enviar}" />
+            <p:commandButton  styleClass="btn" value="Cancelar" action="#{trocarSenhaBean.cancelar}" ajax="false" immediate="true" />
+        </h:form>                        
+
+    </ui:define>     
+</ui:composition>

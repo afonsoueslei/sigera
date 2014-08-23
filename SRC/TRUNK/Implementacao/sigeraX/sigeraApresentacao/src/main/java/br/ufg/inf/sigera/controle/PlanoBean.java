@@ -185,7 +185,7 @@ public class PlanoBean implements Serializable {
                     = Plano.buscaTurmasSemPlano(loginBean.getConfiguracao().getAnoCorrente(),
                             loginBean.getConfiguracao().getSemestreCorrente(),
                             loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
-            Collections.sort(turmasbuscadas);
+            
             this.turmasTela = new ArrayList<TurmaTela>();
             for (Turma d : turmasbuscadas) {
                 this.turmasTela.add(new AdaptadorTurmaTela(d));

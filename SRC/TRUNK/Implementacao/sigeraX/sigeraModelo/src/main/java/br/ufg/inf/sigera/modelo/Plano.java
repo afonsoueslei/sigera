@@ -189,7 +189,7 @@ public class Plano implements Serializable, Comparable<Plano> {
         consulta.append(" OR t.ano > :ano )");                
         consulta.append(" AND t.id not in");
         consulta.append(" ( SELECT p.turma.id ");
-        consulta.append(" FROM Plano as p )");
+        consulta.append(" FROM Plano as p ) ORDER BY t.disciplina.nome ASC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("ano", ano);
