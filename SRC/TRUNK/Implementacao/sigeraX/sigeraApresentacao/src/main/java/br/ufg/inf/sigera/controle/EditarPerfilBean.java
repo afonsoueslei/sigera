@@ -1,19 +1,20 @@
 package br.ufg.inf.sigera.controle;
 
+import br.ufg.inf.sigera.controle.servico.AcessoLdap;
 import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
 import br.ufg.inf.sigera.modelo.AssociacaoPerfilCurso;
-import br.ufg.inf.sigera.modelo.Curso;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.email.GerenciadorEmail;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.ldap.EnumGrupo;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
-import br.ufg.inf.sigera.modelo.perfil.Perfil;
-import br.ufg.inf.sigera.modelo.perfil.PerfilAluno;
+import br.ufg.inf.sigera.modelo.perfil.GerenciadorPerfil;
 import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.servico.SenhaAleatoria;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
@@ -112,7 +113,7 @@ public class EditarPerfilBean implements Serializable {
         //atualizar email-alternativo (registeredAddress) no LDAP            
         if (!this.emailAlternativo.equalsIgnoreCase(this.getUsuarioEdicao().getUsuarioLdap().getEmailAternativo())) {
             String userNameEditado = this.usuarioEdicao.getUsuarioLdap().getUid();
-            this.loginBean.alterarCampoLdap(userNameEditado, "registeredAddress", this.emailAlternativo);
+            AcessoLdap.alterarCampoLdap(userNameEditado, "registeredAddress", this.emailAlternativo);
             this.getUsuarioEdicao().getUsuarioLdap().setEmailAternativo(emailAlternativo);
         }
         this.getUsuarioEdicao().atualizar(this.telefoneCelular, this.telefoneResidencial, this.telefoneComercial);
@@ -130,7 +131,7 @@ public class EditarPerfilBean implements Serializable {
 
         String novaSenha = SenhaAleatoria.Gerar();
         //tratar erro quando não for possível a alteração
-        this.loginBean.alterarCampoLdap(userNameEditado, "userPassword", novaSenha);
+        AcessoLdap.alterarCampoLdap(userNameEditado, "userPassword", novaSenha);
 
         //2.Envia uma MENSAGEM ao usuario no E-MAIL ALTERATIVO informando que sua senha foi resetada.
         if (loginBean.getConfiguracao().isEnviarEmail()) {
@@ -166,17 +167,16 @@ public class EditarPerfilBean implements Serializable {
                 if (usuarioEditado == null) {
                     usuarioEditado = new UsuarioSigera();
                     usuarioEditado.setId(uidNumber);
-                    usuarioEditado.salvar();
                 }
 
                 usuarioEditado.setUsuarioLdap(usuarioLdap);
-
-                if (usuarioEditado.getUsuarioLdap().getGrupo() == EnumGrupo.ALUNO) {
-                    Curso c = Curso.obtenhaCursoPorPrefixo(usuarioEditado.getUsuarioLdap().getPrefixoCurso());
-                    Perfil perfilAluno = new PerfilAluno();
-                    AssociacaoPerfilCurso apc = new AssociacaoPerfilCurso(perfilAluno, c, usuarioEditado);
-                    usuarioEditado.setPerfilAtual(apc);
+                if (usuarioLdap.getGrupo().equals(EnumGrupo.ALUNO) && usuarioEditado.getPerfis().isEmpty() ) {
+                    Collection<AssociacaoPerfilCurso> perfis = new ArrayList<AssociacaoPerfilCurso>();
+                    AssociacaoPerfilCurso perfilEstudante = GerenciadorPerfil.criePerfilAluno(usuarioEditado);
+                    perfis.add(perfilEstudante);
+                    usuarioEditado.setPerfis(perfis);
                 }
+                usuarioEditado.salvar();
 
                 this.setUsuarioEdicao(usuarioEditado);
 
