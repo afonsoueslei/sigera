@@ -178,16 +178,16 @@ public class TurmaBean {
             BuscadorLdap buscadorLdap = loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap();
             List<Turma> turmasBuscadas;
             Integer codigoCurso;
-
-            //se o perfil = Coordenador Curso - busca turmas apenas do seu curso
-            //Turmas de disciplinas de serviço devem ser mantidas pelo administrador e/ou Coordenador Geral
+            
+            //Se perfil = Coordenador Curso: busca somente turmas do seu curso e do "ano/semestre corrente"
+            //Se perfil = Coordenador Geral: busca todas as turmas do "ano/semestre corrente", inclusive relacionadas a disciplinas de serviço
             if (loginBean.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo()) {
                 codigoCurso = loginBean.getUsuario().getPerfilAtual().getCurso().getId();
                 turmasBuscadas = Turma.buscaTurmas(loginBean.getConfiguracao().getAnoCorrente(), loginBean.getConfiguracao().getSemestreCorrente(), buscadorLdap, codigoCurso);
 
             } else if (loginBean.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo()) {
                 turmasBuscadas = Turma.buscaTurmas(loginBean.getConfiguracao().getAnoCorrente(), loginBean.getConfiguracao().getSemestreCorrente(), buscadorLdap, 0);
-                //se perfil for de Administrador    
+            //Se perfil = Administrador busca as turmas cadastradas
             } else {
                 turmasBuscadas = Turma.buscaTodasTurmas(buscadorLdap);
             }
