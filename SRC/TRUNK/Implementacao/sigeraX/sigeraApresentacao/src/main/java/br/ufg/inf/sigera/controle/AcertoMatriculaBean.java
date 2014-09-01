@@ -17,7 +17,6 @@ import br.ufg.inf.sigera.controle.servico.Paginas;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+
 @ManagedBean
 @ViewScoped
 public class AcertoMatriculaBean implements Serializable {
@@ -146,20 +146,21 @@ public class AcertoMatriculaBean implements Serializable {
             msg = Mensagens.obtenha(MT002, EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getNome());
             requerimentoAcerto = new RequerimentoCancelamentoDisciplina(loginBean.getUsuario(), obtenhaTurmasEscolhidas(), justificativa);
         }
-        //persiste requerimento no banco        
-            requerimentoAcerto.salvar();
+        
+        //persiste requerimento no banco                
+        requerimentoAcerto.salvar();
 
-        List<UsuarioSigera> destinatarios =
-                AssociacaoPerfilCurso.obtenhaUsuarios(EnumPerfil.COORDENADOR_CURSO.getCodigo(),
-                requerimentoAcerto.getCurso().getId(),
-                loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+        List<UsuarioSigera> destinatarios
+                = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.COORDENADOR_CURSO.getCodigo(),
+                        requerimentoAcerto.getCurso().getId(),
+                        loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
 
         if (loginBean.getConfiguracao().isEnviarEmail()) {
             GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
             gerenciadorEmail.adicionarEmailRequerimento(requerimentoAcerto, destinatarios);
             gerenciadorEmail.enviarEmails();
         }
-        
+
         mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, msg, Paginas.getDetalheRequerimento());
 
         return Paginas.getAbrirRequerimentoID() + requerimentoAcerto.getId();
@@ -177,28 +178,36 @@ public class AcertoMatriculaBean implements Serializable {
 
     public TurmaDataModel getDataModelTurmas() {
         if (dataModelTurmas == null) {
-            List<Turma> turmasbuscadas =
-                    Turma.buscaTurmas(loginBean.getConfiguracao().getAnoCorrente(),
-                    loginBean.getConfiguracao().getSemestreCorrente(),
-                    loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(),
-                    loginBean.getUsuario().getPerfilAtual().getCurso().getId());
-            
-            this.turmasTela = new ArrayList<TurmaTela>();
-            for (Turma d : turmasbuscadas) {
-                this.turmasTela.add(new AdaptadorTurmaTela(d));
+            try {
+                List<Turma> turmasbuscadas
+                        = Turma.buscaTurmas(loginBean.getConfiguracao().getAnoCorrente(),
+                                loginBean.getConfiguracao().getSemestreCorrente(),
+                                loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(),
+                                loginBean.getUsuario().getPerfilAtual().getCurso().getId());
+
+                this.turmasTela = new ArrayList<TurmaTela>();
+                for (Turma d : turmasbuscadas) {
+                    this.turmasTela.add(new AdaptadorTurmaTela(d));
+                }
+                this.dataModelTurmas = new TurmaDataModel(this.turmasTela);
+            } catch (ExceptionInInitializerError ie) {
+                Paginas.redirecionePaginaErro();
             }
-            this.dataModelTurmas = new TurmaDataModel(this.turmasTela);
         }
         return dataModelTurmas;
     }
 
     public TurmaDataModel getDataModelEscolhidas() {
         if (this.dataModelEscolhidas == null || turmasEscolhidasDesatualizadasNaTela) {
-            List<TurmaTela> listaEscolhidas = new ArrayList<TurmaTela>();
-            for (TurmaTela turma : this.getTurmasTelaEscolhidas().values()) {
-                listaEscolhidas.add(turma);
+            try {
+                List<TurmaTela> listaEscolhidas = new ArrayList<TurmaTela>();
+                for (TurmaTela turma : this.getTurmasTelaEscolhidas().values()) {
+                    listaEscolhidas.add(turma);
+                }
+                this.dataModelEscolhidas = new TurmaDataModel(listaEscolhidas);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
             }
-            this.dataModelEscolhidas = new TurmaDataModel(listaEscolhidas);
         }
 
         turmasEscolhidasDesatualizadasNaTela = false;

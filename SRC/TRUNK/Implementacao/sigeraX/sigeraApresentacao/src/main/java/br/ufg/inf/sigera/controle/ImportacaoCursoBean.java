@@ -37,12 +37,16 @@ public class ImportacaoCursoBean {
 
         } else {
             // Arquivo Turma nao Validado
-            mensagemDeTela.criar(FacesMessage.SEVERITY_FATAL, Mensagens.obtenha("MT.605"), Paginas.getImportacaoCurso());            
+            mensagemDeTela.criar(FacesMessage.SEVERITY_FATAL, Mensagens.obtenha("MT.605"), Paginas.getImportacaoCurso());
         }
     }
 
     public CursoImportadoDataModel getDataModel() {
-        this.dataModel = new CursoImportadoDataModel(getCursosImportados());
+        try {
+            this.dataModel = new CursoImportadoDataModel(getCursosImportados());
+        } catch (Exception ie) {
+            Paginas.redirecionePaginaErro();
+        }
         return this.dataModel;
     }
 

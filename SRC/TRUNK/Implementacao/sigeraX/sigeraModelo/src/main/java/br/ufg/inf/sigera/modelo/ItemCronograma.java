@@ -1,18 +1,17 @@
 package br.ufg.inf.sigera.modelo;
 
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Persistence;
 import javax.persistence.RollbackException;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -117,14 +116,14 @@ public class ItemCronograma {
     }
 
     public void salvar(ItemCronograma i) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         em.getTransaction().begin();
         em.merge(i);        
         em.getTransaction().commit();
     }
 
     public Boolean remover() {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         em.getTransaction().begin();
         try {
             ItemCronograma ic;
@@ -135,12 +134,6 @@ public class ItemCronograma {
         } catch (RollbackException e) {
             return false;
         }
-    }
-
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
     }
 
 }

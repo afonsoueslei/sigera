@@ -65,7 +65,7 @@ public class PerfilCoordenadorGeral extends Perfil {
                        
         consulta.append(" SELECT r ");
         consulta.append(" FROM Requerimento as r ");
-        consulta.append(" WHERE r.tipo IN (:tipo1, :tipo2, :tipo3 ) ");
+        consulta.append(" WHERE r.tipo IN (:tipo1, :tipo2, :tipo3 ) ORDER BY r.status, r.id DESC");
         
         Query query = em.createQuery(consulta.toString());
         query.setParameter("tipo1", EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo());
@@ -87,7 +87,7 @@ public class PerfilCoordenadorGeral extends Perfil {
         StringBuilder consulta = new StringBuilder();
 
         consulta.append("SELECT r");
-        consulta.append(" FROM RequerimentoPlano as r ORDER BY r.id DESC");
+        consulta.append(" FROM RequerimentoPlano as r ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
 

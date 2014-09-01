@@ -48,7 +48,7 @@ public class DeclaracaoMatriculaBean {
         requerimento.salvar();
 
         List<UsuarioSigera> destinatarios =
-                AssociacaoPerfilCurso.obtenhaUsuarios(EnumPerfil.SECRETARIA.getCodigo(),
+                AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
                 requerimento.getCurso().getId(),
                 loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
 

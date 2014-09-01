@@ -9,6 +9,7 @@ import br.ufg.inf.sigera.modelo.Turma;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.Transient;
 
 @Entity
+
 @Table(name = "requerimento")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "Tipo", discriminatorType = DiscriminatorType.INTEGER)
@@ -67,6 +69,8 @@ public abstract class Requerimento implements Serializable {
     private String codigoMensagemConfirmacao;
     @Transient
     private Plano plano;
+    @Column(name = "versao")
+    private int versao;
 
     public Requerimento() {
         this.codigoMensagemConfirmacao = "MT.210";
@@ -169,33 +173,39 @@ public abstract class Requerimento implements Serializable {
         this.justificativa = justificativa;
     }
 
+    public int getVersao() {
+        return versao;
+    }
+
+    public void setVersao(int versao) {
+        this.versao = versao;
+    }
+
     public static Requerimento obtenha(BuscadorLdap buscadorLdap, Integer id) {
         EntityManager em = criarManager();
-
         Requerimento req = em.find(Requerimento.class, id);
         if (req != null) {
             req.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(req.getUsuario().getId()));
-        }
-
+        }        
         return req;
-
+        
     }
 
-    public void salvar() {
-        EntityManager em = criarManager();
-        em.getTransaction().begin();
-        if (this.getId() > 0) {
-            em.merge(this);
-        } else {
-            em.persist(this);
+    public Boolean salvar() {                
+        EntityManager em = Persistencia.obterManager();
+        if (Persistencia.versaoValida(this)) {            
+            em.getTransaction().begin();
+            this.setVersao(this.getVersao() + 1);
+            if (this.getId() > 0) {
+                em.merge(this);
+            } else {
+                em.persist(this);
+            }
+            em.getTransaction().commit();
+            em.close();
+            return true;
         }
-        em.getTransaction().commit();
-    }
-
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
+        return false;
     }
 
     public abstract String getDescricaoTipo();
@@ -343,6 +353,17 @@ public abstract class Requerimento implements Serializable {
     }
 
     public void setTurmasComStatus(List<TurmaComStatus> turmasComStatus) {
+    }
+
+    private static EntityManager criarManager() {
+
+        try {
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
+            return emf.createEntityManager();
+        } catch (Exception e) {
+            System.out.println("Não foi possível criar Entidade de Persistência");
+        }
+        return null;
     }
 
 }

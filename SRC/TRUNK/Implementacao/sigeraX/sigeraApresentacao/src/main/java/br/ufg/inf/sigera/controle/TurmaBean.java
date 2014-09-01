@@ -155,8 +155,11 @@ public class TurmaBean {
     }
 
     public String salvar() {
-        Turma.salvar(this.turmaEditavel);
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.508"), Paginas.getManterTurma());        
+        if (Turma.salvar(this.turmaEditavel)) {
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.508"), Paginas.getManterTurma());
+        } else {
+            mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.709", "TURMA"), Paginas.getManterTurma());
+        }
         return voltarListaTurmas();
     }
 
@@ -175,28 +178,32 @@ public class TurmaBean {
 
     public TurmaDataModel getDataModel() {
         if (dataModel == null) {
-            BuscadorLdap buscadorLdap = loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap();
-            List<Turma> turmasBuscadas;
-            Integer codigoCurso;
-            
-            //Se perfil = Coordenador Curso: busca somente turmas do seu curso e do "ano/semestre corrente"
-            //Se perfil = Coordenador Geral: busca todas as turmas do "ano/semestre corrente", inclusive relacionadas a disciplinas de serviço
-            if (loginBean.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo()) {
-                codigoCurso = loginBean.getUsuario().getPerfilAtual().getCurso().getId();
-                turmasBuscadas = Turma.buscaTurmas(loginBean.getConfiguracao().getAnoCorrente(), loginBean.getConfiguracao().getSemestreCorrente(), buscadorLdap, codigoCurso);
+            try {
+                BuscadorLdap buscadorLdap = loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap();
+                List<Turma> turmasBuscadas;
+                Integer codigoCurso;
 
-            } else if (loginBean.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo()) {
-                turmasBuscadas = Turma.buscaTurmas(loginBean.getConfiguracao().getAnoCorrente(), loginBean.getConfiguracao().getSemestreCorrente(), buscadorLdap, 0);
-            //Se perfil = Administrador busca as turmas cadastradas
-            } else {
-                turmasBuscadas = Turma.buscaTodasTurmas(buscadorLdap);
-            }
+                //Se perfil = Coordenador Curso: busca somente turmas do seu curso e do "ano/semestre corrente"
+                //Se perfil = Coordenador Geral: busca todas as turmas do "ano/semestre corrente", inclusive relacionadas a disciplinas de serviço
+                if (loginBean.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo()) {
+                    codigoCurso = loginBean.getUsuario().getPerfilAtual().getCurso().getId();
+                    turmasBuscadas = Turma.buscaTurmas(loginBean.getConfiguracao().getAnoCorrente(), loginBean.getConfiguracao().getSemestreCorrente(), buscadorLdap, codigoCurso);
 
-            this.turmasTela = new ArrayList<TurmaTela>();
-            for (Turma c : turmasBuscadas) {
-                this.turmasTela.add(new AdaptadorTurmaTela(c));
+                } else if (loginBean.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo()) {
+                    turmasBuscadas = Turma.buscaTurmas(loginBean.getConfiguracao().getAnoCorrente(), loginBean.getConfiguracao().getSemestreCorrente(), buscadorLdap, 0);
+                    //Se perfil = Administrador busca as turmas cadastradas
+                } else {
+                    turmasBuscadas = Turma.buscaTodasTurmas(buscadorLdap);
+                }
+
+                this.turmasTela = new ArrayList<TurmaTela>();
+                for (Turma c : turmasBuscadas) {
+                    this.turmasTela.add(new AdaptadorTurmaTela(c));
+                }
+                this.dataModel = new TurmaDataModel(this.turmasTela);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
             }
-            this.dataModel = new TurmaDataModel(this.turmasTela);
         }
         return dataModel;
     }

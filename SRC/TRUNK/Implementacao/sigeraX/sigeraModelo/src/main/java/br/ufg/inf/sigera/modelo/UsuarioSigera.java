@@ -6,6 +6,7 @@ import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
 import br.ufg.inf.sigera.modelo.perfil.GerenciadorPerfil;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,11 +17,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.Persistence;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
@@ -44,9 +43,9 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     @Column(name = "ultimo_acesso")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date ultimoAcesso;
-    @Column(name="chave_ativacao")
+    @Column(name = "chave_ativacao")
     private String chaveAtivacao;
-    
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
     @PrivateOwned
@@ -57,7 +56,7 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     private UsuarioLdap usuarioLdap;
 
     public UsuarioSigera() {
-    }
+    }   
 
     public String getTelefoneCelular() {
         return telefoneCelular;
@@ -155,19 +154,19 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
         setTelefoneResidencial(telefoneResidencial);
         setTelefoneComercial(telefoneComercial);
         setChaveAtivacao(chaveAtivacao);
-                 
+
         //Ao atualizar um usuário que é aluno e que ainda não foi setado esse perfil (estudante) para ele
         if (this.getUsuarioLdap().getGrupo().equals(EnumGrupo.ALUNO) && this.getPerfis().isEmpty()) {
             Collection<AssociacaoPerfilCurso> meusPerfis = new ArrayList<AssociacaoPerfilCurso>();
             AssociacaoPerfilCurso perfilEstudante = GerenciadorPerfil.criePerfilAluno(this);
-            meusPerfis.add(perfilEstudante);            
-            this.setPerfis(meusPerfis);                
+            meusPerfis.add(perfilEstudante);
+            this.setPerfis(meusPerfis);
         }
         salvar();
     }
 
     public void salvar() {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         em.getTransaction().begin();
 
         tratePerfilProfessor(em);
@@ -175,6 +174,9 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
         em.merge(this);
 
         em.getTransaction().commit();
+        
+        em.close();
+        
     }
 
     private void tratePerfilProfessor(EntityManager em) {
@@ -214,14 +216,8 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     }
 
     public static UsuarioSigera obtenhaUsuarioSigera(int uidNumber) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         return em.find(UsuarioSigera.class, uidNumber);
-    }
-
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
     }
 
     public int compareTo(UsuarioSigera u) {

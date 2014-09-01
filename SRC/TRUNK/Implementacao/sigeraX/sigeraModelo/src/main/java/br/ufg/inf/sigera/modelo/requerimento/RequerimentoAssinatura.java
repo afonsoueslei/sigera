@@ -29,12 +29,9 @@ public class RequerimentoAssinatura extends Requerimento {
         return EnumTipoRequerimento.ASSINATURA.getNome();
     }    
     
+    @Override
     public boolean usuarioPodeConferirDocumentos(UsuarioSigera usuarioLogado) {        
-        
-        if (this.getStatus() != EnumStatusRequerimento.ABERTO.getCodigo()) {
-            return false;
-        }
-        
+                        
         // Só os usuários autenticados com perfil de secretaria do mesmo curso do estudante 
         // requerente podem conferir e confirmar a entrega dos documentos.
         // Adição de autorização para perfil secretaria de graduação

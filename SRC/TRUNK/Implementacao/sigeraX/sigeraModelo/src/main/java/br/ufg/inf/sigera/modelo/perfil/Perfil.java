@@ -3,6 +3,7 @@ package br.ufg.inf.sigera.modelo.perfil;
 import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.DiscriminatorColumn;
@@ -43,8 +44,7 @@ public abstract class Perfil implements Serializable {
     }
 
     protected static EntityManager obtenhaEntityManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        return emf.createEntityManager();
+        return Persistencia.obterManager();
     }
 
     public abstract boolean permiteFazerRequerimento();

@@ -69,7 +69,7 @@ public class PerfilSecretariaGraduacao extends Perfil {
         consulta.append(" AND r.usuario.id IN (SELECT apc.usuario.id ");
         consulta.append("                      FROM AssociacaoPerfilCurso as apc ");
         consulta.append("                      WHERE apc.curso.id IN (:idCursoCC, :idCursoES, :idCursoSI) ");
-        consulta.append("                      AND apc.perfil.id = :perfilAluno) ORDER BY r.id DESC");
+        consulta.append("                      AND apc.perfil.id = :perfilAluno) ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("tipo1", EnumTipoRequerimento.DECLARACAO_MATRICULA.getCodigo());

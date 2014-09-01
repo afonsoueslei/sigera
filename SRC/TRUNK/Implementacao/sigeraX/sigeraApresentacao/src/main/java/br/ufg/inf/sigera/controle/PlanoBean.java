@@ -165,13 +165,16 @@ public class PlanoBean implements Serializable {
     }
 
     public PlanoDataModel getDataModelPlanos() {
-        List<RequerimentoPlano> requerimentosPlanosBuscados = this.loginBean.getUsuario().obtenhaRequerimentosPlanos();
-        this.planosTela = new ArrayList<PlanoTela>();
-        for (RequerimentoPlano p : requerimentosPlanosBuscados) {
-            this.planosTela.add(new AdaptadorPlanoTela(p.getPlano()));
+        try {
+            List<RequerimentoPlano> requerimentosPlanosBuscados = this.loginBean.getUsuario().obtenhaRequerimentosPlanos();
+            this.planosTela = new ArrayList<PlanoTela>();
+            for (RequerimentoPlano p : requerimentosPlanosBuscados) {
+                this.planosTela.add(new AdaptadorPlanoTela(p.getPlano()));
+            }
+            this.dataModelPlanos = new PlanoDataModel(this.planosTela);
+        } catch (Exception ie) {
+            Paginas.redirecionePaginaErro();
         }
-        this.dataModelPlanos = new PlanoDataModel(this.planosTela);
-
         return dataModelPlanos;
     }
 
@@ -181,16 +184,20 @@ public class PlanoBean implements Serializable {
 
     public TurmaDataModel getDataModelTurmasSemPlano() {
         if (dataModelTurmasSemPlano == null) {
-            List<Turma> turmasbuscadas
-                    = Plano.buscaTurmasSemPlano(loginBean.getConfiguracao().getAnoCorrente(),
-                            loginBean.getConfiguracao().getSemestreCorrente(),
-                            loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
-            
-            this.turmasTela = new ArrayList<TurmaTela>();
-            for (Turma d : turmasbuscadas) {
-                this.turmasTela.add(new AdaptadorTurmaTela(d));
+            try {
+                List<Turma> turmasbuscadas
+                        = Plano.buscaTurmasSemPlano(loginBean.getConfiguracao().getAnoCorrente(),
+                                loginBean.getConfiguracao().getSemestreCorrente(),
+                                loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+
+                this.turmasTela = new ArrayList<TurmaTela>();
+                for (Turma d : turmasbuscadas) {
+                    this.turmasTela.add(new AdaptadorTurmaTela(d));
+                }
+                dataModelTurmasSemPlano = new TurmaDataModel(turmasTela);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
             }
-            dataModelTurmasSemPlano = new TurmaDataModel(turmasTela);
         }
         return dataModelTurmasSemPlano;
     }
@@ -339,7 +346,7 @@ public class PlanoBean implements Serializable {
             }
             List<UsuarioSigera> destinatarios = criarDestinatarios();
 
-            if ( !destinatarios.isEmpty() && loginBean.getConfiguracao().isEnviarEmail()) {
+            if (!destinatarios.isEmpty() && loginBean.getConfiguracao().isEnviarEmail()) {
                 gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
                 gerenciadorEmail.enviarEmails();
                 Sessoes.limparBeans();
@@ -352,7 +359,7 @@ public class PlanoBean implements Serializable {
     }
 
     public String reabrirPlano() {
-        
+
         RequerimentoPlano requerimento = Plano.buscarRequerimentoDessePlano(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), this.planoSelecionado);
         //mudar estatus do Requerimento do Plano - para ABERTO se ele existir
         if (requerimento.getPlano() != null) {
@@ -495,12 +502,12 @@ public class PlanoBean implements Serializable {
         Integer idCurso = this.planoSelecionado.getTurma().getDisciplina().getCurso().getId();
         //enviar e-mail para destinatarios = coordenador de curso e coordenador Geral
         List<UsuarioSigera> destinatarios
-                = AssociacaoPerfilCurso.obtenhaUsuarios(EnumPerfil.COORDENADOR_CURSO.getCodigo(), idCurso, loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+                = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.COORDENADOR_CURSO.getCodigo(), idCurso, loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
 
         //coordenadores Geral só recebe email dos planos que não tem coordenador de curso 
         if (destinatarios.isEmpty()) {
             List<UsuarioSigera> coordenadoresGeral
-                    = AssociacaoPerfilCurso.obtenhaUsuarios(EnumPerfil.COORDENADOR_GERAL.getCodigo(), idCurso, loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+                    = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.COORDENADOR_GERAL.getCodigo(), idCurso, loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
 
             if (coordenadoresGeral != null) {
                 for (UsuarioSigera user : coordenadoresGeral) {

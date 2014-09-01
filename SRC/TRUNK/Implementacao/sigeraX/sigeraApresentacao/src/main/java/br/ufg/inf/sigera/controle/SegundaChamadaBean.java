@@ -116,12 +116,12 @@ public class SegundaChamadaBean implements Serializable {
 
         Turma turma = this.getTurmaSelecionada().getTurma();
 
-        Requerimento requerimento =
-                new RequerimentoSegundaChamada(loginBean.getUsuario(),
-                turma,
-                this.getDataProva(),
-                this.getJustificativa(),
-                this.getAnexos());
+        Requerimento requerimento
+                = new RequerimentoSegundaChamada(loginBean.getUsuario(),
+                        turma,
+                        this.getDataProva(),
+                        this.getJustificativa(),
+                        this.getAnexos());
         requerimento.salvar();
         limpar();
 
@@ -149,17 +149,21 @@ public class SegundaChamadaBean implements Serializable {
 
     public TurmaDataModel getDataModelTurmas() {
         if (dataModelTurmas == null) {
-            List<Turma> turmasbuscadas =
-                    Turma.buscaTurmas(loginBean.getConfiguracao().getAnoCorrente(),
-                    loginBean.getConfiguracao().getSemestreCorrente(),
-                    loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(),
-                    loginBean.getUsuario().getPerfilAtual().getCurso().getId());
+            try {
+                List<Turma> turmasbuscadas
+                        = Turma.buscaTurmas(loginBean.getConfiguracao().getAnoCorrente(),
+                                loginBean.getConfiguracao().getSemestreCorrente(),
+                                loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(),
+                                loginBean.getUsuario().getPerfilAtual().getCurso().getId());
 
-            this.turmasTela = new ArrayList<TurmaTela>();
-            for (Turma d : turmasbuscadas) {
-                this.turmasTela.add(new AdaptadorTurmaTela(d));
+                this.turmasTela = new ArrayList<TurmaTela>();
+                for (Turma d : turmasbuscadas) {
+                    this.turmasTela.add(new AdaptadorTurmaTela(d));
+                }
+                this.dataModelTurmas = new TurmaDataModel(this.turmasTela);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
             }
-            this.dataModelTurmas = new TurmaDataModel(this.turmasTela);
         }
         return dataModelTurmas;
     }

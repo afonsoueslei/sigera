@@ -15,7 +15,7 @@
 
         <div class="row">
             <div class="span12">                
-                <p:messages closable="true"/>
+                <p:messages closable="true" escape="false"/>
 
                 <h:form> 
 
@@ -29,10 +29,13 @@
                                  emptyMessage="#{msgs['MT.401']}"
                                  rowStyleClass="#{requerimento.status ne 'Aberto' ? 'destacado' : null}">                               
 
-                        <f:facet name="header">  
-                            Lista de Requerimentos
+                        <f:facet name="header" >                              
+                            <h:link style="color: #0000ff" id="btnAtualizar" outcome="#{consultarRequerimentoBean.atualizarLista()}">                                
+                                Lista de Requerimentos
+                            </h:link>
+                            
                         </f:facet>
- 
+
                         <p:column styleClass="centralizar-texto" 
                                   sortBy="#{requerimento.numero}" 
                                   filterBy="#{requerimento.numero}"                                  
@@ -51,7 +54,7 @@
                             </f:facet> 
                             <h:outputText value="#{requerimento.nomeRequerente}" />
                         </p:column>
-                        
+
                         <p:column sortBy="#{requerimento.matricula}" 
                                   styleClass="centralizar-texto"
                                   filterBy="#{requerimento.matricula}"                                     
@@ -71,7 +74,7 @@
                             </f:facet> 
                             <h:outputText value="#{requerimento.tipo}" />
                         </p:column>
-                        
+
                         <p:column sortBy="#{requerimento.prefixoCurso}" 
                                   styleClass="centralizar-texto"
                                   filterBy="#{requerimento.prefixoCurso}"                                                                       
@@ -98,27 +101,27 @@
                             <f:facet name="header">  
                                 <h:outputText value="Status" />
                             </f:facet>
-                            
+
                             <h:outputText value="#{requerimento.status}" />  
                         </p:column>                                               
-                        
+
                         <p:column styleClass="centralizar-texto" exportable="false">
                             <f:facet name="header">  
                                 <h:outputText value="Ações" />
                             </f:facet>
-                            
+
                             <p:tooltip for="btnDetalhe" value="Visualizar detalhes"/>
                             <h:link id="btnDetalhe" outcome="#{consultarRequerimentoBean.visualizarDetalhes()}">
                                 <h:graphicImage value="/resources/img/detalhes.png" />
                                 <f:param name="numero" value="#{requerimento.numero}" />
                             </h:link>
                         </p:column>
-                        
+
                     </p:dataTable>
                     <row>
-                        
+
                         <div class="span3 offset4">
-                            <div class="form-actions" >                            
+                            <div class="form-actions" style="text-align: center">                            
                                 <label class="label-selecione-perfil">Exportar atual:</label>
 
                                 <h:commandLink styleClass="espacar-item-10px-direita">  
@@ -139,7 +142,7 @@
                             </div>      
                         </div>
                         <div class="span3" >
-                            <div class="form-actions" >                            
+                            <div class="form-actions" style="text-align: center">                            
                                 <label class="label-selecione-perfil">Exportar todas:</label>
 
                                 <h:commandLink styleClass="espacar-item-10px-direita">  
@@ -160,13 +163,14 @@
                             </div>                                  
                         </div>                        
                         <div class="span2">
-                            <div class="form-actions" >                            
+                            <div class="form-actions" style="text-align: center">                            
                                 <label class="label-selecione-perfil">Imprimir:</label>
                                 <h:commandButton value="Print" type="button" image="/resources/img/printer.png">  
                                     <p:printer target="dataTable"/>  
                                 </h:commandButton>
                             </div>
-                        </div>
+                        </div>                    
+
                     </row>    
                 </h:form>
             </div>

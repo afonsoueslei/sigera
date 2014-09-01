@@ -15,7 +15,7 @@
     <ui:define name="conteudo">
         <div class="row">
             <div class="span10 offset1">
-                <p:messages id="mensagem" closable="true" />
+                <p:messages id="mensagem" closable="true" escape="false"/>
                 
                 <h:form id="form">
                     <h:panelGroup rendered="#{disciplinaBean.disciplinaEditavel.id != 0}">

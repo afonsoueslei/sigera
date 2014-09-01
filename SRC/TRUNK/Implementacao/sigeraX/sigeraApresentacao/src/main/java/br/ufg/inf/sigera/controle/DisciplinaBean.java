@@ -87,18 +87,21 @@ public class DisciplinaBean implements Serializable {
     }
 
     public String salvar() {
-        Disciplina.salvar(this.disciplinaEditavel);
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.506"), Paginas.getManterDisciplina());            
+        if (Disciplina.salvar(this.disciplinaEditavel)) {
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.506"), Paginas.getManterDisciplina());
+        }else{
+            mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.709", "DISCIPLINA"), Paginas.getManterDisciplina());
+        }
         return voltarListaDisciplinas();
     }
 
     public void remover() {
         if (this.disciplinaExcluir != null) {
             Boolean removido = Disciplina.remover(this.disciplinaExcluir);
-            if (removido) {                
+            if (removido) {
                 mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.505"), Paginas.getManterDisciplina());
                 Sessoes.limparBeans();
-            }else{                
+            } else {
                 mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.500"), Paginas.getManterDisciplina());
                 Sessoes.limparBeans();
             }
@@ -107,12 +110,16 @@ public class DisciplinaBean implements Serializable {
 
     public DisciplinaDataModel getDataModel() {
         if (dataModel == null) {
-            List<Disciplina> disciplinasbuscados = Disciplina.buscaTodosDisciplinas();
-            this.disciplinasTela = new ArrayList<DisciplinaTela>();
-            for (Disciplina d : disciplinasbuscados) {
-                this.disciplinasTela.add(new AdaptadorDisciplinaTela(d));
+            try {
+                List<Disciplina> disciplinasbuscados = Disciplina.buscaTodosDisciplinas();
+                this.disciplinasTela = new ArrayList<DisciplinaTela>();
+                for (Disciplina d : disciplinasbuscados) {
+                    this.disciplinasTela.add(new AdaptadorDisciplinaTela(d));
+                }
+                this.dataModel = new DisciplinaDataModel(this.disciplinasTela);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
             }
-            this.dataModel = new DisciplinaDataModel(this.disciplinasTela);
         }
         return dataModel;
     }

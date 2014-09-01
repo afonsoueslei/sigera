@@ -56,7 +56,6 @@ public class EmentasBean implements Serializable {
         this.justificativa = justificativa;
     }
 
-    
     public void setLoginBean(LoginBean loginBean) {
         this.loginBean = loginBean;
     }
@@ -101,7 +100,7 @@ public class EmentasBean implements Serializable {
         requerimento.salvar();
 
         List<UsuarioSigera> destinatarios
-                = AssociacaoPerfilCurso.obtenhaUsuarios(EnumPerfil.SECRETARIA.getCodigo(),
+                = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
                         requerimento.getCurso().getId(),
                         loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
 
@@ -126,23 +125,31 @@ public class EmentasBean implements Serializable {
 
     public DisciplinaDataModel getDataModelDisciplinas() {
         if (dataModelDisciplinas == null) {
-            List<Disciplina> disciplinasbuscados = Disciplina.buscaTodosDisciplinas();
-            this.disciplinasTela = new ArrayList<DisciplinaTela>();
-            for (Disciplina d : disciplinasbuscados) {
-                this.disciplinasTela.add(new AdaptadorDisciplinaTela(d));
+            try {
+                List<Disciplina> disciplinasbuscados = Disciplina.buscaTodosDisciplinas();
+                this.disciplinasTela = new ArrayList<DisciplinaTela>();
+                for (Disciplina d : disciplinasbuscados) {
+                    this.disciplinasTela.add(new AdaptadorDisciplinaTela(d));
+                }
+                this.dataModelDisciplinas = new DisciplinaDataModel(this.disciplinasTela);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
             }
-            this.dataModelDisciplinas = new DisciplinaDataModel(this.disciplinasTela);
         }
         return dataModelDisciplinas;
     }
 
     public DisciplinaDataModel getDataModelEscolhidas() {
         if (this.dataModelEscolhidas == null || disciplinasEscolhidasDesatualizadasNaTela) {
-            List<DisciplinaTela> listaEscolhidas = new ArrayList<DisciplinaTela>();
-            for (DisciplinaTela disciplina : this.getDisciplinasTelaEscolhidas().values()) {
-                listaEscolhidas.add(disciplina);
+            try {
+                List<DisciplinaTela> listaEscolhidas = new ArrayList<DisciplinaTela>();
+                for (DisciplinaTela disciplina : this.getDisciplinasTelaEscolhidas().values()) {
+                    listaEscolhidas.add(disciplina);
+                }
+                this.dataModelEscolhidas = new DisciplinaDataModel(listaEscolhidas);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
             }
-            this.dataModelEscolhidas = new DisciplinaDataModel(listaEscolhidas);
         }
         disciplinasEscolhidasDesatualizadasNaTela = false;
         return dataModelEscolhidas;

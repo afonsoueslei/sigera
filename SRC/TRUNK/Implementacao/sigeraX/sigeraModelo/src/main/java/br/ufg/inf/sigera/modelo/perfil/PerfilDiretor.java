@@ -60,7 +60,7 @@ public class PerfilDiretor extends Perfil {
         StringBuilder consulta = new StringBuilder();
 
         consulta.append(" SELECT r ");
-        consulta.append(" FROM RequerimentoAssinatura as r  ORDER BY r.id DESC");
+        consulta.append(" FROM RequerimentoAssinatura as r  ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
         List<Requerimento> requerimentos = query.getResultList();

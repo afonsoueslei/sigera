@@ -12,10 +12,10 @@
     <ui:param name="paginaAtual" value="Lista de usuários" />    
 
     <ui:define name="conteudo">
-
-        <div class="row">
-            <div class="span12 margin-top-11px">
-                <p:messages closable="true"/>                        
+        
+        <div class="row" >
+            <div class="span12" style="margin-top: 10px" >
+                <p:messages closable="true" escape="false"/>                        
 
                 <p:outputPanel deferred="true">
 
@@ -52,42 +52,6 @@
                                 </f:facet>
                                 <h:outputText  value="#{usuario.username}" styleClass="conteudo-tabela-atribuir-perfil" />  
                             </p:column>  
-
-<!--                            <p:column sortBy="#{usuario.telefoneCelular}" styleClass="centralizar-texto"                                                                           
-                                      filterBy="#{usuario.telefoneCelular}"                                      
-                                      filterMatchMode="contains">  
-                                <f:facet name="header">  
-                                    <h:outputText value="Fone Celular" styleClass="cabecalho-atribuir-perfil" />
-                                </f:facet>
-                                <h:outputText  value="#{usuario.telefoneCelular}" styleClass="conteudo-tabela-atribuir-perfil" />  
-                            </p:column>  
-
-                            <p:column sortBy="#{usuario.telefoneResidencial}" styleClass="centralizar-texto"                                                                           
-                                      filterBy="#{usuario.telefoneResidencial}"
-                                      filterMatchMode="contains">  
-                                <f:facet name="header">  
-                                    <h:outputText value="Fone Residencial" styleClass="cabecalho-atribuir-perfil" />
-                                </f:facet>
-                                <h:outputText  value="#{usuario.telefoneResidencial}" styleClass="conteudo-tabela-atribuir-perfil" />  
-                            </p:column>  
-
-                            <p:column sortBy="#{usuario.telefoneComercial}" styleClass="centralizar-texto"                                                                           
-                                      filterBy="#{usuario.telefoneComercial}"
-                                      filterMatchMode="contains">  
-                                <f:facet name="header">  
-                                    <h:outputText value="Fone Comercial" styleClass="cabecalho-atribuir-perfil" />
-                                </f:facet>
-                                <h:outputText  value="#{usuario.telefoneComercial}" styleClass="conteudo-tabela-atribuir-perfil" />  
-                            </p:column>  -->
-
-<!--                            <p:column sortBy="#{usuario.email}" styleClass="centralizar-texto"                                                                           
-                                      filterBy="#{usuario.email}"                                      
-                                      filterMatchMode="contains">  
-                                <f:facet name="header">  
-                                    <h:outputText value="E-mail" styleClass="cabecalho-atribuir-perfil" />
-                                </f:facet>
-                                <h:outputText  value="#{usuario.email}" styleClass="conteudo-tabela-atribuir-perfil"/>  
-                            </p:column>  -->
 
                             <p:column sortBy="#{usuario.emailAlternativo}" styleClass="centralizar-texto"                                                                           
                                       filterBy="#{usuario.emailAlternativo}"                                      
@@ -127,7 +91,7 @@
                         </p:dataTable>   
 
                         <row>                         
-                            <div class="span3">
+                            <div class="span3 offset4">
                                 <div class="form-actions" >                            
                                     <label class="label-selecione-perfil">Exportar atual:</label>
 

@@ -23,5 +23,6 @@ public class Sessoes {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("unidadeBean");
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("planoBean");
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("cursoBean");
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
     }
 }

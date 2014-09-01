@@ -6,6 +6,7 @@ import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import br.ufg.inf.sigera.modelo.perfil.Perfil;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,10 +14,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.Persistence;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Query;
 import javax.persistence.Table;
@@ -135,14 +134,8 @@ public class RequerimentoAcrescimoDisciplina extends Requerimento {
         return false;
     }
 
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
-    }
-
     public static Integer consultarPedidosAberto(Integer idTurma) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         StringBuilder consulta = new StringBuilder();
         Integer statusAberto =1;
         

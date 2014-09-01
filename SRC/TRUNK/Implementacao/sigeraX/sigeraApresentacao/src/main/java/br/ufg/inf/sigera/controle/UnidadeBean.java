@@ -86,8 +86,11 @@ public class UnidadeBean {
     }
 
     public String salvar() {
-        Unidade.salvar(this.unidadeEditavel);
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.515"), Paginas.getManterUnidade());        
+        if(Unidade.salvar(this.unidadeEditavel)){                    
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.515"), Paginas.getManterUnidade());
+        }else{
+            mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.709", "UNIDADE")  , Paginas.getManterUnidade());
+        }
         return voltarListaUnidades();
     }
 
@@ -106,13 +109,17 @@ public class UnidadeBean {
 
     public UnidadeDataModel getDataModel() {
         if (dataModel == null) {
-            BuscadorLdap buscadorLdap = loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap();
-            List<Unidade> unidadesBuscadas = Unidade.buscaTodasUnidades(buscadorLdap);
-            this.unidadesTela = new ArrayList<UnidadeTela>();
-            for (Unidade u : unidadesBuscadas) {
-                this.unidadesTela.add(new AdaptadorUnidadeTela(u));
+            try {
+                BuscadorLdap buscadorLdap = loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap();
+                List<Unidade> unidadesBuscadas = Unidade.buscaTodasUnidades(buscadorLdap);
+                this.unidadesTela = new ArrayList<UnidadeTela>();
+                for (Unidade u : unidadesBuscadas) {
+                    this.unidadesTela.add(new AdaptadorUnidadeTela(u));
+                }
+                this.dataModel = new UnidadeDataModel(this.unidadesTela);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
             }
-            this.dataModel = new UnidadeDataModel(this.unidadesTela);
         }
         return dataModel;
     }

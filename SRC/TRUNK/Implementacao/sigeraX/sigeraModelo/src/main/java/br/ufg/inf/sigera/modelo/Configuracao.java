@@ -1,13 +1,12 @@
 package br.ufg.inf.sigera.modelo;
 
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.Id;
-import javax.persistence.Persistence;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
@@ -119,15 +118,14 @@ public class Configuracao {
     }
 
     public void salvar() {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         em.getTransaction().begin();
         em.merge(this);        
         em.getTransaction().commit();
     }
 
     public static Configuracao carregar() {
-        EntityManager em = criarManager();
-
+        EntityManager em = Persistencia.obterManager();
         return em.find(Configuracao.class, ID);
     }
 
@@ -156,9 +154,4 @@ public class Configuracao {
         return false;
     }
 
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
-    }
 }

@@ -4,6 +4,7 @@ import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
 import br.ufg.inf.sigera.modelo.servico.Conexoes;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import com.mysql.jdbc.Connection;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -21,7 +22,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,9 +29,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.NoResultException;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
-import javax.persistence.RollbackException;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.servlet.ServletContext;
@@ -180,7 +178,7 @@ public class Plano implements Serializable, Comparable<Plano> {
     }
 
     public static List<Turma> buscaTurmasSemPlano(int ano, int semestre, BuscadorLdap buscadorLdap) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         StringBuilder consulta = new StringBuilder();
 
         consulta.append(" SELECT t ");
@@ -206,7 +204,7 @@ public class Plano implements Serializable, Comparable<Plano> {
     }
 
     public static Plano buscarPlanoExistenteEmSemestresAnteriores(Turma t) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         StringBuilder consulta = new StringBuilder();
         consulta.append(" SELECT p ");
         consulta.append(" FROM Plano as p  ");
@@ -250,14 +248,13 @@ public class Plano implements Serializable, Comparable<Plano> {
     }
 
     public static List<Plano> buscaTodosPlanos() {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         Query query = em.createQuery(" SELECT p FROM Plano p");
         return query.getResultList();
     }
 
     public static RequerimentoPlano buscarRequerimentoDessePlano(BuscadorLdap buscadorLdap, Plano p) {
-
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         Query query = em.createQuery(" SELECT r FROM RequerimentoPlano r WHERE r.plano.id = :planoId");
         query.setParameter("planoId", p.getId());
 
@@ -275,7 +272,7 @@ public class Plano implements Serializable, Comparable<Plano> {
     }
 
     public static void salvar(Plano p) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         em.getTransaction().begin();
         if (p.id == 0) {
             em.persist(p);
@@ -286,13 +283,12 @@ public class Plano implements Serializable, Comparable<Plano> {
     }
 
     public static Plano obtenhaPlano(int id) {
-        EntityManager em = criarManager();
-
+        EntityManager em = Persistencia.obterManager();
         return em.find(Plano.class, id);
     }
 
     public static Plano obtenhaPlanoTurma(Turma turma) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         Query query = em.createQuery(" SELECT p FROM Plano p WHERE p.turma.id = :idTurma");
         query.setParameter("idTurma", turma.getId());
         Plano p;
@@ -303,12 +299,6 @@ public class Plano implements Serializable, Comparable<Plano> {
         } catch (NoResultException nre) {
             return null;
         }
-    }
-
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
     }
 
     public int compareTo(Plano p) {

@@ -1,17 +1,16 @@
 package br.ufg.inf.sigera.modelo;
 
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.persistence.Table;
@@ -25,6 +24,7 @@ public class Curso implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "tab_id_curso")
     private int id;
+
     @Column(name = "prefixo")
     private String prefixo;
     @Column(name = "cod_matriz_curricular")
@@ -34,6 +34,9 @@ public class Curso implements Serializable {
     @ManyToOne
     @JoinColumn(name = "unidade_id", nullable = false)
     private Unidade unidade;
+    @Column(name = "versao")
+    private int versao;
+       
 
     public Curso() {
     }
@@ -45,6 +48,7 @@ public class Curso implements Serializable {
             this.codMatriz = cursoCopiar.codMatriz;
             this.nome = cursoCopiar.nome;
             this.unidade = cursoCopiar.unidade;
+            this.versao = cursoCopiar.versao;
         } else {
             this.unidade = Unidade.obtenhaUnidadePadrao();
         }
@@ -90,25 +94,39 @@ public class Curso implements Serializable {
         this.unidade = unidade;
     }
 
-    public static List<Curso> buscaTodosCursos() {
-        EntityManager em = criarManager();
-        Query query = em.createQuery("select c from Curso c");
-        return query.getResultList();
+    public int getVersao() {
+        return versao;
     }
 
-    public static void salvar(Curso c) {
-        EntityManager em = criarManager();
-        em.getTransaction().begin();
-        if (c.id == 0) {
-            em.persist(c);
-        } else {
-            em.merge(c);
+    public void setVersao(int versao) {
+        this.versao = versao;
+    }
+
+    public static List<Curso> buscaTodosCursos() {
+        EntityManager em = Persistencia.obterManager();
+        Query query = em.createQuery("select c from Curso c");
+        List<Curso> cursos = query.getResultList();
+        return cursos;
+    }
+
+    public static Boolean salvar(Curso c) {
+        EntityManager em = Persistencia.obterManager();
+        if (Persistencia.versaoValida(c)) {            
+            em.getTransaction().begin();
+            c.setVersao(c.getVersao()+1);
+            if (c.id == 0) {
+                em.persist(c);
+            } else {
+                em.merge(c);
+            }            
+            em.getTransaction().commit();
+            return true;
         }
-        em.getTransaction().commit();
+        return false;
     }
 
     public static Boolean remover(Curso c) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         em.getTransaction().begin();
         try {
             c = em.merge(c);
@@ -120,15 +138,9 @@ public class Curso implements Serializable {
         }
     }
 
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
-    }
-
     public static Curso obtenhaCursoPorPrefixo(String prefixo) {
         if (prefixo != null) {
-            EntityManager em = criarManager();
+            EntityManager em = Persistencia.obterManager();
             Query query = em.createQuery("SELECT c FROM Curso c WHERE c.prefixo = :prefixo");
             query.setParameter("prefixo", prefixo);
             return (Curso) query.getSingleResult();
@@ -137,8 +149,7 @@ public class Curso implements Serializable {
     }
 
     public static Curso obtenhaCurso(int id) {
-        EntityManager em = criarManager();
-
+        EntityManager em = Persistencia.obterManager();
         return em.find(Curso.class, id);
     }
 }

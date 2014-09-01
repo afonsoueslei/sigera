@@ -55,7 +55,7 @@ public class PerfilAluno extends Perfil {
     @Override
     public List<Requerimento> obtenhaRequerimentos(UsuarioSigera usuario) {
         EntityManager em = obtenhaEntityManager();
-        String consulta = " SELECT r FROM Requerimento as r WHERE r.usuario.id = :id ORDER BY r.id DESC";
+        String consulta = " SELECT r FROM Requerimento as r WHERE r.usuario.id = :id ORDER BY r.status, r.id DESC";
         Query query = em.createQuery(consulta);
         query.setParameter("id", usuario.getId());
         List<Requerimento> requerimentos = query.getResultList();
