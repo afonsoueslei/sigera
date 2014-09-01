@@ -59,7 +59,7 @@ public class PerfilAdministrador extends Perfil {
     public List<Requerimento> obtenhaRequerimentos(UsuarioSigera usuarioAutenticado) {
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
         EntityManager em = obtenhaEntityManager();
-        String consulta = " SELECT r FROM Requerimento as r ORDER BY r.id DESC";
+        String consulta = " SELECT r FROM Requerimento as r ORDER BY r.status, r.id DESC ";
         Query query = em.createQuery(consulta);
         List<Requerimento> requerimentos = query.getResultList();
 

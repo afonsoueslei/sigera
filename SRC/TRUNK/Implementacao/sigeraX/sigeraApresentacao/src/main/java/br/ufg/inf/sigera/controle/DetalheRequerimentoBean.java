@@ -60,6 +60,7 @@ public class DetalheRequerimentoBean {
     //Mostrar número de pedidos aberto por disciplina/turma
     private Integer qtdePedidosAcrescimo;
     private Integer qtdePedidosCancelamento;
+    
 
     public DetalheRequerimentoBean() {
         listaStatus = new ArrayList<EnumStatusRequerimento>();
@@ -70,7 +71,7 @@ public class DetalheRequerimentoBean {
 
     @PostConstruct
     public void init() {
-        obtenhaRequerimento();
+        obtenhaRequerimento();        
         if (requerimento == null || !usuarioPodeVerRequerimento()) {
             redirecioneParaPaginaConsulta();
         }
@@ -86,8 +87,7 @@ public class DetalheRequerimentoBean {
     private void redirecioneParaPaginaConsulta() {
         try {
             ExternalContext contexto = FacesContext.getCurrentInstance().getExternalContext();
-            contexto.redirect("consultar_requerimento.xhtml");
-            //contexto.dispatch(Paginas.getConsultar());
+            contexto.redirect("consultar_requerimento.xhtml");           
         } catch (IOException ex) {
             Logger.getLogger(DetalheRequerimentoBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception iex) {
@@ -205,8 +205,8 @@ public class DetalheRequerimentoBean {
             } catch (NumberFormatException ex) {
                 Logger.getLogger(Requerimento.class.getName()).log(Level.WARNING, "Paramêtro passado não é um número válido.", ex);
             }
-        }
-        requerimento = Requerimento.obtenha(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), id);
+        }                        
+        requerimento = Requerimento.obtenha(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), id);        
     }
 
     public Boolean usuarioPodeVerRequerimento() {
@@ -245,13 +245,12 @@ public class DetalheRequerimentoBean {
     public void cancelar() {
         if (this.requerimento != null && this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()) {
             this.requerimento.setStatus(EnumStatusRequerimento.CANCELADO.getCodigo());
-            this.requerimento.salvar();
 
-            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.509"), Paginas.getDetalheRequerimento());
-
-        } else {
-            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.510"), Paginas.getDetalheRequerimento());
+            if (this.requerimento.salvar()) {
+                mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.509"), Paginas.getDetalheRequerimento());
+            }
         }
+        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.510"), Paginas.getDetalheRequerimento());
     }
 
     public String voltar() {
@@ -259,7 +258,7 @@ public class DetalheRequerimentoBean {
     }
 
     public String voltarLista() {
-        return Paginas.getConsultar();
+        return Paginas.getConsultarRequerimentos();
     }
 
     public String editarPlano() {
@@ -332,17 +331,21 @@ public class DetalheRequerimentoBean {
 
         Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaDeferimento, this.statusParecer);
         this.requerimento.adicionarParecer(parecer);
-        this.requerimento.salvar();
+        if (this.requerimento.salvar()) {
 
-        if (loginBean.getConfiguracao().isEnviarEmail()) {
-            GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
-            gerenciadorEmail.adicionarEmailParecer(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), requerimento);
-            gerenciadorEmail.enviarEmails();
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailParecer(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), requerimento);
+                gerenciadorEmail.enviarEmails();
+            }
+            //Limpar o bean para atualizar a lista de requerimentos
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT004), Paginas.getDetalheRequerimento());
+            return enderecoRedirecionamento();
         }
-        //Limpar o bean para atualizar a lista de requerimentos
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT004), Paginas.getDetalheRequerimento());
-        return enderecoRedirecionamento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.709", "REQUERIMENTO"), Paginas.getDetalheRequerimento());
+        return Paginas.getConsultarRequerimentos();
     }
 
     private boolean validarParecer() {
@@ -358,7 +361,8 @@ public class DetalheRequerimentoBean {
     }
 
     public boolean usuarioPodeConferirDocumentos() {
-        return this.requerimento.usuarioPodeConferirDocumentos(this.loginBean.getUsuario());
+        return  this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo() && 
+                this.requerimento.usuarioPodeConferirDocumentos(this.loginBean.getUsuario());
     }
 
     public boolean validarConferencia() {
@@ -382,32 +386,35 @@ public class DetalheRequerimentoBean {
 
         Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaConferencia, EnumStatusRequerimento.CONFERIDO.getCodigo());
         this.requerimento.adicionarParecer(parecer);
-        this.requerimento.salvar();
+        if (this.requerimento.salvar()) {
+            List<UsuarioSigera> destinatarios = new ArrayList<UsuarioSigera>();
 
-        List<UsuarioSigera> destinatarios = new ArrayList<UsuarioSigera>();
+            if (this.coordenadorEstagio) {
+                List<UsuarioSigera> coordenadoresEstagio
+                        = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.COORDENADOR_ESTAGIO.getCodigo(),
+                                requerimento.getCurso().getId(),
+                                loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+                destinatarios.addAll(coordenadoresEstagio);
+            }
 
-        if (this.coordenadorEstagio) {
-            List<UsuarioSigera> coordenadoresEstagio
-                    = AssociacaoPerfilCurso.obtenhaUsuarios(EnumPerfil.COORDENADOR_ESTAGIO.getCodigo(),
-                            requerimento.getCurso().getId(),
-                            loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
-            destinatarios.addAll(coordenadoresEstagio);
-        }
-
-        if (this.diretor) {
-            List<UsuarioSigera> diretores
-                    = AssociacaoPerfilCurso.obtenhaUsuarios(EnumPerfil.DIRETOR.getCodigo(),
-                            loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
-            destinatarios.addAll(diretores);
-        }
-        if (loginBean.getConfiguracao().isEnviarEmail()) {
-            GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
-            gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
-            gerenciadorEmail.enviarEmails();
+            if (this.diretor) {
+                List<UsuarioSigera> diretores
+                        = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfil(EnumPerfil.DIRETOR.getCodigo(),
+                                loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+                destinatarios.addAll(diretores);
+            }
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
+                gerenciadorEmail.enviarEmails();
+            }
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.018"), Paginas.getDetalheRequerimento());
+            return enderecoRedirecionamento();
         }
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.018"), Paginas.getDetalheRequerimento());
-        return enderecoRedirecionamento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.709", "REQUERIMENTO"), Paginas.getDetalheRequerimento());
+        return Paginas.getConsultarRequerimentos();
     }
 
     private String enderecoRedirecionamento() {
@@ -440,16 +447,20 @@ public class DetalheRequerimentoBean {
 
         Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaParecerAcerto, statusParecerAcerto);
         this.requerimento.adicionarParecer(parecer);
-        this.requerimento.salvar();
-
-        if (loginBean.getConfiguracao().isEnviarEmail()) {
-            GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
-            gerenciadorEmail.adicionarEmailParecer(null, requerimento);
-            gerenciadorEmail.enviarEmails();
+        if (this.requerimento.salvar()) {
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailParecer(null, requerimento);
+                gerenciadorEmail.enviarEmails();
+            }
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT004), Paginas.getDetalheRequerimento());
+            return enderecoRedirecionamento();
         }
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT004), Paginas.getDetalheRequerimento());
-        return enderecoRedirecionamento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.709", "REQUERIMENTO"), Paginas.getDetalheRequerimento());
+        return Paginas.getConsultarRequerimentos();
+
     }
 
     public void cancelarParecerAcerto() {
@@ -535,4 +546,5 @@ public class DetalheRequerimentoBean {
         }
         return false;
     }
+    
 }

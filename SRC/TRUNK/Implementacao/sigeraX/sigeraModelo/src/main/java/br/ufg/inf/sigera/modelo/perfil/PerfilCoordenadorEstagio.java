@@ -66,7 +66,7 @@ public class PerfilCoordenadorEstagio extends Perfil {
         consulta.append(" WHERE r.usuario.id IN (SELECT apc.usuario.id ");
         consulta.append("                        FROM AssociacaoPerfilCurso as apc ");
         consulta.append("                        WHERE apc.curso.id = :idCurso ");
-        consulta.append("                        AND apc.perfil.id = :perfilAluno) ORDER BY r.id DESC");
+        consulta.append("                        AND apc.perfil.id = :perfilAluno) ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("idCurso", usuarioAutenticado.getPerfilAtual().getCurso().getId());

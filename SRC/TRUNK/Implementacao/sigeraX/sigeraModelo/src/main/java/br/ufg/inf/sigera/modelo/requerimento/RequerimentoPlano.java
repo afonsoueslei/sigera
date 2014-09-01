@@ -1,18 +1,16 @@
 package br.ufg.inf.sigera.modelo.requerimento;
 
-import br.ufg.inf.sigera.modelo.Curso;
 import br.ufg.inf.sigera.modelo.Plano;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import br.ufg.inf.sigera.modelo.perfil.Perfil;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.Persistence;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -48,14 +46,8 @@ public class RequerimentoPlano extends Requerimento {
         return EnumTipoRequerimento.PLANO.getNome();
     }
 
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
-    }
-
     public static RequerimentoPlano obtenhaRequerimentoPlano(BuscadorLdap buscadorLdap, Integer id) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         RequerimentoPlano req = em.find(RequerimentoPlano.class, id);
         if (req != null) {
             req.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(req.getUsuario().getId()));

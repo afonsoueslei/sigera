@@ -1,13 +1,13 @@
 package br.ufg.inf.sigera.modelo;
 
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NoResultException;
 import javax.persistence.OneToOne;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -60,7 +59,7 @@ public class Professor implements Serializable, Comparable<Professor> {
     }
 
     public static void salvar(Professor p) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         em.getTransaction().begin();
         if (p.id == 0) {
             em.persist(p);
@@ -71,12 +70,12 @@ public class Professor implements Serializable, Comparable<Professor> {
     }
 
     public static Professor obtenhaProfessor(int id) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         return em.find(Professor.class, id);
     }
 
     public static Professor obtenhaProfessor(BuscadorLdap buscadorLdap, int id) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         Professor prof = em.find(Professor.class, id);
         if (prof != null) {
             prof.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(prof.getUsuario().getId()));
@@ -87,7 +86,7 @@ public class Professor implements Serializable, Comparable<Professor> {
 
     public static Professor obtenhaProfessorPorIdUsuario(int idUsuario) {
         try {
-            EntityManager em = criarManager();
+            EntityManager em = Persistencia.obterManager();
             String consulta = " SELECT p FROM Professor as p WHERE p.usuario.id = :idUsuario ";
             Query query = em.createQuery(consulta);
             query.setParameter("idUsuario", idUsuario);
@@ -99,7 +98,7 @@ public class Professor implements Serializable, Comparable<Professor> {
     }
 
     public static List<Professor> buscaTodosProfessores(BuscadorLdap buscadorLdap) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         Query query = em.createQuery("SELECT p FROM Professor p");
         List<Professor> profs = query.getResultList();
 
@@ -110,13 +109,7 @@ public class Professor implements Serializable, Comparable<Professor> {
         Collections.sort(profs);
 
         return profs;
-    }
-
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
-    }
+    }    
 
     public int compareTo(Professor p) {
         return this.getNome().compareTo(p.getNome());

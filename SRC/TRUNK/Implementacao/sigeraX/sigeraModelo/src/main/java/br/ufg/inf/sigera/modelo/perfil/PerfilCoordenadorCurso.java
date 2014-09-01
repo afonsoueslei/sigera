@@ -69,7 +69,7 @@ public class PerfilCoordenadorCurso extends Perfil {
         consulta.append(" AND r.usuario.id IN (SELECT apc.usuario.id ");
         consulta.append("                      FROM AssociacaoPerfilCurso as apc ");
         consulta.append("                      WHERE apc.perfil.id = :perfilAdmin ");
-        consulta.append("                      OR (apc.perfil.id = :perfilAluno AND apc.curso.id = :idCurso ) ) ORDER BY r.id DESC");
+        consulta.append("                      OR (apc.perfil.id = :perfilAluno AND apc.curso.id = :idCurso ) ) ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("tipo1", EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo());
@@ -108,7 +108,7 @@ public class PerfilCoordenadorCurso extends Perfil {
         consulta.append(" FROM RequerimentoPlano as r  ");
         consulta.append(" WHERE r.plano.turma.disciplina.curso.id IN (SELECT apc.curso.id ");
         consulta.append("                      FROM AssociacaoPerfilCurso as apc ");
-        consulta.append("                      WHERE apc.curso.id = :idCurso) ORDER BY r.id DESC");
+        consulta.append("                      WHERE apc.curso.id = :idCurso) ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("idCurso", usuarioAutenticado.getPerfilAtual().getCurso().getId());

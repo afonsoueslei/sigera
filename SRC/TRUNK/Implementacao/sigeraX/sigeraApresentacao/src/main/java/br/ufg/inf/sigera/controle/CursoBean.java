@@ -100,8 +100,11 @@ public class CursoBean {
     }
 
     public String salvar() {
-        Curso.salvar(this.cursoEditavel);
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.501"), Paginas.getManterCurso());        
+        if (Curso.salvar(this.cursoEditavel)) {
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.501"), Paginas.getManterCurso());
+        } else {
+            mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.709", "CURSO"), Paginas.getManterCurso());
+        }
         return voltarListaCursos();
     }
 
@@ -133,12 +136,16 @@ public class CursoBean {
 
     public CursoDataModel getDataModel() {
         if (dataModel == null) {
-            List<Curso> cursosbuscados = Curso.buscaTodosCursos();
-            this.cursosTela = new ArrayList<CursoTelaManter>();
-            for (Curso c : cursosbuscados) {
-                this.cursosTela.add(new AdaptadorCursoTelaManter(c));
+            try {
+                List<Curso> cursosbuscados = Curso.buscaTodosCursos();
+                this.cursosTela = new ArrayList<CursoTelaManter>();
+                for (Curso c : cursosbuscados) {
+                    this.cursosTela.add(new AdaptadorCursoTelaManter(c));
+                }
+                this.dataModel = new CursoDataModel(this.cursosTela);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
             }
-            this.dataModel = new CursoDataModel(this.cursosTela);
         }
         return dataModel;
     }
@@ -162,8 +169,8 @@ public class CursoBean {
     public void cancelar() {
         prepararCursoEditavel();
     }
-    
-     public String voltarListaCursos() {
+
+    public String voltarListaCursos() {
         Sessoes.limparBeans();
         return Paginas.getManterCurso();
     }

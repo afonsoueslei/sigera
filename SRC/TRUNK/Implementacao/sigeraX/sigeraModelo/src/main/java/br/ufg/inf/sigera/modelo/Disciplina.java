@@ -1,17 +1,16 @@
 package br.ufg.inf.sigera.modelo;
 
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.persistence.Table;
@@ -42,6 +41,8 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
     private String bibliografiaComplementar;
     @Column(name = "objetivo_geral")
     private String objetivoGeral;
+    @Column(name = "versao")
+    private int versao;
 
     public Disciplina(Disciplina disciplinaCopiar) {
         if (disciplinaCopiar != null) {
@@ -54,6 +55,7 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
             this.bibliografiaBasica = disciplinaCopiar.getBibliografiaBasica();
             this.bibliografiaComplementar = disciplinaCopiar.getBibliografiaComplementar();
             this.objetivoGeral = disciplinaCopiar.getObjetivoGeral();
+            this.versao = disciplinaCopiar.getVersao();
         }
     }
 
@@ -143,14 +145,23 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
         this.objetivoGeral = objetivoGeral;
     }
 
+    public int getVersao() {
+        return versao;
+    }
+
+    public void setVersao(int versao) {
+        this.versao = versao;
+    }
+    
+
     public static List<Disciplina> buscaTodosDisciplinas() {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         Query query = em.createQuery(" SELECT d FROM Disciplina d ORDER BY d.nome ");
         return query.getResultList();
     }
 
     public static List<Disciplina> buscaDisciplinasDoCurso(Integer codCurso) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         StringBuilder consulta = new StringBuilder();
         int codCursoMestrado = 0;
         int codCursoDoutorado = 0;
@@ -175,19 +186,24 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
         return query.getResultList();
     }
 
-    public static void salvar(Disciplina d) {
-        EntityManager em = criarManager();
-        em.getTransaction().begin();
-        if (d.id == 0) {
-            em.persist(d);
-        } else {
-            em.merge(d);
+    public static boolean salvar(Disciplina d) {
+        EntityManager em = Persistencia.obterManager();
+        if (Persistencia.versaoValida(d)) {
+            em.getTransaction().begin();
+            d.setVersao(d.getVersao() + 1);
+            if (d.id == 0) {
+                em.persist(d);
+            } else {
+                em.merge(d);
+            }
+            em.getTransaction().commit();
+            return true;
         }
-        em.getTransaction().commit();
+        return false;
     }
 
     public static Boolean remover(Disciplina d) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         em.getTransaction().begin();
         try {
             d = em.merge(d);
@@ -200,14 +216,8 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
     }
 
     public static Disciplina obtenhaDisciplina(int id) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         return em.find(Disciplina.class, id);
-    }
-
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
     }
 
     public int compareTo(Disciplina d) {

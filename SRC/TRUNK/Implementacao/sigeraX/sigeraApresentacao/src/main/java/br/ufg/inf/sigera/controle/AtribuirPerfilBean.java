@@ -124,13 +124,17 @@ public class AtribuirPerfilBean {
 
     public AtribuirPerfilDataModel getDataModel() {
         if (dataModel == null) {
-            List<UsuarioSigera> usuarios = Autenticacao.obtenhaUsuarios(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
-            this.usuariosTela = new ArrayList<UsuarioTelaAtribuirPerfil>();
-            for (UsuarioSigera usuario : usuarios) {
-                this.usuariosTela.add(new AdaptadorUsuarioTelaAtribuirPerfil(usuario));
-            }
+            try {
+                List<UsuarioSigera> usuarios = Autenticacao.obtenhaUsuarios(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+                this.usuariosTela = new ArrayList<UsuarioTelaAtribuirPerfil>();
+                for (UsuarioSigera usuario : usuarios) {
+                    this.usuariosTela.add(new AdaptadorUsuarioTelaAtribuirPerfil(usuario));
+                }
 
-            this.dataModel = new AtribuirPerfilDataModel(this.usuariosTela);
+                this.dataModel = new AtribuirPerfilDataModel(this.usuariosTela);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
+            }
         }
         return dataModel;
     }

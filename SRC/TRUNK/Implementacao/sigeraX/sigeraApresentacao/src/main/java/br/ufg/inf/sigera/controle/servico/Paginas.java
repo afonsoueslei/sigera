@@ -4,6 +4,14 @@
  */
 package br.ufg.inf.sigera.controle.servico;
 
+import br.ufg.inf.sigera.controle.LoginBean;
+import br.ufg.inf.sigera.modelo.servico.Conexoes;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+
 /**
  *
  * @author auf
@@ -58,7 +66,7 @@ public class Paginas {
 
     private Paginas() {
     }
-    
+
     public static String getAbrirRequerimentoID() {
         return ABRIR_REQUERIMENTO_ID;
     }
@@ -74,7 +82,7 @@ public class Paginas {
     public static String getAssinaturaFinalizacao() {
         return ASSINATURA_FINALIZACAO;
     }
-    
+
     public static String getAtribuirPerfil() {
         return ATRIBUIR_PERFIL;
     }
@@ -87,7 +95,7 @@ public class Paginas {
         return CONFIG;
     }
 
-    public static String getConsultar() {
+    public static String getConsultarRequerimentos() {
         return CONSULTAR;
     }
 
@@ -98,7 +106,6 @@ public class Paginas {
     public static String getDeclaracaoMatriculaFinalizacao() {
         return DECLARACAO_MATRICULA_FINALIZACAO;
     }
-    
 
     public static String getDetalheRequerimento() {
         return DETALHE_REQUERIMENTO;
@@ -222,7 +229,7 @@ public class Paginas {
 
     public static String getConsultarUsuarios() {
         return CONSULTAR_USUARIOS;
-    }    
+    }
 
     public static String getTrocarSenha() {
         return TROCAR_SENHA;
@@ -231,13 +238,23 @@ public class Paginas {
     public static String getTrocarSenhaFinal() {
         return TROCAR_SENHA_FINAL;
     }
-    
+
     public static String getRecuperarSenha() {
         return RECUPERAR_SENHA;
     }
-    
+
     public static String getAjuda() {
         return AJUDA;
     }
-    
+
+    public static void redirecionePaginaErro() {
+        try {
+            ExternalContext contexto = FacesContext.getCurrentInstance().getExternalContext();
+            contexto.redirect(Conexoes.getURL_SIGERA() + "faces/paginaErro.xhtml");
+        } catch (IOException ex) {
+            Logger.getLogger(LoginBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception iex) {
+            Logger.getLogger(LoginBean.class.getName()).log(Level.SEVERE, null, iex);
+        }
+    }
 }

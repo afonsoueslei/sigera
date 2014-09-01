@@ -3,6 +3,8 @@ package br.ufg.inf.sigera.controle;
 import br.ufg.inf.sigera.controle.datamodels.RequerimentoTelaConsultaDataModel;
 import br.ufg.inf.sigera.controle.tela.RequerimentoTelaConsulta;
 import br.ufg.inf.sigera.controle.adaptador.AdaptadorRequerimentoTelaConsulta;
+import br.ufg.inf.sigera.controle.servico.MensagensTela;
+import br.ufg.inf.sigera.controle.servico.Paginas;
 import br.ufg.inf.sigera.modelo.requerimento.EnumStatusRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.EnumTipoRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
@@ -35,7 +38,7 @@ public class ConsultarRequerimentoBean {
     private static final String[] TIPOS_REQUERIMENTO;
     private SelectItem[] opcoesTipoRequerimento;
     private static final String[] TIPOS_STATUS;
-    private SelectItem[] opcoesTipoStatus;    
+    private SelectItem[] opcoesTipoStatus;
 
     static {
         TIPOS_REQUERIMENTO = new String[8];
@@ -88,14 +91,17 @@ public class ConsultarRequerimentoBean {
 
     public RequerimentoTelaConsultaDataModel getDataModel() {
         if (dataModel == null) {
-            List<Requerimento> requerimentos = this.loginBean.getUsuario().obtenhaRequerimentos();
-            this.requerimentosTela = new ArrayList<RequerimentoTelaConsulta>();
-            for (Requerimento requerimento : requerimentos) {
-                this.requerimentosTela.add(new AdaptadorRequerimentoTelaConsulta(requerimento));                                
+            try {
+                List<Requerimento> requerimentos = this.loginBean.getUsuario().obtenhaRequerimentos();
+                this.requerimentosTela = new ArrayList<RequerimentoTelaConsulta>();
+                for (Requerimento requerimento : requerimentos) {
+                    this.requerimentosTela.add(new AdaptadorRequerimentoTelaConsulta(requerimento));
+                }                
+                this.dataModel = new RequerimentoTelaConsultaDataModel(this.requerimentosTela);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
             }
-
-            this.dataModel = new RequerimentoTelaConsultaDataModel(this.requerimentosTela);
-        }  
+        }
         return dataModel;
     }
 
@@ -103,9 +109,9 @@ public class ConsultarRequerimentoBean {
         SelectItem[] options = new SelectItem[data.length + 1];
 
         options[0] = new SelectItem("", "Todos");
-        for (int i = 0; i < data.length; i++) {            
+        for (int i = 0; i < data.length; i++) {
             options[i + 1] = new SelectItem(data[i], data[i]);
-            
+
         }
 
         return options;
@@ -140,4 +146,11 @@ public class ConsultarRequerimentoBean {
     public String visualizarDetalhes() {
         return "detalhe_requerimento";
     }
+    
+    public String atualizarLista(){
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");        
+        return Paginas.getConsultarRequerimentos();
+    }
+    
+
 }

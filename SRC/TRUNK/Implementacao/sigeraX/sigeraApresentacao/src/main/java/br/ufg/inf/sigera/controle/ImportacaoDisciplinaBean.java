@@ -41,7 +41,11 @@ public class ImportacaoDisciplinaBean {
     }
 
     public DisciplinaImportadaDataModel getDataModel() {
-        this.dataModel = new DisciplinaImportadaDataModel(getDisciplinasImportados());
+        try {
+            this.dataModel = new DisciplinaImportadaDataModel(getDisciplinasImportados());
+        } catch (Exception ie) {
+            Paginas.redirecionePaginaErro();
+        }
         return this.dataModel;
     }
 

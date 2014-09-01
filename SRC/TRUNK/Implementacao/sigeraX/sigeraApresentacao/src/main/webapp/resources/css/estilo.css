@@ -283,6 +283,8 @@ legend {
 .largura-minima-tabela {
     width:-moz-min-content !important;   
     min-width: 100% !important;     
+    width: -webkit-min-content; 
+    width: min-content;
     _width: 100% !important;
 }
 

@@ -1,18 +1,17 @@
 package br.ufg.inf.sigera.modelo;
 
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -44,13 +43,17 @@ public class Turma implements Serializable, Comparable<Turma> {
     @JoinColumn(name = "professor_id")
     private Professor professor;
 
+    @Column(name = "versao")
+    private int versao;
+
     public Turma() {
     }
 
-    public Turma(String nome, int semestre, Disciplina disciplina, Professor professor) {
+    public Turma(String nome, int semestre, Disciplina disciplina, Professor professor, int versao) {
         this.nome = nome;
         this.semestre = semestre;
         this.professor = professor;
+        this.versao = versao;
     }
 
     public Turma(Turma turmaCopiar) {
@@ -61,6 +64,7 @@ public class Turma implements Serializable, Comparable<Turma> {
             this.disciplina = turmaCopiar.getDisciplina();
             this.nome = turmaCopiar.getNome();
             this.professor = turmaCopiar.getProfessor();
+            this.versao = turmaCopiar.getVersao();
         }
     }
 
@@ -112,19 +116,32 @@ public class Turma implements Serializable, Comparable<Turma> {
         this.ano = ano;
     }
 
-    public static void salvar(Turma t) {
-        EntityManager em = criarManager();
-        em.getTransaction().begin();
-        if (t.id == 0) {
-            em.persist(t);
-        } else {
-            em.merge(t);
+    public int getVersao() {
+        return versao;
+    }
+
+    public void setVersao(int versao) {
+        this.versao = versao;
+    }
+
+    public static Boolean salvar(Turma t) {
+        if (Persistencia.versaoValida(t)) {
+            EntityManager em = Persistencia.obterManager();
+            em.getTransaction().begin();
+            t.setVersao(t.getVersao() + 1);
+            if (t.id == 0) {
+                em.persist(t);
+            } else {
+                em.merge(t);
+            }
+            em.getTransaction().commit();
+            return true;
         }
-        em.getTransaction().commit();
+        return false;
     }
 
     public static List<Turma> buscaTodasTurmas(BuscadorLdap buscadorLdap) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         Query query = em.createQuery("select t from Turma t ORDER BY t.ano DESC, t.semestre DESC, t.disciplina.nome ASC");
         List<Turma> turmas = query.getResultList();
 
@@ -137,7 +154,7 @@ public class Turma implements Serializable, Comparable<Turma> {
     }
 
     public static Boolean remover(Turma t) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         em.getTransaction().begin();
         try {
             t = em.merge(t);
@@ -149,20 +166,13 @@ public class Turma implements Serializable, Comparable<Turma> {
         }
     }
 
-    private static EntityManager criarManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-        EntityManager em = emf.createEntityManager();
-        return em;
-    }
-
     public static Turma obtenhaTurma(int id) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         return em.find(Turma.class, id);
     }
 
     public static Turma obtenhaTurmaDisciplina(int id, BuscadorLdap buscadorLdap) {
-
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         Query query = em.createQuery(" SELECT t FROM Turma t WHERE t.disciplina.id = :idDisciplina");
         query.setParameter("idDisciplina", id);
 
@@ -177,16 +187,16 @@ public class Turma implements Serializable, Comparable<Turma> {
     }
 
     public static List<Turma> buscaTurmas(int anoCorrente, int semestreCorrente, BuscadorLdap buscadorLdap, int codCurso) {
-        EntityManager em = criarManager();
+        EntityManager em = Persistencia.obterManager();
         StringBuilder consulta = new StringBuilder();
         int codCursoMestrado = 0;
         int codCursoDoutorado = 0;
 
         consulta.append(" SELECT t ");
-        consulta.append(" FROM Turma as t  ");        
+        consulta.append(" FROM Turma as t  ");
         consulta.append(" WHERE ( ( t.ano = :anoCorrente AND t.semestre >= :semestreCorrente ) ");
-        consulta.append(" OR t.ano > :anoCorrente )");        
-        
+        consulta.append(" OR t.ano > :anoCorrente )");
+
         if (codCurso != 0) {
             consulta.append(" AND ( t.disciplina.curso.id = :codCurso ");
 

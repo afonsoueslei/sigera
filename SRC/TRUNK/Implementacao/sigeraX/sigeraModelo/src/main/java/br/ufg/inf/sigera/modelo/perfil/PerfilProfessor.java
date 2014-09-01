@@ -62,7 +62,7 @@ public class PerfilProfessor extends Perfil {
 
         consulta.append(" SELECT r ");
         consulta.append(" FROM RequerimentoSegundaChamada as r  ");
-        consulta.append(" WHERE r.turma.professor.usuario.id = :id ORDER BY r.id DESC");
+        consulta.append(" WHERE r.turma.professor.usuario.id = :id ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("id", usuarioAutenticado.getId());
@@ -72,7 +72,7 @@ public class PerfilProfessor extends Perfil {
         StringBuilder consulta2 = new StringBuilder();
         consulta2.append("SELECT r");
         consulta2.append(" FROM RequerimentoPlano as r  ");
-        consulta2.append(" WHERE r.plano.turma.professor.usuario.id = :idUsuario ORDER BY r.id DESC");
+        consulta2.append(" WHERE r.plano.turma.professor.usuario.id = :idUsuario ORDER BY r.status, r.id DESC");
         
         Query query2 = em.createQuery(consulta2.toString());
         query2.setParameter("idUsuario", usuarioAutenticado.getId());
@@ -97,7 +97,7 @@ public class PerfilProfessor extends Perfil {
 
         consulta.append("SELECT r");
         consulta.append(" FROM RequerimentoPlano as r  ");
-        consulta.append(" WHERE r.plano.turma.professor.usuario.id = :idUsuario ORDER BY r.id DESC");
+        consulta.append(" WHERE r.plano.turma.professor.usuario.id = :idUsuario ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("idUsuario", usuarioAutenticado.getId());

@@ -36,7 +36,7 @@ public class ImportacaoProfessorBean {
 
         if (importaProfessor.validaArquivo(arquivo)) {
             // Arquivo Professor Validado
-            setProfessorsImportados(importaProfessor.importaArquivo(arquivo));            
+            setProfessorsImportados(importaProfessor.importaArquivo(arquivo));
             mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.604", arquivo.getFileName()), Paginas.getImportacaoCurso());
             Sessoes.limparBeans();
         } else {
@@ -46,7 +46,11 @@ public class ImportacaoProfessorBean {
     }
 
     public ProfessorImportadoDataModel getDataModel() {
-        this.dataModel = new ProfessorImportadoDataModel(getProfessorsImportados());
+        try {
+            this.dataModel = new ProfessorImportadoDataModel(getProfessorsImportados());
+        } catch (Exception ie) {
+            Paginas.redirecionePaginaErro();
+        }
         return this.dataModel;
     }
 

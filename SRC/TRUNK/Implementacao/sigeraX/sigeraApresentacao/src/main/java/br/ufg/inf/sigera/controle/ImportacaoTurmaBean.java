@@ -44,7 +44,11 @@ public class ImportacaoTurmaBean {
     }
 
     public TurmaImportadaDataModel getDataModel() {
-        this.dataModel = new TurmaImportadaDataModel(getTurmasImportados());
+        try {
+            this.dataModel = new TurmaImportadaDataModel(getTurmasImportados());
+        } catch (Exception ie) {
+            Paginas.redirecionePaginaErro();
+        }
         return this.dataModel;
     }
 
