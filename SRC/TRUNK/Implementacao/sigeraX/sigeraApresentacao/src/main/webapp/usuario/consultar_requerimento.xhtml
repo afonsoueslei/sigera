@@ -29,11 +29,11 @@
                                  emptyMessage="#{msgs['MT.401']}"
                                  rowStyleClass="#{requerimento.status ne 'Aberto' ? 'destacado' : null}">                               
 
+
                         <f:facet name="header" >                              
-                            <h:link style="color: #0000ff" id="btnAtualizar" outcome="#{consultarRequerimentoBean.atualizarLista()}">                                
+                            <h:commandLink style="color: #0000ff" id="btnAtualizar" action="#{consultarRequerimentoBean.atualizarLista()}">                                
                                 Lista de Requerimentos
-                            </h:link>
-                            
+                            </h:commandLink>
                         </f:facet>
 
                         <p:column styleClass="centralizar-texto" 

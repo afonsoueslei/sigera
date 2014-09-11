@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -122,21 +121,24 @@ public class SegundaChamadaBean implements Serializable {
                         this.getDataProva(),
                         this.getJustificativa(),
                         this.getAnexos());
-        requerimento.salvar();
-        limpar();
+        if (requerimento.salvar()) {
+            limpar();
 
-        List<UsuarioSigera> destinatarios = new ArrayList<UsuarioSigera>();
-        destinatarios.add(turma.getProfessor().getUsuario());
+            List<UsuarioSigera> destinatarios = new ArrayList<UsuarioSigera>();
+            destinatarios.add(turma.getProfessor().getUsuario());
 
-        if (loginBean.getConfiguracao().isEnviarEmail()) {
-            GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
-            gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
-            gerenciadorEmail.enviarEmails();
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
+                gerenciadorEmail.enviarEmails();
+            }
+
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.002", EnumTipoRequerimento.SEGUNDA_CHAMADA.getNome()), Paginas.getDetalheRequerimento());
+
+            return Paginas.getAbrirRequerimentoID() + requerimento.getId();
         }
-
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.002", EnumTipoRequerimento.SEGUNDA_CHAMADA.getNome()), Paginas.getDetalheRequerimento());
-
-        return Paginas.getAbrirRequerimentoID() + requerimento.getId();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.002.Falha", EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getPrincipal());
+        return Paginas.getPrincipal();
     }
 
     public String voltar() {
@@ -163,6 +165,7 @@ public class SegundaChamadaBean implements Serializable {
                 this.dataModelTurmas = new TurmaDataModel(this.turmasTela);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(SegundaChamadaBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModelTurmas;

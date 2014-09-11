@@ -6,6 +6,7 @@
 package br.ufg.inf.sigera.controle.servico;
 
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 
 /**
  *
@@ -23,6 +24,16 @@ public class Sessoes {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("unidadeBean");
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("planoBean");
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("cursoBean");
+        limparBeanConsultarRequerimento();
+    }
+
+    public static void limparBeanConsultarRequerimento() {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
     }
+
+    public static void invalidarSessoes() {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().clear();
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+    }
+
 }

@@ -119,6 +119,7 @@ public class DisciplinaBean implements Serializable {
                 this.dataModel = new DisciplinaDataModel(this.disciplinasTela);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(DisciplinaBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModel;

@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package br.ufg.inf.sigera.controle.servico;
 
 import br.ufg.inf.sigera.modelo.ldap.AutenticacaoLdap;
@@ -17,7 +16,10 @@ import javax.naming.directory.DirContext;
  * @author auf
  */
 public class AcessoLdap {
-    
+
+    private AcessoLdap() {
+    }
+   
     public static void alterarCampoLdap(String userNameEditado, String campoQueSeraAlterado, String novoValor) {
         AutenticacaoLdap autenticador = new AutenticacaoLdap();
         try {

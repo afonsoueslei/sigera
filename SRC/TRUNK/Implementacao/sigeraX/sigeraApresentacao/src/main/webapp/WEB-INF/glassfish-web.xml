@@ -1,7 +1,7 @@
 <!DOCTYPE glassfish-application PUBLIC "-//GlassFish.org//DTD 
 GlassFish Application Server 3.1 Java EE Application 6.0//EN" 
 "http://glassfish.org/dtds/glassfish-application_6_0-1.dtd">
-
+<!--<!DOCTYPE html> Quando tiver sem conexão com a internet-->
 <glassfish-web-app>
     <parameter-encoding default-charset="UTF-8" />
 </glassfish-web-app>

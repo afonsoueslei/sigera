@@ -5,6 +5,7 @@ import br.ufg.inf.sigera.modelo.ldap.AutenticacaoLdap;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.ldap.EnumGrupo;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -12,8 +13,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 public class Autenticacao {
 
@@ -39,8 +38,7 @@ public class Autenticacao {
         List<UsuarioLdap> usuariosLdap = buscadorLdap.obtenhaTodosUsuariosLdap();
         List<UsuarioSigera> usuarios = new ArrayList<UsuarioSigera>();
         try {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-            EntityManager em = emf.createEntityManager();
+            EntityManager em = Persistencia.obterManager();
 
             for (UsuarioLdap usuarioLdap : usuariosLdap) {
                 UsuarioSigera usuario = null;
@@ -67,15 +65,16 @@ public class Autenticacao {
 
     public static UsuarioSigera obtenhaUsuarioPorUidNumber(BuscadorLdap buscadorLdap, UsuarioLdap userLdap) {
         UsuarioSigera usuarioEncontrado;
+        EntityManager em = Persistencia.obterManager();
         try {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-            EntityManager em = emf.createEntityManager();
             usuarioEncontrado = em.find(UsuarioSigera.class, Integer.parseInt(userLdap.getUidNumber()));
             usuarioEncontrado.setUsuarioLdap(userLdap);
             return usuarioEncontrado;
 
         } catch (javax.persistence.PersistenceException ex) {
             Logger.getLogger(Autenticacao.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            em.close();
         }
         return null;
     }
@@ -88,8 +87,12 @@ public class Autenticacao {
             return null;
         }
         try {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-            EntityManager em = emf.createEntityManager();
+            EntityManager em = Persistencia.obterManager();
+
+            if (em == null) {
+                return crieUsuarioFalhaBanco();                
+            }
+
             usuario = em.find(UsuarioSigera.class, Integer.valueOf(usuarioLdap.getUidNumber()));
 
             if (usuario == null) {
@@ -104,9 +107,9 @@ public class Autenticacao {
                     AssociacaoPerfilCurso perfilEstudante = GerenciadorPerfil.criePerfilAluno(usuario);
                     perfis.add(perfilEstudante);
                     usuario.setPerfis(perfis);
-                }                
+                }
             }
-            
+
             //Grava primeiro acesso no Sigera 2.0
             if (usuario.getPrimeiroAcesso() == null) {
                 usuario.setPrimeiroAcesso(new Date());
@@ -114,14 +117,19 @@ public class Autenticacao {
 
             usuario.setUsuarioLdap(usuarioLdap);
             usuario.salvar();
-            
+
             return usuario;
 
         } catch (javax.persistence.PersistenceException ex) {
             Logger.getLogger(Autenticacao.class.getName()).log(Level.SEVERE, null, ex);
-            usuario = new UsuarioSigera();
-            usuario.setTelefoneComercial("falha-banco");
-            return usuario;
+            return crieUsuarioFalhaBanco();            
         }
+    }
+
+    //Usuario temporário apenas para informar que não há conexão com o banco
+    public UsuarioSigera crieUsuarioFalhaBanco() {
+        usuario = new UsuarioSigera();
+        usuario.setTelefoneComercial("falha-banco");     
+        return usuario;
     }
 }

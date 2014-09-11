@@ -134,6 +134,7 @@ public class AtribuirPerfilBean {
                 this.dataModel = new AtribuirPerfilDataModel(this.usuariosTela);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(AtribuirPerfilBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModel;
@@ -236,14 +237,11 @@ public class AtribuirPerfilBean {
             pdf.add(Image.getInstance(logo));
 
         } catch (IOException ex) {
-            Logger.getLogger(AtribuirPerfilBean.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AtribuirPerfilBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BadElementException badEx) {
-            Logger.getLogger(AtribuirPerfilBean.class
-                    .getName()).log(Level.SEVERE, null, badEx);
+            Logger.getLogger(AtribuirPerfilBean.class.getName()).log(Level.SEVERE, null, badEx);
         } catch (DocumentException docEx) {
-            Logger.getLogger(AtribuirPerfilBean.class
-                    .getName()).log(Level.SEVERE, null, docEx);
+            Logger.getLogger(AtribuirPerfilBean.class.getName()).log(Level.SEVERE, null, docEx);
         }
     }
 

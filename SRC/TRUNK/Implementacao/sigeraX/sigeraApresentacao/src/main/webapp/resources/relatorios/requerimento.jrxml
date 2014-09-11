@@ -1,67 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="879a5200-3b9a-46a9-ac9d-63c23643ff5f">
-	<property name="ireport.zoom" value="1.210000000000005"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="879a5200-3b9a-46a9-ac9d-63c23643ff5f">
+	<property name="ireport.zoom" value="1.000000000000004"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
-	<parameter name="requerimentoId" class="java.lang.Long">
-		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
-	</parameter>
+	<property name="ireport.y" value="192"/>
+	<subDataset name="dataset1" uuid="189785bd-62c9-4dd0-80d0-a6e7179185b3"/>
+	<parameter name="requerimentoId" class="java.lang.Integer"/>
 	<parameter name="nomeRequerente" class="java.lang.String"/>
 	<parameter name="matriculaRequerente" class="java.lang.String"/>
 	<parameter name="nomeCurso" class="java.lang.String"/>
+	<parameter name="tipoRequerimento" class="java.lang.String"/>
+	<parameter name="caminhoImagemSigera" class="java.lang.String"/>
+	<parameter name="caminhoImagemUFG" class="java.lang.String"/>
+	<parameter name="status" class="java.lang.String"/>
+	<parameter name="email" class="java.lang.String"/>
+	<parameter name="turmaSegundaChamada" class="java.lang.String"/>
+	<parameter name="dataProvaSegundaChamada" class="java.lang.String"/>
+	<parameter name="listaDisciplinasAcerto" class="java.lang.String"/>
+	<parameter name="listaDisciplinasEmenta" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
      requerimento.`id` AS requerimento_id,
-     requerimento.`usuario_id` AS requerimento_usuario_id,
      requerimento.`data_abertura` AS requerimento_data_abertura,
      requerimento.`status_req` AS requerimento_status_req,
-     requerimento.`data_fechamento` AS requerimento_data_fechamento,
      requerimento.`justificativa` AS requerimento_justificativa,
-     requerimento.`tipo` AS requerimento_tipo,
-     usuario.`id` AS usuario_id,
-     usuario.`telefone_celular` AS usuario_telefone_celular,
-     usuario.`telefone_residencial` AS usuario_telefone_residencial,
-     usuario.`telefone_comercial` AS usuario_telefone_comercial,
-     usuario.`primeiro_acesso` AS usuario_primeiro_acesso,
-     usuario.`ultimo_acesso` AS usuario_ultimo_acesso,
-     parecer.`id` AS parecer_id,
-     parecer.`requerimento_id` AS parecer_requerimento_id,
-     parecer.`usuario_id` AS parecer_usuario_id,
-     parecer.`data_parecer` AS parecer_data_parecer,
-     parecer.`conteudo` AS parecer_conteudo,
-     parecer.`status` AS parecer_status
+     requerimento.`tipo` AS requerimento_tipo
 FROM
-     `usuario` usuario INNER JOIN `requerimento` requerimento ON usuario.`id` = requerimento.`usuario_id`
-     LEFT OUTER JOIN `parecer` parecer ON requerimento.`id` = parecer.`requerimento_id`
+     `requerimento` requerimento
 WHERE
-     requerimento.`id` = $P{requerimentoId} AND requerimento.`tipo` IN ( 4, 5, 7 )]]>
+     requerimento.`id` = $P{requerimentoId}]]>
 	</queryString>
 	<field name="requerimento_id" class="java.lang.Long"/>
-	<field name="requerimento_usuario_id" class="java.lang.Long"/>
 	<field name="requerimento_data_abertura" class="java.sql.Timestamp"/>
 	<field name="requerimento_status_req" class="java.lang.Integer"/>
-	<field name="requerimento_data_fechamento" class="java.sql.Timestamp"/>
 	<field name="requerimento_justificativa" class="java.lang.String"/>
 	<field name="requerimento_tipo" class="java.lang.Integer"/>
-	<field name="usuario_id" class="java.lang.Long"/>
-	<field name="usuario_telefone_celular" class="java.lang.String"/>
-	<field name="usuario_telefone_residencial" class="java.lang.String"/>
-	<field name="usuario_telefone_comercial" class="java.lang.String"/>
-	<field name="usuario_primeiro_acesso" class="java.sql.Timestamp"/>
-	<field name="usuario_ultimo_acesso" class="java.sql.Timestamp"/>
-	<field name="parecer_id" class="java.lang.Long"/>
-	<field name="parecer_requerimento_id" class="java.lang.Long"/>
-	<field name="parecer_usuario_id" class="java.lang.Long"/>
-	<field name="parecer_data_parecer" class="java.sql.Timestamp"/>
-	<field name="parecer_conteudo" class="java.lang.String"/>
-	<field name="parecer_status" class="java.lang.Integer"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<detail>
-		<band height="375" splitType="Stretch">
+	<pageHeader>
+		<band height="73">
 			<staticText>
-				<reportElement x="0" y="1" width="555" height="38" uuid="4fee7d83-010a-4590-891f-0e67dbe66b63"/>
+				<reportElement x="0" y="45" width="50" height="20" forecolor="#00187F" uuid="d60f73a1-b0f8-4cc5-bc6d-7ab185238823"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial Black" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SIGERA]]></text>
+			</staticText>
+			<textField pattern="&apos;EMITIDO EM:&apos; EEEEE dd &apos;de&apos; MMMMM &apos;de&apos; yyyy &apos;às&apos; HH:mm">
+				<reportElement x="42" y="45" width="471" height="12" uuid="30ea9e1b-2bf0-43ff-93c4-5c09c174d07e"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RealSize">
+				<reportElement x="513" y="4" width="40" height="61" uuid="86d7298d-6007-48ec-98cc-24103443b714"/>
+				<imageExpression><![CDATA[$P{caminhoImagemUFG}]]></imageExpression>
+			</image>
+			<image scaleImage="RealSize">
+				<reportElement x="6" y="2" width="36" height="63" uuid="f4dc47d7-5240-4e3c-80be-65995201d167"/>
+				<imageExpression><![CDATA[$P{caminhoImagemSigera}]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="38" uuid="4fee7d83-010a-4590-891f-0e67dbe66b63"/>
 				<textElement textAlignment="Center">
 					<font fontName="Tahoma" size="10" isBold="true" isStrikeThrough="false"/>
 					<paragraph lineSpacing="Single"/>
@@ -71,140 +72,354 @@ Instituto de Informática
 Sistema Gerenciador de Requerimento Acadêmico]]></text>
 			</staticText>
 			<line>
-				<reportElement x="0" y="61" width="555" height="1" uuid="24593de0-f7be-4275-9e77-e8097acc1b27"/>
+				<reportElement x="0" y="66" width="555" height="1" uuid="dc544df9-2ba4-45a0-9038-3d2b19f8320c"/>
 			</line>
-			<image scaleImage="RealSize">
-				<reportElement x="6" y="4" width="36" height="87" uuid="f4dc47d7-5240-4e3c-80be-65995201d167"/>
-				<imageExpression><![CDATA["C:\\Users\\auf\\Desktop\\marca-inf.gif"]]></imageExpression>
-			</image>
-			<image scaleImage="RealSize">
-				<reportElement x="513" y="5" width="40" height="87" uuid="86d7298d-6007-48ec-98cc-24103443b714"/>
-				<imageExpression><![CDATA["C:\\Users\\auf\\Desktop\\marca-ufg.gif"]]></imageExpression>
-			</image>
-			<textField pattern="&apos;EMITIDO EM:&apos; EEEEE dd &apos;de&apos; MMMMM &apos;de&apos; yyyy &apos;às&apos; HH:mm">
-				<reportElement x="0" y="46" width="555" height="12" uuid="30ea9e1b-2bf0-43ff-93c4-5c09c174d07e"/>
-				<textElement textAlignment="Center">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
-			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="429" splitType="Stretch">
 			<staticText>
-				<reportElement x="2" y="42" width="50" height="20" forecolor="#00187F" uuid="d60f73a1-b0f8-4cc5-bc6d-7ab185238823"/>
-				<textElement textAlignment="Center">
-					<font fontName="Teen" size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[SIGERA]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="67" width="555" height="20" uuid="e5b859fb-9b26-4b78-837e-9b31f7972a14"/>
-				<textElement textAlignment="Center">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[COMPROVANTE DE REQUERIMENTO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="5" y="127" width="86" height="20" uuid="500b5ec9-7e1f-4d79-a59e-131a4fed3b06"/>
-				<text><![CDATA[Número:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="107" width="550" height="19" uuid="0d91ed9c-023d-4789-b71d-f62754e4d7a8"/>
+				<reportElement positionType="Float" x="4" y="241" width="548" height="73" uuid="ab2acde7-cd9c-4811-a223-ef37b07e3cdb"/>
 				<textElement>
-					<font fontName="Corbel" size="12" isBold="true" isUnderline="true"/>
+					<font fontName="Calibri" size="10" isBold="true" isItalic="true" isStrikeThrough="false"/>
+					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
-				<text><![CDATA[DECLARAÇÃO DE MATRÍCULA]]></text>
+				<text><![CDATA[INFORMAÇÕES IMPORTANTES:
+- Este documento lhe garante que o registro do requerimento foi realizado com sucesso!
+- Acompanhe o andamento do seu requerimento pelo sistema, ou pelas notificações enviadas a seu e-mail institucional.
+- Somente através desse documento você poderá contestar e cobrar andamento sobre seu requerimento.
+]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="5" y="151" width="86" height="20" uuid="9800bda5-d9b0-4bbb-b857-ba6c65b3b273"/>
-				<text><![CDATA[Data Abertura:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="93" y="151" width="457" height="20" uuid="a483f623-910a-4244-b62b-a7b9fb951133"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{requerimento_data_abertura}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="5" y="247" width="86" height="20" uuid="afeefa94-4fee-4eff-8064-8e88b9a10d23"/>
-				<text><![CDATA[Data Fechamento:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="93" y="247" width="457" height="20" uuid="5980a043-6393-4701-a14e-fb3726fd6b66"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{requerimento_data_fechamento}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="5" y="271" width="86" height="20" uuid="359a71c6-7a9e-4483-8b6f-d1cd07eee741"/>
-				<text><![CDATA[Status:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="93" y="269" width="457" height="20" uuid="cc1d59fe-f093-4a56-b372-527f57b566b1"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{requerimento_status_req}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="93" y="127" width="457" height="20" uuid="3063a82c-7f5d-4bbd-b81b-617dbaf142dd"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{requerimentoId}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="5" y="175" width="85" height="20" uuid="dc36a715-c674-45f8-a192-0990f70b16d5"/>
-				<text><![CDATA[Requerente:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="93" y="175" width="457" height="20" uuid="13648bd5-b58b-4a95-85fc-2b3753749e2b"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{nomeRequerente}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="5" y="199" width="85" height="20" uuid="d1d69ecf-7953-4599-bbd3-2f3177b0ab56"/>
-				<text><![CDATA[Matrícula:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="93" y="199" width="457" height="20" uuid="82d5eca8-6d3e-4ecd-89c0-c6438ed46073"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{matriculaRequerente}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="5" y="223" width="85" height="20" uuid="168de8fe-7902-4d9c-abb6-e47c9d5b137c"/>
-				<text><![CDATA[Curso:]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="93" y="223" width="457" height="20" uuid="dd012e01-7f23-43d1-ae0c-064933312b6e"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{nomeCurso}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="6" y="296" width="85" height="20" uuid="06c6f568-76da-415e-b1b1-b90a875a29a0"/>
-				<text><![CDATA[Justificativa:]]></text>
-			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="93" y="296" width="457" height="20" uuid="0ba5bdf1-3bad-41ae-98dc-348793cc113d"/>
-				<textElement>
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{requerimento_justificativa}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="36" y="355" width="100" height="20" uuid="a6fd2999-ad94-4da0-a661-96f596f72e07"/>
-				<text><![CDATA[usuario_telefone_celular]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="136" y="355" width="100" height="20" uuid="1b5ddb72-2ba8-4a88-b699-056c0e29b8ab"/>
-				<textFieldExpression><![CDATA[$F{usuario_telefone_celular}]]></textFieldExpression>
-			</textField>
+			<frame>
+				<reportElement positionType="Float" mode="Opaque" x="0" y="206" width="555" height="23" backcolor="#F9F9F9" uuid="e5c0848d-1c9f-4488-b4a1-3eb2dfa9df32"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Dotted"/>
+					<topPen lineWidth="0.25" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<staticText>
+					<reportElement positionType="Float" x="12" y="0" width="67" height="20" uuid="4f2b64ee-5d42-428b-988b-15613231311b"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<text><![CDATA[Justificativa:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="81" y="0" width="457" height="20" uuid="c77715df-a118-4679-89ac-0504d711fc1a"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font fontName="Calibri" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{requerimento_justificativa}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement x="0" y="0" width="555" height="206" uuid="1949c207-c918-4cd3-b92a-8d92ade82484"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Dotted"/>
+					<topPen lineWidth="0.25" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<staticText>
+					<reportElement positionType="Float" mode="Transparent" x="12" y="71" width="67" height="20" backcolor="#F0F0F0" uuid="ad3d6d94-fa25-4501-be31-94686d352046"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
+						<pen lineWidth="0.0" lineStyle="Dotted"/>
+						<topPen lineWidth="0.0" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.0" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<text><![CDATA[Requerente:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" mode="Transparent" x="12" y="98" width="67" height="20" uuid="8c21c2b4-3ca5-419e-81b5-6433662aa74b"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
+						<pen lineWidth="0.0" lineStyle="Dotted"/>
+						<topPen lineWidth="0.0" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.0" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<text><![CDATA[Matrícula:]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement positionType="Float" x="81" y="174" width="457" height="20" isRemoveLineWhenBlank="true" uuid="08654687-f90f-41e4-afbb-17a2c841d5b7"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.25" lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Calibri" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{dataProvaSegundaChamada}.isEmpty() ? "" : $P{dataProvaSegundaChamada})]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" mode="Transparent" x="81" y="71" width="245" height="20" backcolor="#F0F0F0" uuid="e0d3dca9-034f-4d1e-ac53-6cd463c97585"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.25" lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Calibri" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{nomeRequerente}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="12" y="150" width="136" height="20" isRemoveLineWhenBlank="true" uuid="1bb0faae-0683-4563-a4c0-743708e63549"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{listaDisciplinasAcerto}.isEmpty() ? "" : "Turmas selecionadas:")]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" mode="Transparent" x="81" y="124" width="457" height="20" backcolor="#F0F0F0" uuid="e5ec144f-8807-4e95-b8ea-f3eb3b3878a4"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.25" lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Calibri" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{nomeCurso}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" mode="Transparent" x="12" y="124" width="67" height="20" backcolor="#F0F0F0" uuid="3c858672-957d-4536-8c32-272c88435be0"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
+						<pen lineWidth="0.0" lineStyle="Dotted"/>
+						<topPen lineWidth="0.0" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.0" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<text><![CDATA[Curso:]]></text>
+				</staticText>
+				<rectangle>
+					<reportElement x="0" y="0" width="555" height="20" backcolor="#E3E3E3" uuid="f4ec6fa6-6d33-4111-93f1-065eb7b74fc1"/>
+					<graphicElement>
+						<pen lineColor="#FFFFFF"/>
+					</graphicElement>
+				</rectangle>
+				<textField>
+					<reportElement positionType="Float" mode="Transparent" x="81" y="98" width="457" height="20" backcolor="#F0F0F0" uuid="e269862a-d55d-4ef3-bbed-8b8b6424310d"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.25" lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Calibri" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{matriculaRequerente}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" mode="Opaque" x="81" y="46" width="229" height="20" backcolor="#F0F0F0" uuid="7657dc67-902c-44aa-abf5-eda6f6d07dbe"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.25" lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Calibri" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["#" + $P{requerimentoId}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="12" y="174" width="67" height="20" isRemoveLineWhenBlank="true" uuid="55f2d81b-7338-4153-9a04-729a4918d934"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{dataProvaSegundaChamada}.isEmpty() ? "" : "Data Prova:")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" mode="Transparent" x="12" y="46" width="67" height="20" backcolor="#F0F0F0" uuid="d6dc82c1-eab6-4209-a517-4ddd4f494311"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
+						<pen lineWidth="0.0" lineStyle="Dotted"/>
+						<topPen lineWidth="0.0" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.0" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<text><![CDATA[Número:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="81" y="174" width="456" height="20" isRemoveLineWhenBlank="true" uuid="2523be96-21e4-458d-8571-7b5d991e1f13"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.25" lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Calibri" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{listaDisciplinasAcerto}.isEmpty() ? "" : $P{listaDisciplinasAcerto})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="81" y="150" width="457" height="20" isRemoveLineWhenBlank="true" uuid="ceffc8ea-5327-44c0-9b6b-bf0f9a8ec8ea"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.25" lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Calibri" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{turmaSegundaChamada}.isEmpty() ? "" : $P{turmaSegundaChamada})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="12" y="150" width="67" height="20" isRemoveLineWhenBlank="true" uuid="6989766f-9bf8-4395-b6c1-3fd6ecd71b4b"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{turmaSegundaChamada}.isEmpty() ? "" : "Prova:");]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" mode="Transparent" x="310" y="46" width="63" height="20" uuid="0bcd53bb-7eba-43de-82c9-62ae799c1d08"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
+						<pen lineWidth="0.0" lineStyle="Dotted"/>
+						<topPen lineWidth="0.0" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.0" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<text><![CDATA[Aberto em:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="1" y="1" width="551" height="20" backcolor="#FFFFFF" uuid="0164b8b5-071e-4156-a67c-7b74a086485d"/>
+					<textElement textAlignment="Center">
+						<font fontName="Calibri" size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[COMPROVANTE DE REQUERIMENTO]]></text>
+				</staticText>
+				<textField>
+					<reportElement positionType="Float" mode="Opaque" x="374" y="46" width="164" height="20" backcolor="#F0F0F0" uuid="e0680940-6939-42c4-8fb2-64873dabf46a"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.25" lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Top">
+						<font fontName="Calibri" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{requerimento_data_abertura}.toLocaleString()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement positionType="Float" mode="Transparent" x="374" y="71" width="164" height="20" backcolor="#F0F0F0" uuid="5d026e7c-fe39-4099-bd1e-366a3322569f"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.25" lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Calibri" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{email}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" x="12" y="22" width="525" height="20" uuid="04fa282f-c9af-49c0-b06e-ad63b2f3ac5e"/>
+					<textElement textAlignment="Justified">
+						<font fontName="Calibri" size="10" isBold="false" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Seu requerimento de " + $P{tipoRequerimento} + " foi registrado comos seguintes dados:"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" mode="Transparent" x="330" y="71" width="43" height="20" backcolor="#F0F0F0" uuid="902fe005-0758-423b-9571-80386cdf8ea3"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
+						<pen lineWidth="0.0" lineStyle="Dotted"/>
+						<topPen lineWidth="0.0" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.0" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.0" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<text><![CDATA[E-mail:]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="81" y="174" width="457" height="20" isRemoveLineWhenBlank="true" forecolor="#000000" backcolor="#FFFFFF" uuid="9088860e-b050-455b-8b1c-376034ddca6a"/>
+					<box topPadding="1" leftPadding="2" bottomPadding="1" rightPadding="1">
+						<pen lineWidth="0.25" lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dotted"/>
+						<leftPen lineWidth="0.25" lineStyle="Dotted"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+						<rightPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+						<font fontName="Calibri" size="9" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{listaDisciplinasEmenta}.isEmpty() ? "" : $P{listaDisciplinasEmenta})]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="12" y="150" width="136" height="20" isRemoveLineWhenBlank="true" uuid="05cf1c5a-ab37-43fc-9171-26875441a158"/>
+					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1"/>
+					<textElement verticalAlignment="Bottom">
+						<font fontName="Calibri" size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{listaDisciplinasEmenta}.isEmpty() ? "" : "Disciplinas selecionadas:")]]></textFieldExpression>
+				</textField>
+			</frame>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="44">
+			<textField>
+				<reportElement x="-2" y="5" width="555" height="39" uuid="4b9aea61-bbe2-4110-a0b5-5dc8e473846c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Instituto de Informática (INF) - UFG"
++"\nAlameda Palmeiras, Quadra D, Câmpus Samambaia"
++"\nCaixa Postal 131 - CEP 74001-970 - Goiânia - GO"
++"\nFone: (62) 3521-1181 / Fax: (62) 3521-1182"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="4" width="555" height="1" uuid="24593de0-f7be-4275-9e77-e8097acc1b27"/>
+			</line>
+		</band>
+	</pageFooter>
 </jasperReport>

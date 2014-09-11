@@ -21,9 +21,9 @@ public class ExtratoAcademicoBean {
 
     @ManagedProperty(value = "#{loginBean}")
     private LoginBean loginBean;
-    private String justificativa;  
+    private String justificativa;
     private final MensagensTela mensagemDeTela = new MensagensTela();
-            
+
     public ExtratoAcademicoBean() {
     }
 
@@ -42,31 +42,33 @@ public class ExtratoAcademicoBean {
     public void setJustificativa(String justificativa) {
         this.justificativa = justificativa;
     }
-        
 
-    public String salvar() {            
+    public String salvar() {
         Requerimento requerimento = new RequerimentoExtratoAcademico(loginBean.getUsuario(), this.getJustificativa());
-        requerimento.salvar();
+        if (requerimento.salvar()) {
 
-        List<UsuarioSigera> destinatarios =
-                AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
-                requerimento.getCurso().getId(),
-                loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+            List<UsuarioSigera> destinatarios
+                    = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
+                            requerimento.getCurso().getId(),
+                            loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
 
-        if (loginBean.getConfiguracao().isEnviarEmail()) {
-            GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
-            gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
-            gerenciadorEmail.enviarEmails();
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
+                gerenciadorEmail.enviarEmails();
+            }
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.002", EnumTipoRequerimento.EXTRATO_ACADEMICO.getNome()), Paginas.getDetalheRequerimento());
+            return Paginas.getAbrirRequerimentoID() + requerimento.getId();
         }
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.002", EnumTipoRequerimento.EXTRATO_ACADEMICO.getNome()), Paginas.getDetalheRequerimento());
-        return Paginas.getAbrirRequerimentoID() + requerimento.getId();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.002.Falha", EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getPrincipal());
+        return Paginas.getPrincipal();
     }
 
     public String voltar() {
         return Paginas.getPrincipal();
     }
-    
-     public String prosseguir(){
+
+    public String prosseguir() {
         return Paginas.getExtratoAcademicoFinalizacao();
     }
 }

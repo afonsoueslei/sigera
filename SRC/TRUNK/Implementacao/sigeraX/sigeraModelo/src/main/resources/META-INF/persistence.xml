@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-  <persistence-unit name="br.ufg.inf.sigera" transaction-type="RESOURCE_LOCAL">
-    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <class>br.ufg.inf.sigera.modelo.perfil.Perfil</class>
-    <class>br.ufg.inf.sigera.modelo.perfil.PerfilAdministrador</class>
-    <class>br.ufg.inf.sigera.modelo.perfil.PerfilAluno</class>
-    <class>br.ufg.inf.sigera.modelo.perfil.PerfilCoordenadorCurso</class>
-    <class>br.ufg.inf.sigera.modelo.perfil.PerfilCoordenadorEstagio</class>
-    <class>br.ufg.inf.sigera.modelo.perfil.PerfilCoordenadorGeral</class>
-    <class>br.ufg.inf.sigera.modelo.perfil.PerfilDiretor</class>
-    <class>br.ufg.inf.sigera.modelo.perfil.PerfilProfessor</class>
-    <class>br.ufg.inf.sigera.modelo.perfil.PerfilSecretaria</class>
-    <class>br.ufg.inf.sigera.modelo.perfil.PerfilSecretariaGraduacao</class>
-    <class>br.ufg.inf.sigera.modelo.UsuarioSigera</class>
-    <class>br.ufg.inf.sigera.modelo.Configuracao</class>
-    <class>br.ufg.inf.sigera.modelo.Parecer</class>
-    <class>br.ufg.inf.sigera.modelo.AssociacaoPerfilCurso</class>
-    <class>br.ufg.inf.sigera.modelo.Curso</class>
-    <class>br.ufg.inf.sigera.modelo.Disciplina</class>
-    <class>br.ufg.inf.sigera.modelo.Professor</class>
-    <class>br.ufg.inf.sigera.modelo.Turma</class>
-    <class>br.ufg.inf.sigera.modelo.Unidade</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.Requerimento</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoSegundaChamada</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoDeclaracaoMatricula</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoAssinatura</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoExtratoAcademico</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoEmenta</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoAcrescimoDisciplina</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoCancelamentoDisciplina</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.AssociacaoReqAcrescimoTurma</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.AssociacaoReqCancelamentoTurma</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.Anexo</class>
-    <class>br.ufg.inf.sigera.modelo.ItemCronograma</class>
-    <class>br.ufg.inf.sigera.modelo.Plano</class>
-    <class>br.ufg.inf.sigera.modelo.UsuarioInativo</class>
-    <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano</class>
-    <properties>
-      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-      <!--            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://200.137.197.214:3306/infsis_testes?zeroDateTimeBehavior=convertToNull"/>-->
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/infsis?zeroDateTimeBehavior=convertToNull"/>
-      <property name="javax.persistence.jdbc.user" value="sigera"/>
-      <property name="javax.persistence.jdbc.password" value="sigera"/>
-      <property name="eclipselink.query-results-cache" value="false"/>
-      <property name="eclipselink.logging.level.sql" value="FINE"/>
-      <property name="eclipselink.logging.parameters" value="true"/>
-    </properties>
-  </persistence-unit>
+    <persistence-unit name="br.ufg.inf.sigera" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <class>br.ufg.inf.sigera.modelo.perfil.Perfil</class>
+        <class>br.ufg.inf.sigera.modelo.perfil.PerfilAdministrador</class>
+        <class>br.ufg.inf.sigera.modelo.perfil.PerfilAluno</class>
+        <class>br.ufg.inf.sigera.modelo.perfil.PerfilCoordenadorCurso</class>
+        <class>br.ufg.inf.sigera.modelo.perfil.PerfilCoordenadorEstagio</class>
+        <class>br.ufg.inf.sigera.modelo.perfil.PerfilCoordenadorGeral</class>
+        <class>br.ufg.inf.sigera.modelo.perfil.PerfilDiretor</class>
+        <class>br.ufg.inf.sigera.modelo.perfil.PerfilProfessor</class>
+        <class>br.ufg.inf.sigera.modelo.perfil.PerfilSecretaria</class>
+        <class>br.ufg.inf.sigera.modelo.perfil.PerfilSecretariaGraduacao</class>
+        <class>br.ufg.inf.sigera.modelo.UsuarioSigera</class>
+        <class>br.ufg.inf.sigera.modelo.Configuracao</class>
+        <class>br.ufg.inf.sigera.modelo.Parecer</class>
+        <class>br.ufg.inf.sigera.modelo.AssociacaoPerfilCurso</class>
+        <class>br.ufg.inf.sigera.modelo.Curso</class>
+        <class>br.ufg.inf.sigera.modelo.Disciplina</class>
+        <class>br.ufg.inf.sigera.modelo.Professor</class>
+        <class>br.ufg.inf.sigera.modelo.Turma</class>
+        <class>br.ufg.inf.sigera.modelo.Unidade</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.Requerimento</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoSegundaChamada</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoDeclaracaoMatricula</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoAssinatura</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoExtratoAcademico</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoEmenta</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoAcrescimoDisciplina</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoCancelamentoDisciplina</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.AssociacaoReqAcrescimoTurma</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.AssociacaoReqCancelamentoTurma</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.Anexo</class>
+        <class>br.ufg.inf.sigera.modelo.ItemCronograma</class>
+        <class>br.ufg.inf.sigera.modelo.Plano</class>
+        <class>br.ufg.inf.sigera.modelo.UsuarioInativo</class>
+        <class>br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano</class>
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+            <!--<property name="javax.persistence.jdbc.url" value="jdbc:mysql://200.137.197.214:3306/infsis?zeroDateTimeBehavior=convertToNull"/>-->
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/infsis?zeroDateTimeBehavior=convertToNull"/>
+            <property name="javax.persistence.jdbc.user" value="sigera"/>
+            <property name="javax.persistence.jdbc.password" value="sigera"/>
+            <property name="eclipselink.query-results-cache" value="false"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>                        
+        </properties>
+    </persistence-unit>
 </persistence>

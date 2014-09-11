@@ -14,6 +14,7 @@ import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoSegundaChamada;
 import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
+import br.ufg.inf.sigera.controle.servico.Sessoes;
 import br.ufg.inf.sigera.modelo.Disciplina;
 import br.ufg.inf.sigera.modelo.Plano;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoAcrescimoDisciplina;
@@ -57,10 +58,10 @@ public class DetalheRequerimentoBean {
     private List<TurmaComStatus> turmasComStatus;
     private final MensagensTela mensagemDeTela = new MensagensTela();
     private static final String MT004 = "MT.004";
+    private static final String MT709 = "MT.709";
     //Mostrar número de pedidos aberto por disciplina/turma
     private Integer qtdePedidosAcrescimo;
     private Integer qtdePedidosCancelamento;
-    
 
     public DetalheRequerimentoBean() {
         listaStatus = new ArrayList<EnumStatusRequerimento>();
@@ -71,7 +72,7 @@ public class DetalheRequerimentoBean {
 
     @PostConstruct
     public void init() {
-        obtenhaRequerimento();        
+        obtenhaRequerimento();
         if (requerimento == null || !usuarioPodeVerRequerimento()) {
             redirecioneParaPaginaConsulta();
         }
@@ -87,11 +88,9 @@ public class DetalheRequerimentoBean {
     private void redirecioneParaPaginaConsulta() {
         try {
             ExternalContext contexto = FacesContext.getCurrentInstance().getExternalContext();
-            contexto.redirect("consultar_requerimento.xhtml");           
+            contexto.redirect("consultar_requerimento.xhtml");
         } catch (IOException ex) {
             Logger.getLogger(DetalheRequerimentoBean.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception iex) {
-            Logger.getLogger(DetalheRequerimentoBean.class.getName()).log(Level.SEVERE, null, iex);
         }
     }
 
@@ -205,18 +204,22 @@ public class DetalheRequerimentoBean {
             } catch (NumberFormatException ex) {
                 Logger.getLogger(Requerimento.class.getName()).log(Level.WARNING, "Paramêtro passado não é um número válido.", ex);
             }
-        }                        
-        requerimento = Requerimento.obtenha(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), id);        
+        }
+        requerimento = Requerimento.obtenha(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), id);
     }
 
     public Boolean usuarioPodeVerRequerimento() {
         UsuarioSigera usuarioLogado = loginBean.getUsuario();
-        //somente o próprio usuário, o administrador, o coordenador Geral e aqueles que podem dar parecer podem ver o requerimento
-        return usuarioLogado.getId() == requerimento.getUsuario().getId()
-                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo()
-                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo()
+        return perfilAutorizadoVerRequerimento(usuarioLogado)
                 || requerimento.perfilPermiteDarParecer(usuarioLogado)
                 || requerimento.usuarioPodeConferirDocumentos(usuarioLogado);
+    }
+
+    private Boolean perfilAutorizadoVerRequerimento(UsuarioSigera usuarioLogado) {
+        //somente o próprio usuário, o administrador, o coordenador Geral 
+        return usuarioLogado.getId() == requerimento.getUsuario().getId()
+                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo()
+                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo();
     }
 
     public LoginBean getLoginBean() {
@@ -339,12 +342,12 @@ public class DetalheRequerimentoBean {
                 gerenciadorEmail.enviarEmails();
             }
             //Limpar o bean para atualizar a lista de requerimentos
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
+            Sessoes.limparBeanConsultarRequerimento();
             mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT004), Paginas.getDetalheRequerimento());
             return enderecoRedirecionamento();
         }
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
-        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.709", "REQUERIMENTO"), Paginas.getDetalheRequerimento());
+        Sessoes.limparBeanConsultarRequerimento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
         return Paginas.getConsultarRequerimentos();
     }
 
@@ -361,8 +364,8 @@ public class DetalheRequerimentoBean {
     }
 
     public boolean usuarioPodeConferirDocumentos() {
-        return  this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo() && 
-                this.requerimento.usuarioPodeConferirDocumentos(this.loginBean.getUsuario());
+        return this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()
+                && this.requerimento.usuarioPodeConferirDocumentos(this.loginBean.getUsuario());
     }
 
     public boolean validarConferencia() {
@@ -408,12 +411,12 @@ public class DetalheRequerimentoBean {
                 gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
                 gerenciadorEmail.enviarEmails();
             }
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
+            Sessoes.limparBeanConsultarRequerimento();
             mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.018"), Paginas.getDetalheRequerimento());
             return enderecoRedirecionamento();
         }
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
-        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.709", "REQUERIMENTO"), Paginas.getDetalheRequerimento());
+        Sessoes.limparBeanConsultarRequerimento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
         return Paginas.getConsultarRequerimentos();
     }
 
@@ -426,9 +429,9 @@ public class DetalheRequerimentoBean {
             return false;
         }
 
-        for (TurmaComStatus turma : this.getTurmasComStatus()) {
-            if (turma.getStatus() != EnumStatusRequerimento.DEFERIDO.getCodigo()
-                    && turma.getStatus() != EnumStatusRequerimento.INDEFERIDO.getCodigo()) {
+        for (TurmaComStatus turmaI : this.getTurmasComStatus()) {
+            if (turmaI.getStatus() != EnumStatusRequerimento.DEFERIDO.getCodigo()
+                    && turmaI.getStatus() != EnumStatusRequerimento.INDEFERIDO.getCodigo()) {
                 return false;
             }
         }
@@ -453,12 +456,12 @@ public class DetalheRequerimentoBean {
                 gerenciadorEmail.adicionarEmailParecer(null, requerimento);
                 gerenciadorEmail.enviarEmails();
             }
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
+            Sessoes.limparBeanConsultarRequerimento();
             mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT004), Paginas.getDetalheRequerimento());
             return enderecoRedirecionamento();
         }
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");
-        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.709", "REQUERIMENTO"), Paginas.getDetalheRequerimento());
+        Sessoes.limparBeanConsultarRequerimento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
         return Paginas.getConsultarRequerimentos();
 
     }
@@ -469,8 +472,8 @@ public class DetalheRequerimentoBean {
     }
 
     private int obtenhaStatusParecerAcerto() {
-        for (TurmaComStatus turma : this.getTurmasComStatus()) {
-            if (turma.getStatus() == EnumStatusRequerimento.DEFERIDO.getCodigo()) {
+        for (TurmaComStatus turmaI : this.getTurmasComStatus()) {
+            if (turmaI.getStatus() == EnumStatusRequerimento.DEFERIDO.getCodigo()) {
                 return EnumStatusRequerimento.DEFERIDO.getCodigo();
             }
         }
@@ -541,10 +544,11 @@ public class DetalheRequerimentoBean {
     }
 
     public Boolean requerimentoEhPlano() {
-        if (this.requerimento.getTipo() == EnumTipoRequerimento.PLANO.getCodigo()) {
-            return true;
-        }
-        return false;
+        return this.requerimento.getTipo() == EnumTipoRequerimento.PLANO.getCodigo();
     }
-    
+
+    public void imprimirComprovanteRequerimento() throws IOException {
+        this.requerimento.imprimir(loginBean.getUsuario());
+    }
+        
 }

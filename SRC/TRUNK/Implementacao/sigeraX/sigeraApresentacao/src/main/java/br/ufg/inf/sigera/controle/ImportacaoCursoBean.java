@@ -6,6 +6,8 @@ import br.ufg.inf.sigera.modelo.ImportacaoArquivoCurso;
 import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -46,6 +48,7 @@ public class ImportacaoCursoBean {
             this.dataModel = new CursoImportadoDataModel(getCursosImportados());
         } catch (Exception ie) {
             Paginas.redirecionePaginaErro();
+            Logger.getLogger(ImportacaoCursoBean.class.getName()).log(Level.SEVERE, null, ie);
         }
         return this.dataModel;
     }

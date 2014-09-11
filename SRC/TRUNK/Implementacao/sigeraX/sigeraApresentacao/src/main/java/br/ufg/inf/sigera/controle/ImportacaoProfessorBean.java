@@ -7,6 +7,8 @@ import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
 import br.ufg.inf.sigera.controle.servico.Sessoes;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -50,6 +52,7 @@ public class ImportacaoProfessorBean {
             this.dataModel = new ProfessorImportadoDataModel(getProfessorsImportados());
         } catch (Exception ie) {
             Paginas.redirecionePaginaErro();
+            Logger.getLogger(ImportacaoProfessorBean.class.getName()).log(Level.SEVERE, null, ie);
         }
         return this.dataModel;
     }

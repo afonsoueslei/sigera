@@ -119,6 +119,7 @@ public class UnidadeBean {
                 this.dataModel = new UnidadeDataModel(this.unidadesTela);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                 Logger.getLogger(UnidadeBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModel;

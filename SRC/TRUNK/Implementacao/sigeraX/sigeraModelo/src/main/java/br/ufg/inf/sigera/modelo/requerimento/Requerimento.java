@@ -9,12 +9,23 @@ import br.ufg.inf.sigera.modelo.Turma;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
+import br.ufg.inf.sigera.modelo.servico.Conexoes;
 import br.ufg.inf.sigera.modelo.servico.Persistencia;
+import com.mysql.jdbc.Connection;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.sql.DriverManager;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -34,16 +45,25 @@ import javax.persistence.Persistence;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.util.JRLoader;
 
 @Entity
-
 @Table(name = "requerimento")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "Tipo", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class Requerimento implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)    
     private int id;
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
@@ -186,14 +206,14 @@ public abstract class Requerimento implements Serializable {
         Requerimento req = em.find(Requerimento.class, id);
         if (req != null) {
             req.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(req.getUsuario().getId()));
-        }        
+        }
         return req;
-        
+
     }
 
-    public Boolean salvar() {                
+    public Boolean salvar() {
         EntityManager em = Persistencia.obterManager();
-        if (Persistencia.versaoValida(this)) {            
+        if (Persistencia.versaoValida(this)) {
             em.getTransaction().begin();
             this.setVersao(this.getVersao() + 1);
             if (this.getId() > 0) {
@@ -364,6 +384,119 @@ public abstract class Requerimento implements Serializable {
             System.out.println("Não foi possível criar Entidade de Persistência");
         }
         return null;
+    }
+
+    public void imprimir(UsuarioSigera usuarioAutenticado) throws IOException {
+        Map parametrosImpressao = obterParametrosParaImpressao(usuarioAutenticado);
+
+        FacesContext contexto = FacesContext.getCurrentInstance();
+        ExternalContext contextoExterno = contexto.getExternalContext();
+        HttpServletResponse resp = (HttpServletResponse) contextoExterno.getResponse();
+
+        ServletContext servletContext = (ServletContext) contextoExterno.getContext();
+        String realPath = servletContext.getRealPath("") + "/resources/relatorios";
+        String dataHora = new Date().toString();
+        
+        String caminhoArquivoPDF = Conexoes.getPASTA_PLANOS_DE_AULA() + dataHora+"-REQ-" + String.valueOf(this.id) + "-" + this.getUsuario().getNome().trim() + ".pdf";
+
+        File arquivoPdf = new File(caminhoArquivoPDF);
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Conexoes.lerParametros();
+            Connection conn = (Connection) DriverManager.getConnection(Conexoes.getCONEXAO_BANCO(), Conexoes.getUSUARIO_BANCO(), Conexoes.getCHAVE_BANCO());
+
+            File arquivo = new File(realPath + "/requerimento.jasper");
+
+            JasperReport relatorioJasper = (JasperReport) JRLoader.loadObject(arquivo);
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(relatorioJasper, parametrosImpressao, conn);
+
+            JasperExportManager.exportReportToPdfFile(jasperPrint, caminhoArquivoPDF);
+
+            byte[] bytes = JasperRunManager.runReportToPdf(relatorioJasper, parametrosImpressao);
+            resp.reset();
+            resp.setContentType("application/pdf");
+            resp.setContentLength(bytes.length);
+            resp.setHeader("Content-Disposition", "inline; filename=\"" + arquivoPdf.getName() + "\"");
+            ServletOutputStream ouputStream = resp.getOutputStream();
+            ouputStream.write(bytes, 0, bytes.length);
+            ouputStream.flush();
+            ouputStream.close();
+
+            // Informar ao  JSF que não precisa lidar com a resposta, caso contrário, terá a seguinte exceção nos logs:
+            // java.lang.IllegalStateException: Cannot forward after response has been committed.
+            contexto.responseComplete();
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex);
+        }
+    }
+
+    private Map obterParametrosParaImpressao(UsuarioSigera usuarioAutenticado) {
+        String dataProvaSegundaChamada = null;
+        String turmaSegundaChamada = null;
+        StringBuilder listaDisciplinasAcerto = new StringBuilder();        
+        StringBuilder listaDisciplinasEmenta = new StringBuilder();        
+        Collection<Turma> turmas = null;
+        Collection<Disciplina> disciplinas  = null;
+
+        //Se o requerimento for de ajuste de matricula (Acrescimo / Cancelamento de Disciplinas)
+        if (this instanceof RequerimentoAcrescimoDisciplina) {
+            turmas = ((RequerimentoAcrescimoDisciplina) this).getTurmasAcertoMatricula(usuarioAutenticado.getUsuarioLdap().getBuscadorLdap());
+        }
+        if (this instanceof RequerimentoCancelamentoDisciplina) {
+            turmas = ((RequerimentoCancelamentoDisciplina) this).getTurmasAcertoMatricula(usuarioAutenticado.getUsuarioLdap().getBuscadorLdap());
+        }
+        if (turmas != null && turmas.size() > 0) {
+            for (Turma t : turmas) {
+                listaDisciplinasAcerto.append("* ").append(t.getDisciplina().getNome());
+                listaDisciplinasAcerto.append(" - ").append(t.getProfessor().getNome());
+                listaDisciplinasAcerto.append(" - Turma: [").append(t.getNome()).append("] \n");
+            }
+        }
+        //Se o requerimento for de Segunda Chamada
+        if (this instanceof RequerimentoSegundaChamada) {
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            dataProvaSegundaChamada = dateFormat.format(((RequerimentoSegundaChamada) this).getDataProva());
+            turmaSegundaChamada = ((RequerimentoSegundaChamada) this).getTurma().getDisciplina().getNome() + " - "
+                    + ((RequerimentoSegundaChamada) this).getTurma().getProfessor().getNome() + " - Turma: [ "
+                    + ((RequerimentoSegundaChamada) this).getTurma().getNome() + " ] ";
+        }
+
+        //Se o requerimento for de Ementa de Disciplinas
+        if (this instanceof RequerimentoEmenta) {
+            disciplinas = ((RequerimentoEmenta) this).getDisciplinas();
+        }
+        if (disciplinas != null && disciplinas.size() > 0) {
+            for (Disciplina d : disciplinas) {
+                listaDisciplinasEmenta.append("* ").append(d.getNome());
+                listaDisciplinasEmenta.append(" - ").append(d.getCurso().getNome()).append(" \n");
+            }
+        }
+
+        ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
+        String realPath = servletContext.getRealPath("") + "/resources/relatorios";
+
+        String caminhoImagemSigera = realPath + "/marca-inf.png";
+        String caminhoImagemUFG = realPath + "/marca-ufg.png";
+
+        Map parametros = new HashMap();
+        parametros.put("tipoRequerimento", EnumTipoRequerimento.obtenha(this.tipo).getNome().toUpperCase());
+        parametros.put("status",EnumStatusRequerimento.obtenha(this.status).getNome());
+        parametros.put("requerimentoId", this.id);
+        parametros.put("nomeRequerente", this.getUsuario().getNome().trim());
+        parametros.put("matriculaRequerente", this.getUsuario().getMatricula());
+        parametros.put("nomeCurso", this.getCurso().getNome().trim());
+        parametros.put("caminhoImagemSigera", caminhoImagemSigera);
+        parametros.put("caminhoImagemUFG", caminhoImagemUFG);
+        parametros.put("email", this.getUsuario().getUsuarioLdap().getEmail());
+        parametros.put("dataProvaSegundaChamada", dataProvaSegundaChamada);
+        parametros.put("turmaSegundaChamada", turmaSegundaChamada);
+        parametros.put("listaDisciplinasAcerto", listaDisciplinasAcerto.toString().trim());
+        parametros.put("listaDisciplinasEmenta", listaDisciplinasEmenta.toString().trim());
+
+        return parametros;
     }
 
 }

@@ -20,6 +20,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -146,24 +148,29 @@ public class AcertoMatriculaBean implements Serializable {
             msg = Mensagens.obtenha(MT002, EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getNome());
             requerimentoAcerto = new RequerimentoCancelamentoDisciplina(loginBean.getUsuario(), obtenhaTurmasEscolhidas(), justificativa);
         }
-        
+
         //persiste requerimento no banco                
-        requerimentoAcerto.salvar();
+        if (requerimentoAcerto != null && requerimentoAcerto.salvar()) {
 
-        List<UsuarioSigera> destinatarios
-                = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.COORDENADOR_CURSO.getCodigo(),
-                        requerimentoAcerto.getCurso().getId(),
-                        loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+            List<UsuarioSigera> destinatarios
+                    = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.COORDENADOR_CURSO.getCodigo(),
+                            requerimentoAcerto.getCurso().getId(),
+                            loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
 
-        if (loginBean.getConfiguracao().isEnviarEmail()) {
-            GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
-            gerenciadorEmail.adicionarEmailRequerimento(requerimentoAcerto, destinatarios);
-            gerenciadorEmail.enviarEmails();
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailRequerimento(requerimentoAcerto, destinatarios);
+                gerenciadorEmail.enviarEmails();
+            }
+
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, msg, Paginas.getDetalheRequerimento());
+
+            return Paginas.getAbrirRequerimentoID() + requerimentoAcerto.getId();
         }
-
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, msg, Paginas.getDetalheRequerimento());
-
-        return Paginas.getAbrirRequerimentoID() + requerimentoAcerto.getId();
+        if (requerimentoAcerto != null) {
+            mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.002.Falha", EnumTipoRequerimento.obtenha(requerimentoAcerto.getTipo()).getNome().toUpperCase()), Paginas.getPrincipal());
+        }
+        return Paginas.getPrincipal();
     }
 
     public void remover() {
@@ -192,6 +199,7 @@ public class AcertoMatriculaBean implements Serializable {
                 this.dataModelTurmas = new TurmaDataModel(this.turmasTela);
             } catch (ExceptionInInitializerError ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(AcertoMatriculaBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModelTurmas;
@@ -207,6 +215,7 @@ public class AcertoMatriculaBean implements Serializable {
                 this.dataModelEscolhidas = new TurmaDataModel(listaEscolhidas);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(AcertoMatriculaBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
 

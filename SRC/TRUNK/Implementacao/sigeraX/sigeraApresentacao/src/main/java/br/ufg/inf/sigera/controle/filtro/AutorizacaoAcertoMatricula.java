@@ -8,16 +8,9 @@ import java.util.logging.Logger;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class AutorizacaoAcertoMatricula implements Filter {
+public class AutorizacaoAcertoMatricula extends FiltroUrlBase {
 
-    
-
-    @Override
-    public void init(FilterConfig config) throws ServletException {
-        // TODO
-    }
-
-    @Override
+    @Override    
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) {
         try {
             HttpServletRequest request = (HttpServletRequest) req;
@@ -39,8 +32,4 @@ public class AutorizacaoAcertoMatricula implements Filter {
         }
     }
 
-    @Override
-    public void destroy() {
-        // TODO implementação de filter exigir sobrescrever metodo destroy
-    }
 }
