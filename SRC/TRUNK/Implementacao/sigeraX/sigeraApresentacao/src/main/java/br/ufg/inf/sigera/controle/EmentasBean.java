@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -97,20 +99,24 @@ public class EmentasBean implements Serializable {
         }
 
         Requerimento requerimento = new RequerimentoEmenta(loginBean.getUsuario(), obtenhaDisciplinasEscolhidas(), this.getJustificativa());
-        requerimento.salvar();
 
-        List<UsuarioSigera> destinatarios
-                = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
-                        requerimento.getCurso().getId(),
-                        loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+        if (requerimento.salvar()) {
 
-        if (loginBean.getConfiguracao().isEnviarEmail()) {
-            GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
-            gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
-            gerenciadorEmail.enviarEmails();
+            List<UsuarioSigera> destinatarios
+                    = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
+                            requerimento.getCurso().getId(),
+                            loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
+                gerenciadorEmail.enviarEmails();
+            }
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.002", EnumTipoRequerimento.EMENTAS.getNome()), Paginas.getEmentas());
+            return Paginas.getAbrirRequerimentoID() + requerimento.getId();
         }
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.002", EnumTipoRequerimento.EMENTAS.getNome()), Paginas.getEmentas());
-        return Paginas.getAbrirRequerimentoID() + requerimento.getId();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.002.Falha", EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getPrincipal());
+        return Paginas.getPrincipal();
     }
 
     public void remover() {
@@ -134,6 +140,7 @@ public class EmentasBean implements Serializable {
                 this.dataModelDisciplinas = new DisciplinaDataModel(this.disciplinasTela);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(EmentasBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModelDisciplinas;
@@ -149,6 +156,8 @@ public class EmentasBean implements Serializable {
                 this.dataModelEscolhidas = new DisciplinaDataModel(listaEscolhidas);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(EmentasBean.class.getName()).log(Level.SEVERE, null, ie);
+
             }
         }
         disciplinasEscolhidasDesatualizadasNaTela = false;

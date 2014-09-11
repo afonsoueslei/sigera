@@ -7,12 +7,7 @@ import java.util.logging.Logger;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class AutorizacaoFazerRequerimento implements Filter {
-
-    @Override
-    public void init(FilterConfig config) throws ServletException {    
-        // TODO
-    }
+public class AutorizacaoFazerRequerimento extends FiltroUrlBase {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) {
@@ -34,8 +29,4 @@ public class AutorizacaoFazerRequerimento implements Filter {
         }
     }
 
-    @Override
-    public void destroy() {
-        //TODO implementação de filter exigir sobrescrever metodo destroy
-    }
 }

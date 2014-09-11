@@ -10,7 +10,6 @@ import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.ldap.EnumGrupo;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
 import br.ufg.inf.sigera.modelo.perfil.GerenciadorPerfil;
-import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.servico.SenhaAleatoria;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -80,15 +79,9 @@ public class EditarPerfilBean implements Serializable {
     }
 
     public UsuarioSigera getUsuarioEdicao() {
-        String uid = null;
         Integer uidInteiro;
         try {
-            uid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("uid");
-        } catch (Exception ex) {
-            Logger.getLogger(Requerimento.class.getName()).log(Level.WARNING, "Paramêtro não pode ser recuperado", ex);
-        }
-
-        try {
+            String uid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("uid");
             uidInteiro = Integer.parseInt(uid);
         } catch (NumberFormatException nfe) {
             uidInteiro = loginBean.getUsuario().getId();
@@ -96,13 +89,14 @@ public class EditarPerfilBean implements Serializable {
         }
 
         //verifica se o usuário tem permissão para editar o usuario passado como parametro (uid)
-        if (loginBean.getUsuario().getPerfilAtual().getPerfil().permiteManterUsuarios() || loginBean.getUsuario().getId() == uidInteiro) {
-
-            if ((uid != null) && (this.usuarioEdicao == null || this.usuarioEdicao.getId() != uidInteiro)) {
-                construirUsuarioEdicao(uidInteiro);
-            }
+        if (loginBean.getUsuario().getPerfilAtual().getPerfil().permiteManterUsuarios()) {
+            construirUsuarioEdicao(uidInteiro);
+        }else{
+            this.setUsuarioEdicao(loginBean.getUsuario());
         }
+
         return this.usuarioEdicao;
+
     }
 
     public void setUsuarioEdicao(UsuarioSigera usuarioEdicao) {
@@ -170,7 +164,7 @@ public class EditarPerfilBean implements Serializable {
                 }
 
                 usuarioEditado.setUsuarioLdap(usuarioLdap);
-                if (usuarioLdap.getGrupo().equals(EnumGrupo.ALUNO) && usuarioEditado.getPerfis().isEmpty() ) {
+                if (usuarioLdap.getGrupo().equals(EnumGrupo.ALUNO) && usuarioEditado.getPerfis().isEmpty()) {
                     Collection<AssociacaoPerfilCurso> perfis = new ArrayList<AssociacaoPerfilCurso>();
                     AssociacaoPerfilCurso perfilEstudante = GerenciadorPerfil.criePerfilAluno(usuarioEditado);
                     perfis.add(perfilEstudante);
@@ -193,10 +187,7 @@ public class EditarPerfilBean implements Serializable {
     }
 
     public boolean isAluno() {
-        if (this.usuarioEdicao.getUsuarioLdap().getGrupo() == EnumGrupo.ALUNO) {
-            return true;
-        }
-        return false;
+        return this.usuarioEdicao.getUsuarioLdap().getGrupo() == EnumGrupo.ALUNO;
     }
 
     public boolean temEmailAlternativo() {

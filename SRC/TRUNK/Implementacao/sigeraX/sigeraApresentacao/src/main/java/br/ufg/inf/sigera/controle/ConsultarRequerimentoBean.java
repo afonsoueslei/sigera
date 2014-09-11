@@ -3,7 +3,6 @@ package br.ufg.inf.sigera.controle;
 import br.ufg.inf.sigera.controle.datamodels.RequerimentoTelaConsultaDataModel;
 import br.ufg.inf.sigera.controle.tela.RequerimentoTelaConsulta;
 import br.ufg.inf.sigera.controle.adaptador.AdaptadorRequerimentoTelaConsulta;
-import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
 import br.ufg.inf.sigera.modelo.requerimento.EnumStatusRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.EnumTipoRequerimento;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
@@ -100,6 +98,7 @@ public class ConsultarRequerimentoBean {
                 this.dataModel = new RequerimentoTelaConsultaDataModel(this.requerimentosTela);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(ConsultarRequerimentoBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModel;

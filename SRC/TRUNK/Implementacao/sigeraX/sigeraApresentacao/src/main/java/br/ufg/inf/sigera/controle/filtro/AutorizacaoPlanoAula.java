@@ -7,12 +7,7 @@ import java.util.logging.Logger;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-public class AutorizacaoPlanoAula implements Filter {
-
-    @Override
-    public void init(FilterConfig config) throws ServletException {    
-        // TODO
-    }
+public class AutorizacaoPlanoAula extends FiltroUrlBase {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) {
@@ -32,10 +27,5 @@ public class AutorizacaoPlanoAula implements Filter {
         } catch (ServletException sEx) {
             Logger.getLogger(AutorizacaoPlanoAula.class.getName()).log(Level.SEVERE, null, sEx);
         }
-    }
-
-    @Override
-    public void destroy() {
-        //TODO implementação de filter exigir sobrescrever metodo destroy
     }
 }

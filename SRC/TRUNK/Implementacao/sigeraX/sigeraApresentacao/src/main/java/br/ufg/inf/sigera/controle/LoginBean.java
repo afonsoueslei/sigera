@@ -167,8 +167,8 @@ public class LoginBean {
             this.usuario = UsuarioSigera.obtenhaUsuarioSigera(this.usuario.getId());
             this.usuario.setUltimoAcesso(new Date());
             this.usuario.salvar();
-        }
-        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        }                
+        Sessoes.invalidarSessoes();        
         return Paginas.getLogin();
     }
 
@@ -194,41 +194,46 @@ public class LoginBean {
 
     public String loginComSucesso() {
         this.configuracao = Configuracao.carregar();
+        
         //se for primeiro acesso ou não tem e-mail alternativo cadastrado
         if (this.getUsuario().getPrimeiroAcesso() == null || this.getUsuario().getUsuarioLdap().getEmailAternativo().isEmpty()) {
             mensagemDeTela.criar(FacesMessage.SEVERITY_WARN, Mensagens.obtenha("MT.708"), Paginas.getEditarPerfil());
             redirecionePaginaEditarPerfil();
-        } else {
-
-            // Redireciona o usuário para a URL que ele estava tentando acessar originalmente (se for o caso).
-            try {
-                ExternalContext contexto = FacesContext.getCurrentInstance().getExternalContext();
-
-                Object objUrlOriginal = contexto.getSessionMap().get(URL_ORIGINAL);
-                if (objUrlOriginal != null) {
-                    String urlOriginal = (String) objUrlOriginal;
-                    if (urlOriginal.trim().isEmpty()) {
-                        contexto.getSessionMap().put(URL_ORIGINAL, null);
-                        contexto.redirect(urlOriginal);
-                    }
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(LoginBean.class.getName()).log(Level.WARNING, null, ex);
-            }
-
-            //Se o perfil do usuário for de secretario(a) de curso ou de Graduação, de Coordenador de Estagio ou de Diretor
-            //então já abri direto na página de consultar requerimentos.
-            if (this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA.getCodigo()
-                    || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA_GRADUACAO.getCodigo()
-                    || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_ESTAGIO.getCodigo()
-                    || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.DIRETOR.getCodigo()) {
-                return Paginas.getConsultarRequerimentos();
-            }
         }
-        // Por padrão, se o usuário não estava tentando acessar outra página diretamente,
-        // após o login ele é redirecionado para a página principal da aplicação.        
+
+        // Redireciona o usuário para a URL que ele estava tentando acessar originalmente (se for o caso).
+        redirecionePaginaURLInformada();
+
+        //Se o perfil do usuário = secretario(a) de curso ou de Graduação, Coordenador de Estagio 
+        //ou de Diretor abri direto na página de consultar requerimentos.
+        if (redirecionePaginaConsultarRequerimentos()) {
+            return Paginas.getConsultarRequerimentos();
+        }
+
+        // Por padrão, o usuário é redirecionado para a página principal da aplicação.        
         return Paginas.getPrincipal();
 
+    }
+
+    private void redirecionePaginaURLInformada() {
+        // Redireciona o usuário para a URL que ele estava tentando acessar originalmente (se for o caso).
+        try {
+            ExternalContext contexto = FacesContext.getCurrentInstance().getExternalContext();
+            Object objUrlOriginal = contexto.getSessionMap().get(URL_ORIGINAL);
+            if (objUrlOriginal != null && !(objUrlOriginal.toString().trim().isEmpty())) {
+                contexto.getSessionMap().put(URL_ORIGINAL, null);
+                contexto.redirect(objUrlOriginal.toString().trim());
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(LoginBean.class.getName()).log(Level.WARNING, null, ex);
+        }
+    }
+
+    private boolean redirecionePaginaConsultarRequerimentos() {
+        return this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA.getCodigo()
+                || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA_GRADUACAO.getCodigo()
+                || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_ESTAGIO.getCodigo()
+                || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.DIRETOR.getCodigo();
     }
 
     public String cancelar() {

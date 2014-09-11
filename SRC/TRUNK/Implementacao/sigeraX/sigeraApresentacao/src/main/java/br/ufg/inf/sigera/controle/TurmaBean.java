@@ -203,6 +203,7 @@ public class TurmaBean {
                 this.dataModel = new TurmaDataModel(this.turmasTela);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(TurmaBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModel;

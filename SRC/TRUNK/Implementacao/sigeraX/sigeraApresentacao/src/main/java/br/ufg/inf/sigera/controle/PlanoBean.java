@@ -23,8 +23,9 @@ import br.ufg.inf.sigera.controle.servico.Sessoes;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -174,6 +175,7 @@ public class PlanoBean implements Serializable {
             this.dataModelPlanos = new PlanoDataModel(this.planosTela);
         } catch (Exception ie) {
             Paginas.redirecionePaginaErro();
+            Logger.getLogger(PlanoBean.class.getName()).log(Level.SEVERE, null, ie);
         }
         return dataModelPlanos;
     }
@@ -197,6 +199,7 @@ public class PlanoBean implements Serializable {
                 dataModelTurmasSemPlano = new TurmaDataModel(turmasTela);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(PlanoBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModelTurmasSemPlano;

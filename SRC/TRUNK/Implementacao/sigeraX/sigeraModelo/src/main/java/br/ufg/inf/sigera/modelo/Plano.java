@@ -12,10 +12,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.persistence.CascadeType;
@@ -36,6 +40,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -363,8 +368,9 @@ public class Plano implements Serializable, Comparable<Plano> {
 
         ServletContext servletContext = (ServletContext) contextoExterno.getContext();
         String realPath = servletContext.getRealPath("") + "/resources/relatorios";
+        String dataHora = new Date().toString();
 
-        String caminhoArquivoPDF = Conexoes.getPASTA_PLANOS_DE_AULA() + planoId + "-" + nomeProfessor.trim() + ".pdf";
+        String caminhoArquivoPDF = Conexoes.getPASTA_PLANOS_DE_AULA() + dataHora+"-PLA-"+planoId + "-" + nomeProfessor.trim() + ".pdf";
 
         File arquivoPdf = new File(caminhoArquivoPDF);
         BufferedInputStream input = null;
@@ -410,8 +416,13 @@ public class Plano implements Serializable, Comparable<Plano> {
             // java.lang.IllegalStateException: Cannot forward after response has been committed.
             contexto.responseComplete();
 
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Plano.class.getName()).log(Level.WARNING, "Impossível conectar ao driver JDBC do Mysql!", ex);
+        }catch(SQLException sqlex){
+            Logger.getLogger(Plano.class.getName()).log(Level.WARNING, "Impossível obter coneção como banco!", sqlex);            
+        }catch(JRException jrex){
+            Logger.getLogger(Plano.class.getName()).log(Level.WARNING, "Erro ao criar objeto JasperReport", jrex);
         }
+        
     }
 }

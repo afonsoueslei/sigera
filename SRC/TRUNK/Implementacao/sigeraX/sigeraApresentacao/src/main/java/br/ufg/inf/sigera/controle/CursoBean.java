@@ -145,6 +145,7 @@ public class CursoBean {
                 this.dataModel = new CursoDataModel(this.cursosTela);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
+                Logger.getLogger(CursoBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModel;

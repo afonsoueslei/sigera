@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
@@ -27,6 +29,7 @@ import org.eclipse.persistence.annotations.PrivateOwned;
 
 @Entity(name = "UsuarioSigera")
 @Table(name = "usuario")
+@DiscriminatorColumn(name = "Tipo", discriminatorType = DiscriminatorType.INTEGER)
 public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
 
     @Id
@@ -56,7 +59,7 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     private UsuarioLdap usuarioLdap;
 
     public UsuarioSigera() {
-    }   
+    }
 
     public String getTelefoneCelular() {
         return telefoneCelular;
@@ -174,9 +177,9 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
         em.merge(this);
 
         em.getTransaction().commit();
-        
+
         em.close();
-        
+
     }
 
     private void tratePerfilProfessor(EntityManager em) {

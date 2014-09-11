@@ -509,6 +509,8 @@
                                 </h:commandLink>
                             </h:panelGroup>            
 
+                            <h:commandLink styleClass="btn btn-inverse botao-com-margem-direita" value="Imprimir comprovante" action="#{detalheRequerimentoBean.imprimirComprovanteRequerimento()}" target="_blank" immediate="true"/>
+                            
                             <h:commandButton styleClass="btn btn-primary botao-com-margem-direita" value="Voltar à lista de requerimentos" action="#{detalheRequerimentoBean.voltarLista}" /> 
 
                             <h:panelGroup rendered="#{detalheRequerimentoBean.usuarioPodeCancelar()}">
@@ -518,9 +520,9 @@
                             </h:panelGroup>
 
 
+                            <h:commandButton styleClass="btn botao-com-margem-direita" value="Voltar à página inicial" action="#{detalheRequerimentoBean.voltar}" /> 
 
 
-                            <h:commandButton styleClass="btn" value="Voltar à página inicial" action="#{detalheRequerimentoBean.voltar}" /> 
                         </div>  
 
                     </h:panelGroup>

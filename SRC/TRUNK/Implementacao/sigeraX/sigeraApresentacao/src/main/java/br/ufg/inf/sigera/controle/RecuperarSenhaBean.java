@@ -53,7 +53,7 @@ public class RecuperarSenhaBean {
         AutenticacaoLdap autenticador = new AutenticacaoLdap();
 
         Conexoes.lerParametros();
-        UsuarioLdap userLdap = autenticador.efetuaLogin("administrator", Conexoes.getKEY_ADMIN());
+        UsuarioLdap userLdap = autenticador.efetuaLogin(Conexoes.getUSER_ADMIN(), Conexoes.getKEY_ADMIN());
         UsuarioLdap userEmail = userLdap.getBuscadorLdap().obtenhaUsuarioLdap(login);
 
         if (userEmail != null) {

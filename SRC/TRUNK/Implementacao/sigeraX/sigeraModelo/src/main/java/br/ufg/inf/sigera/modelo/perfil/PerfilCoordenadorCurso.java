@@ -86,8 +86,7 @@ public class PerfilCoordenadorCurso extends Perfil {
 
         for (Requerimento r : requerimentos) {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
-            RequerimentoPlano r1 = null;
-            r1 = RequerimentoPlano.obtenhaRequerimentoPlano(buscadorLdap, r.getId());
+            RequerimentoPlano r1 = RequerimentoPlano.obtenhaRequerimentoPlano(buscadorLdap, r.getId());
             if (r1 != null) {
                 if (r1.getPlano().getTurma().getDisciplina().getCurso().getId() == idCurso) {
                     requerimentos2.add(r);

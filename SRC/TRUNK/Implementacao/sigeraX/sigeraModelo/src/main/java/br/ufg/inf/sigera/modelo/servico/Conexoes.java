@@ -28,6 +28,7 @@ public class Conexoes {
     private static String CHAVE_BANCO;
     private static String PATH_ADMIN;
     private static String KEY_ADMIN;
+    private static String USER_ADMIN;
     private static String INITIAL_CTX;
     private static String SERVIDOR_LDAP;
     private static String SEARCHBASE;
@@ -69,6 +70,7 @@ public class Conexoes {
         Conexoes.setCHAVE_BANCO(prop.getProperty("CHAVE_BANCO"));
         Conexoes.setPATH_ADMIN(prop.getProperty("PATH_ADMIN"));
         Conexoes.setKEY_ADMIN(prop.getProperty("KEY_ADMIN"));
+        Conexoes.setUSER_ADMIN(prop.getProperty("USER_ADMIN"));
         Conexoes.setCONEXAO_BANCO(SERVIDOR_BANCO + PORTA_BANCO + NOME_BANCO);
         Conexoes.setINITIAL_CTX(prop.getProperty("INITIAL_CTX"));
         Conexoes.setSERVIDOR_LDAP(prop.getProperty("SERVIDOR_LDAP"));
@@ -110,6 +112,10 @@ public class Conexoes {
 
     public static void setKEY_ADMIN(String KEY_ADMIN) {
         Conexoes.KEY_ADMIN = KEY_ADMIN;
+    }
+
+    public static void setUSER_ADMIN(String USER_ADMIN) {
+        Conexoes.USER_ADMIN = USER_ADMIN;
     }
 
     public static void setINITIAL_CTX(String INITIAL_CTX) {
@@ -171,6 +177,10 @@ public class Conexoes {
 
     public static String getKEY_ADMIN() {
         return KEY_ADMIN;
+    }
+    
+    public static String getUSER_ADMIN() {
+        return USER_ADMIN;
     }
 
     public static String getINITIAL_CTX() {

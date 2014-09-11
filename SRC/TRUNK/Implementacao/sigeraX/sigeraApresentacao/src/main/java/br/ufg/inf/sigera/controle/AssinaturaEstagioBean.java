@@ -23,7 +23,7 @@ public class AssinaturaEstagioBean {
     private LoginBean loginBean;
     private String justificativa;
     private final MensagensTela mensagemDeTela = new MensagensTela();
-           
+
     public AssinaturaEstagioBean() {
     }
 
@@ -42,33 +42,35 @@ public class AssinaturaEstagioBean {
     public void setJustificativa(String justificativa) {
         this.justificativa = justificativa;
     }
-    
 
     public String salvar() {
         Requerimento requerimento = new RequerimentoAssinatura(loginBean.getUsuario(), this.getJustificativa());
-        requerimento.salvar();
 
-        List<UsuarioSigera> destinatarios =
-                AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
-                requerimento.getCurso().getId(),
-                loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+        if (requerimento.salvar()) {
 
-        if (loginBean.getConfiguracao().isEnviarEmail()) {            
-            GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
-            gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
-            gerenciadorEmail.enviarEmails();
+            List<UsuarioSigera> destinatarios
+                    = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
+                            requerimento.getCurso().getId(),
+                            loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
+                gerenciadorEmail.enviarEmails();
+            }
+
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.002", EnumTipoRequerimento.ASSINATURA.getNome()), Paginas.getDetalheRequerimento());
+
+            return Paginas.getAbrirRequerimentoID() + requerimento.getId();
         }
-        
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.002", EnumTipoRequerimento.ASSINATURA.getNome()), Paginas.getDetalheRequerimento());
-
-        return Paginas.getAbrirRequerimentoID() + requerimento.getId();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.002.Falha", EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getPrincipal());
+        return Paginas.getPrincipal();
     }
-    
 
     public String voltar() {
         return Paginas.getPrincipal();
     }
-    
+
     public String prosseguir() {
         return Paginas.getAssinaturaFinalizacao();
     }

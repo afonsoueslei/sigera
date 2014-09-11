@@ -6,10 +6,10 @@ import java.util.Map;
 
 public enum EnumStatusRequerimento {
     ABERTO(1, "Aberto"),
-    DEFERIDO(2, "Deferido"),
+    CONFERIDO(2,"Conferido"),    
     INDEFERIDO(3, "Indeferido"),
     CANCELADO(4,"Cancelado"),
-    CONFERIDO(5,"Conferido"),
+    DEFERIDO(5, "Deferido"),
     CONCLUIDO(6,"Concluído"); //Quando um plano foi concluído pelo professor.
     
     private int codigo;

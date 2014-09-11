@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="usuario/template/template_login.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:define name="conteudo">        
+
+
+        <div id ="cabecalho-ajuda" style="text-align: center; margin-top:-70px; color:#000099 ">
+
+            <img src="#{request.contextPath}/resources/img/paginaErro.png" alt="Página não encontrada!" /> 
+            <br/><br/>
+
+            <h:outputLabel style="margin-left: 15%; margin-right: 15%; font-weight: bold" value="Isso pode ter ocorrido por falha de conexão com algum de nossos servidores ou a página que está tentando acessar não existe ou você não tem autorização para acessar a página requisitada."/>
+
+            <br/><h4> O que você deseja fazer? </h4>
+            <br/>
+            <h:form >                    
+                <h:commandButton styleClass="btn btn-primary botao-req-documento" value="Sair do Sigera" action="#{loginBean.logout()}" />
+                <h:commandButton styleClass="btn" value="Voltar à página inicial" action="#{loginBean.voltarPaginaPrincipal()}" />   
+            </h:form>     
+        </div>
+    </ui:define>                
+</ui:composition>
