@@ -39,7 +39,6 @@ import javax.persistence.TableGenerator;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.JOptionPane;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -368,7 +367,7 @@ public class Plano implements Serializable, Comparable<Plano> {
 
         ServletContext servletContext = (ServletContext) contextoExterno.getContext();
         String realPath = servletContext.getRealPath("") + "/resources/relatorios";
-        String dataHora = new Date().toString();
+        String dataHora = Long.toString(new Date().getTime());
 
         String caminhoArquivoPDF = Conexoes.getPASTA_PLANOS_DE_AULA() + dataHora+"-PLA-"+planoId + "-" + nomeProfessor.trim() + ".pdf";
 
@@ -425,4 +424,5 @@ public class Plano implements Serializable, Comparable<Plano> {
         }
         
     }
+       
 }

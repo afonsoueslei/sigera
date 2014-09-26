@@ -28,7 +28,7 @@
                                                var="p"
                                                itemLabel="#{p.nome}"
                                                itemValue="#{p.id}"/>
-                                <f:ajax event="change" render="cursos" />
+                                <f:ajax event="change" render="cursos orientadores" />
                             </h:selectOneMenu>
 
                             <h:outputLabel styleClass="label-selecione-perfil" for="cursos" value="Curso:" />
@@ -38,8 +38,20 @@
                                                var="c"                                           
                                                itemLabel="#{c.nome}"
                                                itemValue="#{c.id}"/>                            
+                                    <f:ajax event="change" render="orientadores" />
                             </h:selectOneMenu>
 
+                            <h:outputLabel styleClass="label-selecione-perfil" for="orientadores" value="Orientador:" />
+                            <h:selectOneMenu styleClass="selecao-perfil" id="orientadores"  
+                                             value="#{atribuirPerfilBean.codigoOrientador}" 
+                                             disabled="#{!atribuirPerfilBean.selecaoOrientadoresHabilitada}">
+                                <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                <f:selectItems value="#{atribuirPerfilBean.listaOrientadores}" 
+                                               var="ori"
+                                               itemLabel="#{ori.nome}"
+                                               itemValue="#{ori.id}"/>                            
+                            </h:selectOneMenu>
+                            
                             <h:commandButton styleClass="btn btn-success botao-margem-direita" value="Atribuir perfil" action="#{atribuirPerfilBean.definirPerfilSelecionados(true)}" />
                             <h:commandButton styleClass="btn btn-inverse" value="Remover perfil" action="#{atribuirPerfilBean.definirPerfilSelecionados(false)}" />
                         </div>
@@ -84,7 +96,7 @@
                                 <f:facet name="header">  
                                     <h:outputText value="Aluno" styleClass="cabecalho-atribuir-perfil" />
                                 </f:facet>
-                                <h:outputText value="#{usuario.descricaoAluno}" title="#{usuario.nomeCursoAluno}" id="output-aluno" styleClass="#{usuario.aluno ? 'destacar-perfil' : 'conteudo-tabela-atribuir-perfil'}"/>
+                                <h:outputText value="#{usuario.descricaoAluno}" title="#{usuario.nomeCursoAluno}" id="output-aluno" styleClass="#{usuario.aluno or usuario.alunoStrictoSensu? 'destacar-perfil' : 'conteudo-tabela-atribuir-perfil'}"/>
                             </p:column>
 
                             <p:column sortBy="#{usuario.descricaoCoordenadorCurso}" styleClass="centralizar-texto"

@@ -13,7 +13,8 @@ public enum EnumPerfil {
     SECRETARIA(6, "Secretário(a) de Curso"),
     DIRETOR(7, "Diretor"),
     SECRETARIA_GRADUACAO(8, "Secretário(a) de Graduação"),
-    COORDENADOR_GERAL(9, "Coordenador Geral");
+    COORDENADOR_GERAL(9, "Coordenador Geral"),
+    ALUNO_POS_STRICTO_SENSU(21, "Aluno Pós Stricto Sensu");
     
     private int codigo;
     private String nome;

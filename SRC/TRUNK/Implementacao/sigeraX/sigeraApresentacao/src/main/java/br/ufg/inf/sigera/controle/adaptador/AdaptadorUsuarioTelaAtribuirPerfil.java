@@ -3,6 +3,7 @@ package br.ufg.inf.sigera.controle.adaptador;
 import br.ufg.inf.sigera.controle.tela.UsuarioTelaAtribuirPerfil;
 import br.ufg.inf.sigera.modelo.AssociacaoPerfilCurso;
 import br.ufg.inf.sigera.modelo.Curso;
+import br.ufg.inf.sigera.modelo.Professor;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.perfil.Perfil;
@@ -23,6 +24,7 @@ public class AdaptadorUsuarioTelaAtribuirPerfil implements UsuarioTelaAtribuirPe
     private boolean teveAlteracoes;
     private String primeiroAcessoParaFiltro;
     private String ultimoAcessoParaFiltro;
+    private static final String NCA = "Nenhum curso associado.";
 
     public AdaptadorUsuarioTelaAtribuirPerfil(UsuarioSigera usuario) {
         this.usuario = usuario;
@@ -31,6 +33,7 @@ public class AdaptadorUsuarioTelaAtribuirPerfil implements UsuarioTelaAtribuirPe
 
         modifiqueInformacaoPerfil(EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo(), null, false);
         modifiqueInformacaoPerfil(EnumPerfil.ALUNO.getCodigo(), null, false);
+        modifiqueInformacaoPerfil(EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo(), null, false);
         modifiqueInformacaoPerfil(EnumPerfil.COORDENADOR_CURSO.getCodigo(), null, false);
         modifiqueInformacaoPerfil(EnumPerfil.COORDENADOR_ESTAGIO.getCodigo(), null, false);
         modifiqueInformacaoPerfil(EnumPerfil.COORDENADOR_GERAL.getCodigo(), null, false);
@@ -131,25 +134,28 @@ public class AdaptadorUsuarioTelaAtribuirPerfil implements UsuarioTelaAtribuirPe
     }
 
     @Override
-    public void modificarPerfil(Perfil perfilModificado, Curso cursoAssociado, boolean concederPerfil) {
+    public void modificarPerfil(Perfil perfilModificado, Curso cursoAssociado, Professor orientadorAssociado, boolean concederPerfil) {
         int codigoPerfil = perfilModificado.getId();
         AssociacaoPerfilCurso infoPerfil = obtenhaAssociacaoPerfilCurso(codigoPerfil);
 
-        //Caso por engano perfil ser definido com secretario do mestrado ou doutorado entao modifica para secretario pos
-        if (cursoAssociado != null && ("msc".equalsIgnoreCase(cursoAssociado.getPrefixo()) || "dsc".equalsIgnoreCase(cursoAssociado.getPrefixo()))) {
-            cursoAssociado = Curso.obtenhaCursoPorPrefixo("POS");
-        }
-
+        //se o perfil exigi curso associado e foi setado ou alterado esse curso
         if (possuiPerfil(codigoPerfil) != concederPerfil
                 || (concederPerfil && (AssociacaoPerfilCurso.perfilExigeCursoAssociado(perfilModificado)
                 && (infoPerfil.getCurso().getId() != cursoAssociado.getId())))) {
             this.teveAlteracoes = true;
         }
+        //se o perfil exigi orientador associado e foi setado ou alterado esse orientador
+        if (possuiPerfil(codigoPerfil) != concederPerfil
+                || (concederPerfil && (AssociacaoPerfilCurso.perfilExigeOrientador(perfilModificado)
+                && (infoPerfil.getOrientador().getId() != orientadorAssociado.getId())))) {
+            this.teveAlteracoes = true;
+        }
 
         if (infoPerfil != null) {
             infoPerfil.setCurso(cursoAssociado);
+            infoPerfil.setOrientador(orientadorAssociado);
         } else {
-            infoPerfil = new AssociacaoPerfilCurso(perfilModificado, cursoAssociado, usuario);
+            infoPerfil = new AssociacaoPerfilCurso(perfilModificado, cursoAssociado, orientadorAssociado, usuario);
         }
 
         modifiqueInformacaoPerfil(codigoPerfil, infoPerfil, concederPerfil);
@@ -189,6 +195,9 @@ public class AdaptadorUsuarioTelaAtribuirPerfil implements UsuarioTelaAtribuirPe
 
     @Override
     public String getDescricaoAluno() {
+        if (getDescricaoPerfil(EnumPerfil.ALUNO.getCodigo()).equalsIgnoreCase("Não")) {
+            return getDescricaoPerfil(EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
+        }
         return getDescricaoPerfil(EnumPerfil.ALUNO.getCodigo());
     }
 
@@ -238,12 +247,16 @@ public class AdaptadorUsuarioTelaAtribuirPerfil implements UsuarioTelaAtribuirPe
         if (possuiPerfil(codigoPerfil)) {
             return obtenhaAssociacaoPerfilCurso(codigoPerfil).getCurso().getNome();
         } else {
-            return "Nenhum curso associado.";
+            return NCA;
         }
     }
 
     @Override
     public String getNomeCursoAluno() {
+
+        if (getNomeCurso(EnumPerfil.ALUNO.getCodigo()).equalsIgnoreCase(NCA)) {
+            return getNomeCurso(EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
+        }
         return getNomeCurso(EnumPerfil.ALUNO.getCodigo());
 
     }
@@ -307,4 +320,10 @@ public class AdaptadorUsuarioTelaAtribuirPerfil implements UsuarioTelaAtribuirPe
     public Boolean getSecretariaGraduacao() {
         return possuiPerfil(EnumPerfil.SECRETARIA_GRADUACAO.getCodigo());
     }
+
+    @Override
+    public Boolean getAlunoStrictoSensu() {
+        return possuiPerfil(EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
+    }
+
 }

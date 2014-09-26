@@ -34,6 +34,7 @@ public class Conexoes {
     private static String SEARCHBASE;
     private static String BASE_DN;
     private static String PASTA_PLANOS_DE_AULA;
+    private static String PASTA_REQUERIMENTOS;
     private static String PASTA_ANEXOS;
     private static String URL_SIGERA;
 
@@ -77,6 +78,7 @@ public class Conexoes {
         Conexoes.setSEARCHBASE(prop.getProperty("SEARCHBASE"));
         Conexoes.setBASE_DN(prop.getProperty("BASE_DN"));
         Conexoes.setPASTA_PLANOS_DE_AULA(prop.getProperty("PASTA_PLANOS_DE_AULA"));
+        Conexoes.setPASTA_REQUERIMENTOS(prop.getProperty("PASTA_REQUERIMENTOS"));
         Conexoes.setPASTA_ANEXOS(prop.getProperty("PASTA_ANEXOS"));
         Conexoes.setURL_SIGERA(prop.getProperty("URL_SIGERA"));
 
@@ -136,6 +138,10 @@ public class Conexoes {
 
     public static void setPASTA_PLANOS_DE_AULA(String PASTA_PLANOS_DE_AULA) {
         Conexoes.PASTA_PLANOS_DE_AULA = PASTA_PLANOS_DE_AULA;
+    }
+
+    public static void setPASTA_REQUERIMENTOS(String PASTA_REQUERIMENTOS) {
+        Conexoes.PASTA_REQUERIMENTOS = PASTA_REQUERIMENTOS;
     }
 
     public static void setPASTA_ANEXOS(String PASTA_ANEXOS) {
@@ -202,6 +208,11 @@ public class Conexoes {
     public static String getPASTA_PLANOS_DE_AULA() {
         return PASTA_PLANOS_DE_AULA;
     }
+
+    public static String getPASTA_REQUERIMENTOS() {
+        return PASTA_REQUERIMENTOS;
+    }
+    
 
     public static String getPASTA_ANEXOS() {
         return PASTA_ANEXOS;
