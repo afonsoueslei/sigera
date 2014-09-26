@@ -12,6 +12,7 @@ import br.ufg.inf.sigera.modelo.email.GerenciadorEmail;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
+import br.ufg.inf.sigera.modelo.Professor;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -44,7 +45,9 @@ public class AtribuirPerfilBean {
     private final SelectItem[] opcoesPerfil;
     private Perfil perfilSelecionado;
     private Curso cursoSelecionado;
+    private Professor orientadorSelecionado;
     private boolean selecaoCursosHabilitada;
+    private boolean selecaoOrientadoresHabilitada;
     private final MensagensTela mensagemDeTela = new MensagensTela();
 
     public AtribuirPerfilBean() {
@@ -61,6 +64,10 @@ public class AtribuirPerfilBean {
 
     public boolean isSelecaoCursosHabilitada() {
         return selecaoCursosHabilitada;
+    }
+
+    public boolean isSelecaoOrientadoresHabilitada() {
+        return selecaoOrientadoresHabilitada;
     }
 
     public SelectItem[] getOpcoesPerfil() {
@@ -81,6 +88,12 @@ public class AtribuirPerfilBean {
             this.perfilSelecionado = null;
         }
         this.selecaoCursosHabilitada = AssociacaoPerfilCurso.perfilExigeCursoAssociado(this.perfilSelecionado);
+        this.selecaoOrientadoresHabilitada = AssociacaoPerfilCurso.perfilExigeOrientador(this.perfilSelecionado);
+        if (this.selecaoOrientadoresHabilitada) {
+            this.setCodigoCurso(13);
+        } else {
+            this.setCodigoCurso(null);
+        }
     }
 
     public Integer getCodigoCurso() {
@@ -93,8 +106,29 @@ public class AtribuirPerfilBean {
     public void setCodigoCurso(Integer codigoCurso) {
         if (codigoCurso != null) {
             this.cursoSelecionado = Curso.obtenhaCurso(codigoCurso);
+            //Caso por engano perfil ser definido com curso = mestrado ou doutorado entao modifica para curso POS
+            if (this.cursoSelecionado != null && this.cursoSelecionado.getPrefixo().endsWith("sc")) {
+                this.cursoSelecionado = Curso.obtenhaCursoPorPrefixo("POS");
+            }
+
         } else {
             this.cursoSelecionado = null;
+        }
+        this.selecaoOrientadoresHabilitada = AssociacaoPerfilCurso.perfilExigeOrientador(this.perfilSelecionado);
+    }
+
+    public Integer getCodigoOrientador() {
+        if (orientadorSelecionado != null) {
+            return orientadorSelecionado.getId();
+        }
+        return null;
+    }
+
+    public void setCodigoOrientador(Integer codigoOrientador) {
+        if (codigoOrientador != null) {
+            this.orientadorSelecionado = Professor.obtenhaProfessor(codigoOrientador);
+        } else {
+            this.orientadorSelecionado = null;
         }
     }
 
@@ -104,6 +138,10 @@ public class AtribuirPerfilBean {
 
     public List<Curso> getListaCursos() {
         return Curso.buscaTodosCursos();
+    }
+
+    public List<Professor> getListaOrientadores() {
+        return Professor.buscaTodosProfessores(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
     }
 
     public List<UsuarioTelaAtribuirPerfil> getUsuariosSelecionados() {
@@ -211,7 +249,7 @@ public class AtribuirPerfilBean {
         }
 
         for (UsuarioTelaAtribuirPerfil usuario : usuariosSelecionados) {
-            usuario.modificarPerfil(this.perfilSelecionado, this.cursoSelecionado, concederPerfil);
+            usuario.modificarPerfil(this.perfilSelecionado, this.cursoSelecionado, this.orientadorSelecionado, concederPerfil);
         }
         limparSelecao();
     }
@@ -261,6 +299,10 @@ public class AtribuirPerfilBean {
         } else {
             if (concederPerfil && AssociacaoPerfilCurso.perfilExigeCursoAssociado(perfilSelecionado) && this.cursoSelecionado == null) {
                 mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.015"), Paginas.getAtribuirPerfil());
+                return true;
+            }
+            if (concederPerfil && AssociacaoPerfilCurso.perfilExigeOrientador(perfilSelecionado) && this.orientadorSelecionado == null) {
+                mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.015.Orientador"), Paginas.getAtribuirPerfil());
                 return true;
             }
         }

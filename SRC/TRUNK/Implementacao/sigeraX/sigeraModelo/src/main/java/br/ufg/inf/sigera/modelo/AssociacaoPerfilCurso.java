@@ -37,6 +37,10 @@ public class AssociacaoPerfilCurso implements Serializable, Comparable<Associaca
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioSigera usuario;
+    
+    @ManyToOne
+    @JoinColumn(name = "professor_id", nullable = false)
+    private Professor orientador;
 
     public AssociacaoPerfilCurso() {
     }
@@ -45,6 +49,13 @@ public class AssociacaoPerfilCurso implements Serializable, Comparable<Associaca
         this.perfil = perfil;
         this.usuario = usuario;
         setCurso(curso);
+    }
+    
+    public AssociacaoPerfilCurso(Perfil perfil, Curso curso, Professor orientador, UsuarioSigera usuario) {
+        this.perfil = perfil;
+        this.usuario = usuario;
+        setCurso(curso);
+        setOrientador(orientador);
     }
 
     public Perfil getPerfil() {
@@ -83,6 +94,18 @@ public class AssociacaoPerfilCurso implements Serializable, Comparable<Associaca
         this.usuario = usuario;
     }
 
+    public Professor getOrientador() {
+        return orientador;
+    }
+
+    public void setOrientador(Professor orientador) {
+        if (perfilExigeOrientador(this.perfil)) {
+            this.orientador = orientador;
+        } else {
+            this.orientador = null;
+        }        
+    }
+    
     public static boolean perfilExigeCursoAssociado(Perfil perfil) {
         return ((perfil != null)
                 && (perfilExigeCursoAssociado(perfil.getId())));
@@ -90,9 +113,19 @@ public class AssociacaoPerfilCurso implements Serializable, Comparable<Associaca
 
     public static boolean perfilExigeCursoAssociado(int codigoPerfil) {
         return (codigoPerfil == EnumPerfil.ALUNO.getCodigo()
+                || codigoPerfil == EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo()
                 || codigoPerfil == EnumPerfil.COORDENADOR_CURSO.getCodigo()
                 || codigoPerfil == EnumPerfil.COORDENADOR_ESTAGIO.getCodigo()
                 || codigoPerfil == EnumPerfil.SECRETARIA.getCodigo());
+    }
+    
+    public static boolean perfilExigeOrientador(Perfil perfil){
+        return ((perfil != null ) 
+                && (perfilExigeOrientador(perfil.getId())));
+    }
+    
+    public static boolean perfilExigeOrientador(int codigoPerfil) {
+        return (codigoPerfil == EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
     }
 
     public int compareTo(AssociacaoPerfilCurso a) {

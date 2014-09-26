@@ -2,6 +2,7 @@ package br.ufg.inf.sigera.modelo.perfil;
 
 import br.ufg.inf.sigera.modelo.AssociacaoPerfilCurso;
 import br.ufg.inf.sigera.modelo.Curso;
+import br.ufg.inf.sigera.modelo.Professor;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class GerenciadorPerfil {
         listaPerfis.add(new PerfilProfessor());
         listaPerfis.add(new PerfilSecretaria());
         listaPerfis.add(new PerfilSecretariaGraduacao());
+        listaPerfis.add(new PerfilAlunoPosStrictoSensu());
     }
 
     public static AssociacaoPerfilCurso criePerfil(EnumPerfil tipoPerfil, UsuarioSigera usuario) {
@@ -47,6 +49,8 @@ public class GerenciadorPerfil {
             return new AssociacaoPerfilCurso(new PerfilSecretaria(), null, usuario);
         } else if (tipoPerfil.equals(EnumPerfil.SECRETARIA_GRADUACAO)) {
             return new AssociacaoPerfilCurso(new PerfilSecretariaGraduacao(), null, usuario);
+        } else if (tipoPerfil.equals (EnumPerfil.ALUNO_POS_STRICTO_SENSU)){
+            return new AssociacaoPerfilCurso(new PerfilAlunoPosStrictoSensu(),null, null, usuario);
         }
 
         return null;
@@ -63,6 +67,11 @@ public class GerenciadorPerfil {
     public static AssociacaoPerfilCurso criePerfilAluno(UsuarioSigera usuario) {
         return new AssociacaoPerfilCurso(new PerfilAluno(), obtenhaCurso(usuario.getUsuarioLdap().getUid()), usuario);
     }
+    
+    public static AssociacaoPerfilCurso criePerfilAlunoPosStrictoSensu(UsuarioSigera usuario, Professor orientador) {
+        return new AssociacaoPerfilCurso(new PerfilAluno(), obtenhaCurso(usuario.getUsuarioLdap().getUid()), orientador, usuario);
+    }
+        
 
     public static AssociacaoPerfilCurso criePerfilCoordenadorEstagio(UsuarioSigera usuario, Curso curso) {
         return new AssociacaoPerfilCurso(new PerfilCoordenadorEstagio(), curso, usuario);

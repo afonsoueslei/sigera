@@ -63,7 +63,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 public abstract class Requerimento implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
@@ -115,7 +115,6 @@ public abstract class Requerimento implements Serializable {
         if (curso == null) {
             descobrirCurso();
         }
-
         return curso;
     }
 
@@ -235,12 +234,24 @@ public abstract class Requerimento implements Serializable {
         Collection<AssociacaoPerfilCurso> perfisUsuario = this.usuario.getPerfis();
         if (perfisUsuario != null) {
             for (AssociacaoPerfilCurso infoPerfil : perfisUsuario) {
-                if (infoPerfil.getPerfil().getId() == EnumPerfil.ALUNO.getCodigo()) {
+                if (infoPerfil.getPerfil().getId() == EnumPerfil.ALUNO.getCodigo()
+                        || infoPerfil.getPerfil().getId() == EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo()) {
                     curso = infoPerfil.getCurso();
                     break;
                 }
             }
         }
+
+        if (curso == null && this.getTipo() == EnumTipoRequerimento.PLANO.getCodigo()) {
+            curso = this.getPlano().getTurma().getDisciplina().getCurso();
+        }
+
+        if (curso == null) {
+            curso = new Curso();
+            curso.setNome("Usuário sem curso definido!");
+            curso.setPrefixo("X");
+        }
+
     }
 
     public Collection<Disciplina> getDisciplinas() {
@@ -395,9 +406,9 @@ public abstract class Requerimento implements Serializable {
 
         ServletContext servletContext = (ServletContext) contextoExterno.getContext();
         String realPath = servletContext.getRealPath("") + "/resources/relatorios";
-        String dataHora = new Date().toString();
-        
-        String caminhoArquivoPDF = Conexoes.getPASTA_PLANOS_DE_AULA() + dataHora+"-REQ-" + String.valueOf(this.id) + "-" + this.getUsuario().getNome().trim() + ".pdf";
+        String dataHora = Long.toString(new Date().getTime());
+
+        String caminhoArquivoPDF = Conexoes.getPASTA_REQUERIMENTOS() + dataHora + "-REQ-" + String.valueOf(this.id) + "-" + this.getUsuario().getNome().trim() + ".pdf";
 
         File arquivoPdf = new File(caminhoArquivoPDF);
 
@@ -436,10 +447,10 @@ public abstract class Requerimento implements Serializable {
     private Map obterParametrosParaImpressao(UsuarioSigera usuarioAutenticado) {
         String dataProvaSegundaChamada = null;
         String turmaSegundaChamada = null;
-        StringBuilder listaDisciplinasAcerto = new StringBuilder();        
-        StringBuilder listaDisciplinasEmenta = new StringBuilder();        
+        StringBuilder listaDisciplinasAcerto = new StringBuilder();
+        StringBuilder listaDisciplinasEmenta = new StringBuilder();
         Collection<Turma> turmas = null;
-        Collection<Disciplina> disciplinas  = null;
+        Collection<Disciplina> disciplinas = null;
 
         //Se o requerimento for de ajuste de matricula (Acrescimo / Cancelamento de Disciplinas)
         if (this instanceof RequerimentoAcrescimoDisciplina) {
@@ -478,12 +489,11 @@ public abstract class Requerimento implements Serializable {
         ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
         String realPath = servletContext.getRealPath("") + "/resources/relatorios";
 
-        String caminhoImagemSigera = realPath + "/marca-inf.png";
-        String caminhoImagemUFG = realPath + "/marca-ufg.png";
+        String caminhoImagemSigera = realPath + "/marca-inf.jpg";
+        String caminhoImagemUFG = realPath + "/marca-ufg.jpg";
 
         Map parametros = new HashMap();
         parametros.put("tipoRequerimento", EnumTipoRequerimento.obtenha(this.tipo).getNome().toUpperCase());
-        parametros.put("status",EnumStatusRequerimento.obtenha(this.status).getNome());
         parametros.put("requerimentoId", this.id);
         parametros.put("nomeRequerente", this.getUsuario().getNome().trim());
         parametros.put("matriculaRequerente", this.getUsuario().getMatricula());

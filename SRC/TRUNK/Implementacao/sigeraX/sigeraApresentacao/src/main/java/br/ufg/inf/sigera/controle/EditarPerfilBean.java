@@ -9,7 +9,10 @@ import br.ufg.inf.sigera.modelo.email.GerenciadorEmail;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.ldap.EnumGrupo;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
+import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import br.ufg.inf.sigera.modelo.perfil.GerenciadorPerfil;
+import br.ufg.inf.sigera.modelo.perfil.Perfil;
+import br.ufg.inf.sigera.modelo.perfil.PerfilAlunoPosStrictoSensu;
 import br.ufg.inf.sigera.modelo.servico.SenhaAleatoria;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,7 +35,7 @@ public class EditarPerfilBean implements Serializable {
     private String telefoneResidencial;
     private String telefoneComercial;
     private String emailAlternativo;
-    private UsuarioSigera usuarioEdicao;
+    private UsuarioSigera usuarioEdicao;  
     private final MensagensTela mensagemDeTela = new MensagensTela();
 
     public EditarPerfilBean() {
@@ -78,10 +81,12 @@ public class EditarPerfilBean implements Serializable {
         this.emailAlternativo = emailAlternativo;
     }
 
+    
     public UsuarioSigera getUsuarioEdicao() {
+        String uid = null;
         Integer uidInteiro;
         try {
-            String uid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("uid");
+            uid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("uid");        
             uidInteiro = Integer.parseInt(uid);
         } catch (NumberFormatException nfe) {
             uidInteiro = loginBean.getUsuario().getId();
@@ -89,14 +94,12 @@ public class EditarPerfilBean implements Serializable {
         }
 
         //verifica se o usuário tem permissão para editar o usuario passado como parametro (uid)
-        if (loginBean.getUsuario().getPerfilAtual().getPerfil().permiteManterUsuarios()) {
-            construirUsuarioEdicao(uidInteiro);
-        }else{
-            this.setUsuarioEdicao(loginBean.getUsuario());
+        if (loginBean.getUsuario().getPerfilAtual().getPerfil().permiteManterUsuarios() || loginBean.getUsuario().getId() == uidInteiro) {
+            if ((uid != null) && (this.usuarioEdicao == null || this.usuarioEdicao.getId() != uidInteiro)) {
+                construirUsuarioEdicao(uidInteiro);
+            }
         }
-
         return this.usuarioEdicao;
-
     }
 
     public void setUsuarioEdicao(UsuarioSigera usuarioEdicao) {
@@ -164,6 +167,7 @@ public class EditarPerfilBean implements Serializable {
                 }
 
                 usuarioEditado.setUsuarioLdap(usuarioLdap);
+                usuarioEditado.getUsuarioLdap().setBuscadorLdap(buscadorLdap);
                 if (usuarioLdap.getGrupo().equals(EnumGrupo.ALUNO) && usuarioEditado.getPerfis().isEmpty()) {
                     Collection<AssociacaoPerfilCurso> perfis = new ArrayList<AssociacaoPerfilCurso>();
                     AssociacaoPerfilCurso perfilEstudante = GerenciadorPerfil.criePerfilAluno(usuarioEditado);
@@ -187,10 +191,27 @@ public class EditarPerfilBean implements Serializable {
     }
 
     public boolean isAluno() {
-        return this.usuarioEdicao.getUsuarioLdap().getGrupo() == EnumGrupo.ALUNO;
+        if (this.usuarioEdicao.getUsuarioLdap().getGrupo() == EnumGrupo.ALUNO) {
+            return true;
+        }
+        return false;
     }
 
     public boolean temEmailAlternativo() {
         return !(getEmailAlternativo().isEmpty());
+    }
+
+    public String temOrientador() {
+        UsuarioSigera orientador = new PerfilAlunoPosStrictoSensu().obtenhaOrientador(usuarioEdicao);
+        if (orientador != null) {
+            return orientador.getUsuarioLdap().getCn();
+        }
+        return null;
+    }
+
+    public boolean isAlunoPosStrictoSensu() {
+        return ((this.usuarioEdicao.getUsuarioLdap().getGrupo() == EnumGrupo.ALUNO
+                && this.usuarioEdicao.getUsuarioLdap().getPrefixoCurso().endsWith("sc"))
+                || Perfil.usuarioTemPerfil(this.usuarioEdicao, EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo()));
     }
 }

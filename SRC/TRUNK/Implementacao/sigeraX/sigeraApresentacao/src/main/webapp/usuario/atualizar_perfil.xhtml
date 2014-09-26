@@ -11,82 +11,94 @@
     <ui:param name="paginaAtual" value="Atualizar Perfil" />
 
     <ui:define name="conteudo">
-        <div class="row">
-            <div class="span11 deslocar-40-direita">
-
+        <div>
+            <h:form id="formulario">                    
                 <p:messages closable="true" escape="false"/>
+                <div class="row">
+                    <div class="span6 deslocar-40-direita">                       
 
-                <h:form id="formulario">                    
-                    <h:outputLabel for="nome" value="Nome: " />
-                    <h:inputText styleClass="input-block-level" id="nome" value="#{editarPerfilBean.usuarioEdicao.usuarioLdap.cn}" disabled="true" />
+                        <h:outputLabel for="nome" value="Nome: " />
+                        <h:inputText styleClass="input-block-level" id="nome" value="#{editarPerfilBean.usuarioEdicao.usuarioLdap.cn}" disabled="true" />
 
-                    <h:outputLabel for="email" value="E-mail:" />
-                    <h:inputText styleClass="input-block-level" id="email" value="#{editarPerfilBean.usuarioEdicao.usuarioLdap.email}" disabled="true" />
-
-                    <h:outputLabel for="email-alternativo" value="E-mail Alternativo:" />                    
-                    <h:panelGroup rendered="#{editarPerfilBean.usuarioEdicao.usuarioLdap.possuiEmailAlternativo()}">
-                        <h:inputText styleClass="input-block-level " id="email-alternativo" value="#{editarPerfilBean.emailAlternativo}" />
-                    </h:panelGroup>
-
-                    <h:panelGroup rendered="#{!editarPerfilBean.usuarioEdicao.usuarioLdap.possuiEmailAlternativo()}"> 
-                        <p:inputText styleClass="input-block-level cadastrar-email" id="cadastrar-email" value="#{editarPerfilBean.emailAlternativo}" placeholder="Cadastre um e-mail alternativo!"/>
-                    </h:panelGroup>
-
-                    <h:panelGroup rendered="#{editarPerfilBean.usuarioEdicao.id eq loginBean.usuario.id}">
-                        <h:outputLabel for="perfil" value="Perfil:" />            
-                        <h:inputText styleClass="input-block-level" id="perfil" value="#{loginBean.usuario.perfilAtual.perfil.nome}" disabled="true" />
-                    </h:panelGroup>
-
-                    <h:panelGroup rendered="#{editarPerfilBean.aluno}">
-                        <h:outputLabel for="curso" value="Curso:" />            
-                        <h:inputText styleClass="input-block-level" id="curso" value="#{editarPerfilBean.usuarioEdicao.perfilAtual.curso.nome}" disabled="true" />
-                        <h:outputLabel for="matricula" value="Matrícula:" />            
-                        <h:inputText styleClass="input-block-level" id="matricula" value="#{editarPerfilBean.usuarioEdicao.usuarioLdap.matricula}" disabled="true" />            
-                    </h:panelGroup>
-
-                    <h:panelGroup rendered="#{!editarPerfilBean.aluno and loginBean.usuario.perfilAtual.curso.id > 0}">
-                        <h:outputLabel for="curso2" value="Curso:" />            
-                        <h:inputText styleClass="input-block-level" id="curso2" value="#{loginBean.usuario.perfilAtual.curso.nome}" disabled="true" />
-                    </h:panelGroup>
-
-                    <h:outputLabel for="telefone_celular" value="Telefone Celular:" />                    
-                    <p:inputMask styleClass="input-block-level" id="telefone_celular" value="#{editarPerfilBean.telefoneCelular}" mask="(99) 99999999?9" />
-
-                    <h:outputLabel for="telefone_residencial" value="Telefone Residencial:" />                    
-                    <p:inputMask styleClass="input-block-level" id="telefone_residencial" value="#{editarPerfilBean.telefoneResidencial}" mask="(99) 99999999?9"/>
-
-                    <h:outputLabel for="telefone_comercial" value="Telefone Comercial:" />                    
-                    <p:inputMask styleClass="input-block-level" id="telefone_comercial" value="#{editarPerfilBean.telefoneComercial}" mask="(99) 99999999?9"/>                   
-
-                    <h:outputLabel for="primeiro_acesso" value="Primeiro Acesso:" />                                     
-                    <h:inputText styleClass="input-block-level"  id="primeiro_acesso"  value="#{editarPerfilBean.usuarioEdicao.primeiroAcesso}" disabled="true" >
-                        <f:convertDateTime  locale="BR" pattern="dd/MM/yyyy - HH:mm" timeZone="America/Sao_Paulo"/>                     
-                    </h:inputText>                           
-
-                    <h:outputLabel for="ultimo_acesso" value="Último Acesso:" />                                        
-                    <h:inputText styleClass="input-block-level"  id="ultimo_acesso"  value="#{editarPerfilBean.usuarioEdicao.ultimoAcesso}" disabled="true" >
-                        <f:convertDateTime  locale="BR" pattern="dd/MM/yyyy - HH:mm" timeZone="America/Sao_Paulo"/>                     
-                    </h:inputText>                           
-                    
-                    <div class="form-actions" >                            
-                        <input type="button" class="btn btn-primary botao-com-margem-direita" value="Salvar"  
-                               onclick="exibirConfirmacao('#{msgs['MT.203']}', 'formulario:botao-escondido')" />
-                        <h:commandLink styleClass="botao-escondido" id="botao-escondido" action="#{editarPerfilBean.salvar}"/>
-
-                        <h:commandButton styleClass="btn botao-com-margem-direita" value="Cancelar" action="#{editarPerfilBean.cancelar}" />
+                        <h:outputLabel for="email" value="E-mail:" />
+                        <h:inputText styleClass="input-block-level" id="email" value="#{editarPerfilBean.usuarioEdicao.usuarioLdap.email}" disabled="true" />                   
 
                         <h:panelGroup rendered="#{editarPerfilBean.usuarioEdicao.id eq loginBean.usuario.id}">
-                            <h:commandButton styleClass="btn btn btn-danger " value="Alterar senha" action="#{editarPerfilBean.alterarSenha}" />
-                        </h:panelGroup>  
-
-                        <h:panelGroup rendered="#{editarPerfilBean.usuarioEdicao.id ne loginBean.usuario.id and editarPerfilBean.temEmailAlternativo()}">                                                  
-                            <input type="button" class="btn btn-danger botao-com-margem-direita" value="Resetar senha usuário"  
-                                   onclick="exibirConfirmacao('#{msgs['MT.012']}', 'formulario:botao-resetar-senha')" />
-                            <h:commandButton styleClass="botao-escondido" id="botao-resetar-senha" action="#{editarPerfilBean.resetarSenha()}" />
+                            <h:outputLabel for="perfil" value="Perfil:" />            
+                            <h:inputText styleClass="input-block-level" id="perfil" value="#{loginBean.usuario.perfilAtual.perfil.nome}" disabled="true" />
                         </h:panelGroup>
+
+                        <h:panelGroup rendered="#{editarPerfilBean.aluno}">
+                            <h:outputLabel for="curso" value="Curso:" />            
+                            <h:inputText styleClass="input-block-level" id="curso" value="#{editarPerfilBean.usuarioEdicao.cursoAluno}" disabled="true" />
+                            <h:outputLabel for="matricula" value="Matrícula:" />            
+                            <h:inputText styleClass="input-block-level" id="matricula" value="#{editarPerfilBean.usuarioEdicao.usuarioLdap.matricula}" disabled="true" />            
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{!editarPerfilBean.aluno and loginBean.usuario.perfilAtual.curso.id > 0}">
+                            <h:outputLabel for="curso2" value="Curso:" />            
+                            <h:inputText styleClass="input-block-level" id="curso2" value="#{loginBean.usuario.perfilAtual.curso.nome}" disabled="true" />
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{editarPerfilBean.alunoPosStrictoSensu and editarPerfilBean.temOrientador() ne null}">
+                            <h:outputLabel value="Orientador:" for="orientador" />
+                            <h:inputText styleClass="input-block-level" id="orientador" value="#{editarPerfilBean.temOrientador()}" disabled="true" />                            
+                        </h:panelGroup>
+                        
+                        <h:outputLabel for="primeiro_acesso" value="Primeiro Acesso:" />                                     
+                        <h:inputText styleClass="input-block-level"  id="primeiro_acesso"  value="#{editarPerfilBean.usuarioEdicao.primeiroAcesso}" disabled="true" >
+                            <f:convertDateTime  locale="BR" pattern="dd/MM/yyyy - HH:mm" timeZone="America/Sao_Paulo"/>                     
+                        </h:inputText>  
+
                     </div>
-                </h:form>                    
-            </div>
+
+                    <div class="span6 deslocar-40-direita">                                            
+
+                        <h:outputLabel for="ultimo_acesso" value="Último Acesso:" />                                        
+                        <h:inputText styleClass="input-block-level"  id="ultimo_acesso"  value="#{editarPerfilBean.usuarioEdicao.ultimoAcesso}" disabled="true" >
+                            <f:convertDateTime  locale="BR" pattern="dd/MM/yyyy - HH:mm" timeZone="America/Sao_Paulo"/>                     
+                        </h:inputText>             
+
+
+                        <h:outputLabel for="email-alternativo" value="E-mail Alternativo:" />                    
+                        <h:panelGroup rendered="#{editarPerfilBean.usuarioEdicao.usuarioLdap.possuiEmailAlternativo()}">
+                            <h:inputText styleClass="input-block-level " id="email-alternativo" value="#{editarPerfilBean.emailAlternativo}" />
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{!editarPerfilBean.usuarioEdicao.usuarioLdap.possuiEmailAlternativo()}"> 
+                            <p:inputText styleClass="input-block-level cadastrar-email" id="cadastrar-email" value="#{editarPerfilBean.emailAlternativo}" placeholder="Cadastre um e-mail alternativo!"/>
+                        </h:panelGroup>
+
+                        <h:outputLabel for="telefone_celular" value="Telefone Celular:" />                    
+                        <p:inputMask styleClass="input-block-level" id="telefone_celular" value="#{editarPerfilBean.telefoneCelular}" mask="(99) 99999999?9" />
+
+                        <h:outputLabel for="telefone_residencial" value="Telefone Residencial:" />                    
+                        <p:inputMask styleClass="input-block-level" id="telefone_residencial" value="#{editarPerfilBean.telefoneResidencial}" mask="(99) 99999999?9"/>
+
+                        <h:outputLabel for="telefone_comercial" value="Telefone Comercial:" />                    
+                        <p:inputMask styleClass="input-block-level" id="telefone_comercial" value="#{editarPerfilBean.telefoneComercial}" mask="(99) 99999999?9"/>                   
+
+
+                    </div>
+                </div>
+                <div class="form-actions" >                            
+                    <input type="button" class="btn btn-primary botao-com-margem-direita" value="Salvar"  
+                           onclick="exibirConfirmacao('#{msgs['MT.203']}', 'formulario:botao-escondido')" />
+                    <h:commandLink styleClass="botao-escondido" id="botao-escondido" action="#{editarPerfilBean.salvar}"/>
+
+                    <h:commandButton styleClass="btn botao-com-margem-direita" value="Cancelar" action="#{editarPerfilBean.cancelar}" />
+
+                    <h:panelGroup rendered="#{editarPerfilBean.usuarioEdicao.id eq loginBean.usuario.id}">
+                        <h:commandButton styleClass="btn btn btn-danger " value="Alterar senha" action="#{editarPerfilBean.alterarSenha}" />
+                    </h:panelGroup>  
+
+                    <h:panelGroup rendered="#{editarPerfilBean.usuarioEdicao.id ne loginBean.usuario.id and editarPerfilBean.temEmailAlternativo()}">                                                  
+                        <input type="button" class="btn btn-danger botao-com-margem-direita" value="Resetar senha usuário"  
+                               onclick="exibirConfirmacao('#{msgs['MT.012']}', 'formulario:botao-resetar-senha')" />
+                        <h:commandButton styleClass="botao-escondido" id="botao-resetar-senha" action="#{editarPerfilBean.resetarSenha()}" />
+                    </h:panelGroup>
+                </div>
+            </h:form>     
         </div>
     </ui:define>    
 </ui:composition>

@@ -5,6 +5,7 @@ import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
 import br.ufg.inf.sigera.modelo.perfil.GerenciadorPerfil;
+import br.ufg.inf.sigera.modelo.perfil.Perfil;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
 import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.io.Serializable;
@@ -15,8 +16,6 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
@@ -29,7 +28,6 @@ import org.eclipse.persistence.annotations.PrivateOwned;
 
 @Entity(name = "UsuarioSigera")
 @Table(name = "usuario")
-@DiscriminatorColumn(name = "Tipo", discriminatorType = DiscriminatorType.INTEGER)
 public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
 
     @Id
@@ -57,10 +55,12 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     private AssociacaoPerfilCurso perfilAtual;
     @Transient
     private UsuarioLdap usuarioLdap;
+    @Transient
+    private String cursoAluno;
 
     public UsuarioSigera() {
     }
-
+ 
     public String getTelefoneCelular() {
         return telefoneCelular;
     }
@@ -152,6 +152,21 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
         this.chaveAtivacao = chaveAtivacao;
     }
 
+    public String getCursoAluno() {
+        if (this.getUsuarioLdap().getGrupo().equals(EnumGrupo.ALUNO )) {
+            return Curso.obtenhaCursoPorPrefixo(this.usuarioLdap.getPrefixoCurso()).getNome();            
+        }
+        //isso só ocorre se for dado a alguém que não é aluno o perfil de aluno da pós stricto sensu
+        if(Perfil.usuarioTemPerfil(this, EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo())){
+            return Curso.obtenhaCursoPorPrefixo("POS").getNome();
+        }
+        return "";
+    }
+
+    public void setCursoAluno(String cursoAluno) {
+        this.cursoAluno = cursoAluno;
+    }
+
     public void atualizar(String telefoneCelular, String telefoneResidencial, String telefoneComercial) {
         setTelefoneCelular(telefoneCelular);
         setTelefoneResidencial(telefoneResidencial);
@@ -226,4 +241,5 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     public int compareTo(UsuarioSigera u) {
         return this.getNome().compareTo(u.getNome());
     }
+    
 }

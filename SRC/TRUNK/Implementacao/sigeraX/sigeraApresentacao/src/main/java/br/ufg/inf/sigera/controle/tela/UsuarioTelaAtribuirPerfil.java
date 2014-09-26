@@ -1,6 +1,7 @@
 package br.ufg.inf.sigera.controle.tela;
 
 import br.ufg.inf.sigera.modelo.Curso;
+import br.ufg.inf.sigera.modelo.Professor;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.perfil.Perfil;
 import java.util.Date;
@@ -27,7 +28,7 @@ public interface UsuarioTelaAtribuirPerfil {
     String getNomeCursoSecretaria();
 
     String getDescricaoAdministrador();
-    String getDescricaoAluno();
+    String getDescricaoAluno();    
     String getDescricaoCoordenadorCurso();
     String getDescricaoCoordenadorEstagio();
     String getDescricaoCoordenadorGeral();
@@ -39,6 +40,7 @@ public interface UsuarioTelaAtribuirPerfil {
         
     Boolean getAdministrador();
     Boolean getAluno();
+    Boolean getAlunoStrictoSensu();
     Boolean getCoordenadorCurso();
     Boolean getCoordenadorEstagio();
     Boolean getCoordenadorGeral();
@@ -49,5 +51,5 @@ public interface UsuarioTelaAtribuirPerfil {
    
     UsuarioSigera processePerfisUsuario();
 
-    void modificarPerfil(Perfil perfilModificado, Curso cursoAssociado, boolean concederPerfil);
+    void modificarPerfil(Perfil perfilModificado, Curso cursoAssociado, Professor orientadorAssociado, boolean concederPerfil);
 }
