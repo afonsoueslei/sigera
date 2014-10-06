@@ -44,17 +44,17 @@ public class PerfilProfessor extends Perfil {
     public boolean permiteEditarTurma() {
         return false;
     }
-    
+
     @Override
     public boolean permiteManterUsuarios() {
         return false;
     }
-    
+
     @Override
     public boolean permiteImprimirEmenta() {
         return true;
     }
-    
+
     @Override
     public List<Requerimento> obtenhaRequerimentos(UsuarioSigera usuarioAutenticado) {
         EntityManager em = obtenhaEntityManager();
@@ -68,21 +68,21 @@ public class PerfilProfessor extends Perfil {
         query.setParameter("id", usuarioAutenticado.getId());
         List<Requerimento> requerimentos = query.getResultList();
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
-        
+
         StringBuilder consulta2 = new StringBuilder();
         consulta2.append("SELECT r");
         consulta2.append(" FROM RequerimentoPlano as r  ");
         consulta2.append(" WHERE r.plano.turma.professor.usuario.id = :idUsuario ORDER BY r.status, r.id DESC");
-        
+
         Query query2 = em.createQuery(consulta2.toString());
         query2.setParameter("idUsuario", usuarioAutenticado.getId());
-                
+
         List<Requerimento> requerimentosPlanos = query2.getResultList();
-        
-        for(Requerimento rp: requerimentosPlanos){
+
+        for (Requerimento rp : requerimentosPlanos) {
             requerimentos.add(rp);
         }
-        
+
         for (Requerimento r : requerimentos) {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
         }
@@ -112,4 +112,10 @@ public class PerfilProfessor extends Perfil {
         }
         return planos;
     }
+
+    @Override
+    public boolean permiteCancelarRequerimento() {
+        return false;
+    }
+
 }

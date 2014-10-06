@@ -85,4 +85,10 @@ public class PerfilAdministrador extends Perfil {
         }
         return planos;
     }
+
+    @Override
+    public boolean permiteCancelarRequerimento() {
+        return true;
+    }
+    
 }

@@ -101,12 +101,18 @@ public class PerfilAlunoPosStrictoSensu extends Perfil {
             BuscadorLdap buscadorLdap = usuario.getUsuarioLdap().getBuscadorLdap();
             Integer id = (Integer) query.getSingleResult();
             orientador = em.find(Professor.class, id);
-            orientador.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(orientador.getUsuario().getId()));            
-            
+            orientador.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(orientador.getUsuario().getId()));
+
             return orientador.getUsuario();
-            
+
         } catch (NoResultException e) {
             return null;
-        }                
+        }
     }
+
+    @Override
+    public boolean permiteCancelarRequerimento() {
+        return false;
+    }
+
 }

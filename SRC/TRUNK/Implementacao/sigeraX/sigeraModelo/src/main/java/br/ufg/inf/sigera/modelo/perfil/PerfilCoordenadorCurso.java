@@ -122,4 +122,10 @@ public class PerfilCoordenadorCurso extends Perfil {
         }
         return planos;
     }
+
+    @Override
+    public boolean permiteCancelarRequerimento() {
+        return false;
+    }
+
 }

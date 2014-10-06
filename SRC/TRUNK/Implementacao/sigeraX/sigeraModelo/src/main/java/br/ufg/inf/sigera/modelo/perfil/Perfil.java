@@ -67,6 +67,7 @@ public abstract class Perfil implements Serializable {
             }
         } catch (NoResultException nre) {
             Logger.getLogger(Perfil.class.getName()).log(Level.WARNING, "Erro ao executar consulta: usuarioTemPerfil", nre);
+            return false;
         }
         return false;
     }
@@ -79,7 +80,7 @@ public abstract class Perfil implements Serializable {
 
     public abstract boolean permiteEditarPlanoDeAula();
 
-    public abstract boolean permiteEditarTurma();
+    public abstract boolean permiteEditarTurma();        
 
     public abstract List<Requerimento> obtenhaRequerimentos(UsuarioSigera usuario);
 
@@ -88,4 +89,6 @@ public abstract class Perfil implements Serializable {
     public abstract boolean permiteManterUsuarios();
 
     public abstract boolean permiteImprimirEmenta();
+    
+    public abstract boolean permiteCancelarRequerimento();
 }

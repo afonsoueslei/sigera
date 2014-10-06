@@ -71,31 +71,6 @@ public class RequerimentoAssinatura extends Requerimento {
     }    
     
     @Override
-    public boolean autorizaVisualizarParecer(UsuarioSigera usuario) {
-        if (this.getPareceres() != null && this.getPareceres().size() > 0) {
-            if (this.getUsuario().getId() == usuario.getId()
-                    || perfilPermiteDarParecer(usuario)
-                    || usuarioEhDaSecretariaDoCurso(usuario)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean usuarioEhDaSecretariaDoCurso(UsuarioSigera usuarioLogado) {
-        Perfil perfilUsuario = usuarioLogado.getPerfilAtual().getPerfil();
-        Curso cursoUsuario = usuarioLogado.getPerfilAtual().getCurso();
-
-        if ((perfilUsuario.getId() == EnumPerfil.SECRETARIA.getCodigo()  
-            && cursoUsuario.getId() == getCurso().getId()) 
-            || perfilUsuario.getId() == EnumPerfil.SECRETARIA_GRADUACAO.getCodigo()) {
-            return true;
-        } else {
-            return false;
-        }
-    } 
-    
-    @Override
     public boolean podeVisualizarTelefone(UsuarioSigera usuario) {
         if (getUsuario().getId() == usuario.getId()) {
             return true;
