@@ -12,12 +12,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 @Entity
-@DiscriminatorValue(value="4")
+@DiscriminatorValue(value = "4")
 public class PerfilCoordenadorEstagio extends Perfil {
 
     public PerfilCoordenadorEstagio() {
         setId(EnumPerfil.COORDENADOR_ESTAGIO.getCodigo());
-        setNome(EnumPerfil.COORDENADOR_ESTAGIO.getNome());        
+        setNome(EnumPerfil.COORDENADOR_ESTAGIO.getNome());
     }
 
     @Override
@@ -29,12 +29,12 @@ public class PerfilCoordenadorEstagio extends Perfil {
     public boolean permiteConfigurarSistema() {
         return false;
     }
-    
+
     @Override
     public boolean permitePlanoDeAula() {
         return false;
     }
-    
+
     @Override
     public boolean permiteEditarPlanoDeAula() {
         return false;
@@ -44,18 +44,17 @@ public class PerfilCoordenadorEstagio extends Perfil {
     public boolean permiteEditarTurma() {
         return false;
     }
-    
+
     @Override
     public boolean permiteManterUsuarios() {
         return false;
     }
-    
+
     @Override
     public boolean permiteImprimirEmenta() {
         return true;
     }
-    
-    
+
     @Override
     public List<Requerimento> obtenhaRequerimentos(UsuarioSigera usuarioAutenticado) {
         EntityManager em = obtenhaEntityManager();
@@ -86,5 +85,10 @@ public class PerfilCoordenadorEstagio extends Perfil {
     public List<RequerimentoPlano> obtenhaRequerimentosPlanos(UsuarioSigera usuario) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    @Override
+    public boolean permiteCancelarRequerimento() {
+        return false;
+    }
+
 }

@@ -95,4 +95,10 @@ public class PerfilSecretariaGraduacao extends Perfil {
     public List<RequerimentoPlano> obtenhaRequerimentosPlanos(UsuarioSigera usuario) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public boolean permiteCancelarRequerimento() {
+        return false;
+    }
+
 }

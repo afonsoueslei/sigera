@@ -2,7 +2,6 @@ package br.ufg.inf.sigera.controle.adaptador;
 
 import br.ufg.inf.sigera.controle.tela.RequerimentoTelaConsulta;
 import br.ufg.inf.sigera.modelo.requerimento.EnumStatusRequerimento;
-import br.ufg.inf.sigera.modelo.requerimento.EnumTipoRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -56,15 +55,12 @@ public class AdaptadorRequerimentoTelaConsulta implements RequerimentoTelaConsul
     }
 
     @Override
-    public String getCurso() {
+    public String getCurso() {        
         return this.requerimento.getCurso().getNome();
     }
     
     @Override
-    public String getPrefixoCurso() {
-        if(this.requerimento.getTipo() == EnumTipoRequerimento.PLANO.getCodigo()){
-            return this.requerimento.getPlano().getTurma().getDisciplina().getCurso().getPrefixo();
-        }
+    public String getPrefixoCurso() {        
         return this.requerimento.getCurso().getPrefixo();
     }
     

@@ -245,15 +245,52 @@ public class DetalheRequerimentoBean {
         return this.turmas;
     }
 
-    public void cancelar() {
+    public String cancelar() {
         if (this.requerimento != null && this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()) {
             this.requerimento.setStatus(EnumStatusRequerimento.CANCELADO.getCodigo());
-
-            if (this.requerimento.salvar()) {
-                mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.509"), Paginas.getDetalheRequerimento());
-            }
+            
+            //Se usuário é o proprio aluno que abriu o requerimento.
+            if (this.requerimento.getUsuario().getId() == this.loginBean.getUsuario().getId()) {
+                return cancelarRequerente();
+            } 
+            //Se usuário é alguem que tem autorização para cancelar
+            return cancelarAutorizado();
+            
         }
         mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.510"), Paginas.getDetalheRequerimento());
+        return enderecoRedirecionamento();
+    }
+
+    public String cancelarRequerente() {
+        if (this.requerimento.salvar()) {
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.509"), Paginas.getDetalheRequerimento());
+            return enderecoRedirecionamento();
+        }
+        Sessoes.limparBeanConsultarRequerimento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
+        return Paginas.getConsultarRequerimentos();
+    }
+
+    public String cancelarAutorizado() {
+
+        this.setJustificativaDeferimento(Mensagens.obtenha("MT.800"));
+        Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaDeferimento, EnumStatusRequerimento.CANCELADO.getCodigo());
+        this.requerimento.adicionarParecer(parecer);
+
+        if (this.requerimento.salvar()) {
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailParecer(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), requerimento);
+                gerenciadorEmail.enviarEmails();
+            }
+            //Limpar o bean para atualizar a lista de requerimentos
+            Sessoes.limparBeanConsultarRequerimento();
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.004.Cancelar"), Paginas.getDetalheRequerimento());
+            return enderecoRedirecionamento();
+        }
+        Sessoes.limparBeanConsultarRequerimento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
+        return Paginas.getConsultarRequerimentos();
     }
 
     public String voltar() {
@@ -269,9 +306,13 @@ public class DetalheRequerimentoBean {
     }
 
     public boolean usuarioPodeCancelar() {
-        boolean usuarioIgual = this.requerimento.getUsuario().getId() == this.loginBean.getUsuario().getId();
+        boolean usuarioPode = false;
+        if (this.requerimento.getUsuario().getId() == this.loginBean.getUsuario().getId()
+                || this.loginBean.getUsuario().getPerfilAtual().getPerfil().permiteCancelarRequerimento()) {
+            usuarioPode = true;
+        }
         boolean estaAberto = this.requerimento.estaAberto();
-        boolean podeCancelar = usuarioIgual && estaAberto;
+        boolean podeCancelar = usuarioPode && estaAberto;
 
         return podeCancelar;
     }
@@ -550,5 +591,5 @@ public class DetalheRequerimentoBean {
     public void imprimirComprovanteRequerimento() throws IOException {
         this.requerimento.imprimir(loginBean.getUsuario());
     }
-        
+
 }

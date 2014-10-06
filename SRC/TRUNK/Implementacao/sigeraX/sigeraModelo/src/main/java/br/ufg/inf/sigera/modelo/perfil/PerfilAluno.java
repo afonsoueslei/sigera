@@ -71,4 +71,11 @@ public class PerfilAluno extends Perfil {
     public List<RequerimentoPlano> obtenhaRequerimentosPlanos(UsuarioSigera usuario) {
        return null;
     }        
+
+    @Override
+    public boolean permiteCancelarRequerimento() {        
+        return false;
+    }
+    
+    
 }

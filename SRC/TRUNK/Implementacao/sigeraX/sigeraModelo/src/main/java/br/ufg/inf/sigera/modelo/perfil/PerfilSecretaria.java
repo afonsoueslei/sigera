@@ -90,4 +90,10 @@ public class PerfilSecretaria extends Perfil {
     public boolean permiteManterUsuarios() {
         return false;
     }
+
+    @Override
+    public boolean permiteCancelarRequerimento() {
+        return false;
+    }
+
 }
