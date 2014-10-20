@@ -31,22 +31,7 @@ public class RequerimentoAssinatura extends Requerimento {
     
     @Override
     public boolean usuarioPodeConferirDocumentos(UsuarioSigera usuarioLogado) {        
-                        
-        // Só os usuários autenticados com perfil de secretaria do mesmo curso do estudante 
-        // requerente podem conferir e confirmar a entrega dos documentos.
-        // Adição de autorização para perfil secretaria de graduação
-        
-        Perfil perfilUsuario = usuarioLogado.getPerfilAtual().getPerfil();
-        Curso cursoUsuario = usuarioLogado.getPerfilAtual().getCurso();
-        
-        if ((perfilUsuario.getId() == EnumPerfil.SECRETARIA.getCodigo()  
-            && cursoUsuario.getId() == getCurso().getId()) 
-            || perfilUsuario.getId() == EnumPerfil.SECRETARIA_GRADUACAO.getCodigo()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return usuarioEhDaSecretariaDoCurso(usuarioLogado);
     }
     
     @Override

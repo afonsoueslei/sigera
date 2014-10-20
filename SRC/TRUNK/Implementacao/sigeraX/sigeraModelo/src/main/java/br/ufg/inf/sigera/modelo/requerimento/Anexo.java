@@ -21,17 +21,20 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "anexos")
+@Table(name = "anexo")
 public class Anexo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private int id;
-    @JoinColumn(name = "Req_Segunda_Chamada_Requerimento_id", referencedColumnName = "Requerimento_id")
-    @ManyToOne(optional = false)
-    private RequerimentoSegundaChamada requerimento;
+    
+    @ManyToOne
+    @JoinColumn(name = "requerimento_id")
+    private Requerimento requerimento;
+    
     @Column(name = "caminho")
     private String caminho;
+    
     @Column(name = "nome")
     private String nome;
 
@@ -106,11 +109,11 @@ public class Anexo {
         this.id = id;
     }
 
-    public RequerimentoSegundaChamada getRequerimento() {
+    public Requerimento getRequerimento() {
         return requerimento;
     }
 
-    public void setRequerimento(RequerimentoSegundaChamada requerimento) {
+    public void setRequerimento(Requerimento requerimento) {
         this.requerimento = requerimento;
     }
 

@@ -119,8 +119,10 @@ public class SegundaChamadaBean implements Serializable {
                 = new RequerimentoSegundaChamada(loginBean.getUsuario(),
                         turma,
                         this.getDataProva(),
-                        this.getJustificativa(),
-                        this.getAnexos());
+                        this.getJustificativa());                        
+        
+        requerimento.setAnexos(this.getAnexos());
+        
         if (requerimento.salvar()) {
             limpar();
 

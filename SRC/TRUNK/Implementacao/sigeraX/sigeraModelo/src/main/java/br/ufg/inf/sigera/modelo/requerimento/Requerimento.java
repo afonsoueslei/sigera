@@ -9,7 +9,6 @@ import br.ufg.inf.sigera.modelo.Turma;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
-import br.ufg.inf.sigera.modelo.perfil.Perfil;
 import br.ufg.inf.sigera.modelo.servico.Conexoes;
 import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import com.mysql.jdbc.Connection;
@@ -79,13 +78,21 @@ public abstract class Requerimento implements Serializable {
     private Date dataFechamento;
     @Column(name = "justificativa")
     private String justificativa;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "requerimento_id")
     private Collection<Parecer> pareceres;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "requerimento_id")
+    private Collection<Anexo> anexos;
+
     @Column(name = "Tipo")
     private int tipo;
     @Transient
     private Curso curso;
+    @Transient
+    private Integer prazoRequeridoProrrogacaoDefesa;
     @Transient
     private String codigoMensagemConfirmacao;
     @Transient
@@ -117,6 +124,19 @@ public abstract class Requerimento implements Serializable {
             descobrirCurso();
         }
         return curso;
+    }
+
+    public Integer getPrazoRequeridoProrrogacaoDefesa() {
+        EntityManager em = criarManager();
+
+        if (this.tipo != EnumTipoRequerimento.PRORROGACAO_DEFESA.getCodigo()) {
+            return 0;
+        } else {
+            RequerimentoProrrogacaoDefesa reqProrrogacao = em.find(RequerimentoProrrogacaoDefesa.class, id);
+            prazoRequeridoProrrogacaoDefesa = reqProrrogacao.getPrazoEmMeses();
+        }
+
+        return prazoRequeridoProrrogacaoDefesa;
     }
 
     //para requerimento do tipo Plano
@@ -175,6 +195,19 @@ public abstract class Requerimento implements Serializable {
 
     public void setPareceres(Collection<Parecer> pareceres) {
         this.pareceres = pareceres;
+    }
+
+    public Collection<Anexo> getAnexos() {
+        return anexos;
+    }
+
+    public void setAnexos(Collection<Anexo> anexos) {
+        for (Anexo a : anexos) {
+            a.setRequerimento(this);
+        }
+        this.anexos = anexos;
+
+        this.anexos = anexos;
     }
 
     public int getId() {
@@ -263,10 +296,6 @@ public abstract class Requerimento implements Serializable {
         return null;
     }
 
-    public Collection<Anexo> getAnexos() {
-        return null;
-    }
-
     public String getDescricaoStatus() {
         return EnumStatusRequerimento.obtenha(this.getStatus()).getNome();
     }
@@ -320,7 +349,7 @@ public abstract class Requerimento implements Serializable {
 
         if (this.getPareceres() != null && this.getPareceres().size() > 0) {
             if (this.getUsuario().getId() == usuario.getId()
-                    || perfilPermiteDarParecer(usuario) 
+                    || perfilPermiteDarParecer(usuario)
                     || usuarioEhDaSecretariaDoCurso(usuario)
                     || usuarioEhAdministrador) {
                 return true;
@@ -328,19 +357,38 @@ public abstract class Requerimento implements Serializable {
         }
         return false;
     }
-    
-    public boolean usuarioEhDaSecretariaDoCurso(UsuarioSigera usuarioLogado) {
-        Perfil perfilUsuario = usuarioLogado.getPerfilAtual().getPerfil();
-        Curso cursoUsuario = usuarioLogado.getPerfilAtual().getCurso();
 
-        if ((perfilUsuario.getId() == EnumPerfil.SECRETARIA.getCodigo()  
-            && cursoUsuario.getId() == getCurso().getId()) 
-            || perfilUsuario.getId() == EnumPerfil.SECRETARIA_GRADUACAO.getCodigo()) {
-            return true;
-        } else {
-            return false;
+    public boolean usuarioEhDaSecretariaDoCurso(UsuarioSigera usuarioLogado) {
+        // 1 caso) Usuários com perfil de secretaria do mesmo curso do requerimento
+        // 2 caso) Usuários com perfil de secretaria de Graduaçao        
+
+        Integer perfilUsuarioLogado = usuarioLogado.getPerfilAtual().getPerfil().getId();
+        boolean cursoRequerimentoEhCursoPos = getCurso().getPrefixo().endsWith("SC") || getCurso().getPrefixo().endsWith("sc");
+        boolean usuarioLogadoEhSecretarioCursoPos = false;
+
+        if (usuarioLogado.getPerfilAtual().getCurso() != null) {
+            Integer cursoUsuarioLogado = usuarioLogado.getPerfilAtual().getCurso().getId();
+            if (cursoUsuarioLogado == Curso.obtenhaCursoPorPrefixo("POS").getId()) {
+                usuarioLogadoEhSecretarioCursoPos = true;
+            }
+
+            // 1 caso
+            if (perfilUsuarioLogado == EnumPerfil.SECRETARIA.getCodigo() && cursoUsuarioLogado == this.getCurso().getId()) {
+                return true;
+            }
         }
-    } 
+
+        // 2 caso
+        if (perfilUsuarioLogado == EnumPerfil.SECRETARIA_GRADUACAO.getCodigo()) {
+            return true;
+        }
+
+        //caso excepcional Qdo e secretario Pos e curso do requerimento e de aluno do MSC ou do DSC
+        if (usuarioLogadoEhSecretarioCursoPos && cursoRequerimentoEhCursoPos) {
+            return true;
+        }
+        return false;
+    }
 
     public boolean autorizaVisualizarAnexos(UsuarioSigera usuario) {
         if (this.getAnexos() != null && this.getAnexos().size() > 0) {
@@ -388,6 +436,10 @@ public abstract class Requerimento implements Serializable {
     }
 
     public boolean usuarioPodeConferirDocumentos(UsuarioSigera usuarioLogado) {
+        return false;
+    }
+
+    public boolean usuarioEhOrientadorDoRequerente(UsuarioSigera usuarioLogado) {
         return false;
     }
 
