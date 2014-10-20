@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml"      
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <!-- Parecer intermediário de assinatura de contratos-->
+    <h:panelGroup id="panel-parecer-assinatura" rendered="#{detalheRequerimentoBean.usuarioPodeConferirDocumentos()}">
+
+        <div id="mostrar-parecer-assinatura">
+            <div class="form-actions">
+                <p:commandLink id="botao-parecer-assinatura" styleClass="btn btn-success botao-com-margem-direita"
+                               onclick="mostreControlesConferir();">
+                    <h:outputText value="Confirmar entrega e conferência de documentos" />
+                </p:commandLink> 
+            </div>                          
+        </div>   
+
+        <div id="controles-parecer-assinatura" class="escondido">
+            <div class="div-doc-conf">
+                <h:outputLabel for="doc-conferidos" styleClass="doc-conf" value="Documentos foram conferidos?" />    
+                <p:selectBooleanButton id="doc-conferidos" value="#{detalheRequerimentoBean.documentosConferidos}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close">
+                    <f:ajax event="change" render="botao-confirmar-parecer-assinatura" />
+                </p:selectBooleanButton>
+                <hr  style="margin: 8px !important;"/>
+                <h:outputLabel styleClass="doc-conf" value="Encaminhar requerimento para:" />  
+                <br/>
+
+                <h:selectBooleanCheckbox id="ce"  styleClass="chk-parecer"  value="#{detalheRequerimentoBean.coordenadorEstagio}">
+                    <f:ajax event="change" render="botao-confirmar-parecer-assinatura" />
+                </h:selectBooleanCheckbox>
+                <h:outputLabel styleClass="doc-conf-atores" for="ce" value="Coordenador de estágio" />
+
+                <h:selectBooleanCheckbox id="diretor" styleClass="chk-parecer" value="#{detalheRequerimentoBean.diretor}">
+                    <f:ajax event="change" render="botao-confirmar-parecer-assinatura" />
+                </h:selectBooleanCheckbox>
+                <h:outputLabel styleClass="doc-conf-atores" for="diretor" value="Diretor" />
+            </div>
+
+            <h:outputLabel for="justificativa-parecer-assinatura" value="Justificativa, comentários:" />
+            <h:inputTextarea  id="justificativa-parecer-assinatura" class="area-justificativa"  value="#{detalheRequerimentoBean.justificativaConferencia}" />                            
+
+            <div class="form-actions">
+                <p:commandButton id="botao-confirmar-parecer-assinatura"
+                                 disabled="#{!detalheRequerimentoBean.validarConferencia()}"                                                      
+                                 styleClass="btn btn-primary botao-com-margem-direita" 
+                                 value="Confirmar conferência de documentos" 
+                                 action="#{detalheRequerimentoBean.confirmarParecerConferencia()}" />                                                                        
+
+                <p:commandLink id="botao-cancelar-parecer-assinatura" styleClass="btn" action="#{detalheRequerimentoBean.cancelarConferencia()}" update="doc-conferidos justificativa-parecer-assinatura ce diretor botao-confirmar-parecer-assinatura" 
+                               onclick="escondaControlesConferir();">
+                    <h:outputText value="Cancelar conferência" />
+                </p:commandLink>
+            </div>
+
+            <div class="spacer20"></div>
+        </div>
+
+    </h:panelGroup>
+
+    <!-- Parecer do Orientador sobre prorrogação de prazo defesa-->
+    <h:panelGroup id="panel-parecer-assinatura2" rendered="#{detalheRequerimentoBean.usuarioPodeValidaPedidoProrrogacaoDefesa()}">
+
+        <div id="mostrar-parecer-prorrogacao">
+            <div class="form-actions">
+                <p:commandLink id="botao-parecer-prorrogacao" styleClass="btn btn-success botao-com-margem-direita"
+                               onclick="mostreControlesProrrogacao();">
+                    <h:outputText value="Validar pedido de Prorrogação de Prazo Defesa" />
+                </p:commandLink> 
+            </div>                          
+        </div>   
+
+        <div id="controles-parecer-prorrogacao" class="escondido">
+            <div class="form-actions form-actions-deferimento">
+                <h:selectOneRadio id="botoes-selecao-prorrogacao" styleClass="radio-deferimento" value="#{detalheRequerimentoBean.statusParecer}">
+                    <f:selectItems value="#{detalheRequerimentoBean.listaStatus}"
+                                   var="s"
+                                   itemLabel="#{s.nome}"
+                                   itemValue="#{s.codigo}"/>
+                    <f:ajax event="change" render="botao-confirmar-parecer-prorrogacao" />
+                </h:selectOneRadio>
+            </div>
+
+
+            <h:outputLabel for="justificativa-parecer-prorrogacao" value="Justificativa, comentários:" />
+            <h:inputTextarea  id="justificativa-parecer-prorrogacao" class="area-justificativa"  value="#{detalheRequerimentoBean.justificativaDeferimento}" />
+
+            <div class="form-actions">
+                <p:commandButton id="botao-confirmar-parecer-prorrogacao"
+                                 disabled="#{detalheRequerimentoBean.statusParecer == 0}"                                                      
+                                 styleClass="btn btn-primary botao-com-margem-direita" 
+                                 value="Confirmar parecer" 
+                                 action="#{detalheRequerimentoBean.confirmarParecerValidacaoProrrogacaoPrazoDefesa()}" />                                                                        
+
+                <p:commandLink id="botao-cancelar-parecer-prorrogacao" styleClass="btn" action="#{detalheRequerimentoBean.cancelarConferencia()}" update="" 
+                               onclick="escondaControlesProrrogacao();">
+                    <h:outputText value="Cancelar parecer" />
+                </p:commandLink>
+            </div>
+
+            <div class="spacer20"></div>
+        </div>
+
+
+    </h:panelGroup>                       
+
+    <!-- Dar parecer-->                        
+    <h:panelGroup id="panel-parecer" rendered="#{detalheRequerimentoBean.usuarioPodeDarParecer()}">                                                                
+        <div id="mostrar-parecer">
+            <div class="form-actions">                                
+                <p:commandLink id="botao-parecer" styleClass="btn btn-success botao-com-margem-direita"
+                               onclick="mostreControlesDeferimento();">
+                    <h:outputText value="Dar parecer ao requerimento" />
+                </p:commandLink> 
+
+                <!-- Coordenador encaminhar requerimento Prorrogação prazo defesa para membro de comissão-->                        
+                <h:panelGroup id="painelEncaminhaProrrogacaoParaMembro" rendered="#{detalheRequerimentoBean.usuarioPodeDelegarProrrogacaoDefesaAoMembro()}">
+                    <p:commandLink id="botao-parecer2" styleClass="btn btn-warning botao-com-margem-direita"
+                                   onclick="mostreControlesDelegarProrrogacao();">
+                        <h:outputText value="Delegar para um Membro da comissão" />
+                    </p:commandLink> 
+                </h:panelGroup>
+
+            </div>                          
+        </div>          
+
+        <!--controles parecer delegacao!-->
+        <div id="controles-parecer-delegacao" class="escondido">
+
+            <h:outputLabel styleClass="label-selecione-perfil" for="membros" value="Selecione membro da comissão para analisar o Requerimento:" />
+            <h:selectOneMenu styleClass="selecao-perfil" id="orientadores"  
+                             value="#{detalheRequerimentoBean.codigoMembroCPG}">
+                <f:selectItem itemLabel="" noSelectionOption="true"/>
+                <f:selectItems value="#{detalheRequerimentoBean.listaMembrosCPG}" 
+                               var="membro"
+                               itemLabel="#{membro.nome}"
+                               itemValue="#{membro.id}"/>    
+                <f:ajax event="change" render="botao-confirmar-parecer-delegacao" />
+            </h:selectOneMenu>
+
+            <h:outputLabel for="justificativaDelegacao" value="Justificativa, comentários:" />
+            <h:inputTextarea  id="justificativaDelegacao" class="area-justificativa"  value="#{detalheRequerimentoBean.justificativaDeferimento}" />
+
+            <div class="form-actions">
+                <p:commandButton id="botao-confirmar-parecer-delegacao"
+                                 disabled="#{detalheRequerimentoBean.codigoMembroCPG == null}" 
+                                 onclick="exibirConfirmacao('#{detalheRequerimentoBean.mensagemConfirmacao}', 'form:botao-teste2')"                                                     
+                                 styleClass="btn btn-primary botao-com-margem-direita" 
+                                 value="Confirmar delegação" />                                    
+                <p:commandLink styleClass="botao-escondido" id="botao-teste2" action="#{detalheRequerimentoBean.confirmarParecerDelegacao()}" update="form" />
+
+                <p:commandLink id="botao-cancelar-parecer-delegacao" styleClass="btn" action="#{detalheRequerimentoBean.cancelarParecer}" update="botoes-selecao justificativaParecer botao-confirmar-parecer" 
+                               onclick="escondaControlesDelegarProrrogacao();">
+                    <h:outputText value="Cancelar delegação" />
+                </p:commandLink>
+            </div>
+
+            <div class="spacer20"></div>
+        </div>
+
+
+        <div id="controles-parecer" class="escondido">
+            <div class="form-actions form-actions-deferimento">
+                <h:selectOneRadio id="botoes-selecao" styleClass="radio-deferimento" value="#{detalheRequerimentoBean.statusParecer}">
+                    <f:selectItems value="#{detalheRequerimentoBean.listaStatus}"
+                                   var="s"
+                                   itemLabel="#{s.nome}"
+                                   itemValue="#{s.codigo}"/>
+                    <f:ajax event="change" render="botao-confirmar-parecer" />
+                </h:selectOneRadio>
+            </div>
+
+            <h:outputLabel for="justificativaParecer" value="Justificativa, comentários:" />
+            <h:inputTextarea  id="justificativaParecer" class="area-justificativa"  value="#{detalheRequerimentoBean.justificativaDeferimento}" />                            
+
+            <div class="form-actions">
+                <p:commandButton id="botao-confirmar-parecer"
+                                 disabled="#{detalheRequerimentoBean.statusParecer == 0}" 
+                                 onclick="exibirConfirmacao('#{detalheRequerimentoBean.mensagemConfirmacao}', 'form:botao-teste')"                                                     
+                                 styleClass="btn btn-primary botao-com-margem-direita" 
+                                 value="Confirmar parecer" />                                    
+                <p:commandLink styleClass="botao-escondido" id="botao-teste" action="#{detalheRequerimentoBean.confirmarParecer}" update="form" />
+
+                <p:commandLink id="botao-cancelar-parecer" styleClass="btn" action="#{detalheRequerimentoBean.cancelarParecer}" update="botoes-selecao justificativaParecer botao-confirmar-parecer" 
+                               onclick="escondaControlesDeferimento();">
+                    <h:outputText value="Cancelar parecer" />
+                </p:commandLink>
+            </div>
+
+            <div class="spacer20"></div>
+        </div>
+
+    </h:panelGroup> 
+
+    <!-- Dar parecer de acréscimo/cancelamento de disciplina -->
+    <h:panelGroup id="panel-parecer-acerto" rendered="#{detalheRequerimentoBean.usuarioPodeDarParecerAcertoMatricula()}">
+
+        <div id="mostrar-parecer-acerto">
+            <div class="form-actions">
+                <p:commandLink id="botao-parecer-acerto" styleClass="btn btn-success botao-com-margem-direita"
+                               onclick="mostreControlesDeferimentoAcerto();">
+                    <h:outputText value="Dar parecer ao requerimento" />
+                </p:commandLink> 
+            </div>                          
+        </div>   
+
+        <div id="controles-parecer-acerto" class="escondido">
+
+            <p:dataTable styleClass="largura-minima-tabela"
+                         id="datatable-acerto" var="turmaAcerto" value="#{detalheRequerimentoBean.turmasComStatus}"                                             
+                         emptyMessage="#{msgs['MT.401']}">
+
+                <p:column width="46%">
+                    <f:facet name="header">  
+                        <h:outputText value="Disciplina" />
+                    </f:facet> 
+                    <h:outputText value="#{turmaAcerto.turma.disciplina.nome}" />
+                </p:column>       
+
+                <p:column width="20%">
+                    <f:facet name="header">  
+                        <h:outputText value="Curso" />
+                    </f:facet> 
+                    <h:outputText value="#{turmaAcerto.turma.disciplina.curso.nome}" />
+                </p:column>       
+
+                <p:column width="20%">
+                    <f:facet name="header">  
+                        <h:outputText value="Professor" />
+                    </f:facet> 
+                    <h:outputText value="#{turmaAcerto.turma.professor.nome}" />
+                </p:column>       
+
+                <p:column width="10%">
+                    <f:facet name="header">  
+                        <h:outputText value="Turma" />
+                    </f:facet> 
+                    <h:outputText value="#{turmaAcerto.turma.nome}" />
+                </p:column> 
+
+                <p:column width="10%">
+                    <f:facet name="header">  
+                        <h:outputText value="Parecer" />
+                    </f:facet> 
+                    <p:selectOneRadio id="botoes-selecao-acerto" value="#{turmaAcerto.status}">
+                        <f:selectItems value="#{detalheRequerimentoBean.listaStatus}"
+                                       var="s"
+                                       itemLabel="#{s.nome}"
+                                       itemValue="#{s.codigo}"/>
+                        <f:ajax event="change" render=":form:botao-confirmar-parecer-acerto" />
+                    </p:selectOneRadio>
+                </p:column>
+            </p:dataTable>
+
+            <div class="spacer15"></div>
+
+            <h:outputLabel for="justificativa-parecer-acerto" value="Justificativa, comentários:" />
+            <h:inputTextarea  id="justificativa-parecer-acerto" class="area-justificativa"  value="#{detalheRequerimentoBean.justificativaParecerAcerto}" />                            
+
+            <div class="form-actions">
+                <p:commandButton id="botao-confirmar-parecer-acerto"
+                                 disabled="#{!detalheRequerimentoBean.validarStatusParecerAcerto()}" 
+                                 onclick="exibirConfirmacao('#{detalheRequerimentoBean.mensagemConfirmacao}', 'form:botao-teste-acerto')"                                                     
+                                 styleClass="btn btn-primary botao-com-margem-direita" 
+                                 value="Confirmar parecer" />                                    
+                <p:commandLink styleClass="botao-escondido" id="botao-teste-acerto" action="#{detalheRequerimentoBean.confirmarParecerAcerto()}" update="form" />
+
+                <p:commandLink id="botao-cancelar-parecer-acerto" styleClass="btn" action="#{detalheRequerimentoBean.cancelarParecerAcerto()}" update="datatable-acerto justificativa-parecer-acerto botao-confirmar-parecer-acerto" 
+                               onclick="escondaControlesDeferimentoAcerto();">
+                    <h:outputText value="Cancelar parecer" />
+                </p:commandLink>
+            </div>
+
+            <div class="spacer20"></div>
+        </div>
+
+    </h:panelGroup>
+
+</html>
+

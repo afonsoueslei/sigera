@@ -17,7 +17,8 @@
             <div class="span12">                
                 <p:messages closable="true" escape="false"/>
 
-                <h:form> 
+                <h:form id="form"> 
+
 
                     <p:dataTable styleClass="largura-minima-tabela"                                 
                                  id="dataTable" var="requerimento" value="#{consultarRequerimentoBean.dataModel}"                                 
@@ -27,15 +28,15 @@
                                  rowsPerPageTemplate="10,20,30,#{consultarRequerimentoBean.requerimentosTela.size() > 30 ? consultarRequerimentoBean.requerimentosTela.size() : ''}"
                                  filteredValue="#{consultarRequerimentoBean.requerimentosFiltrados}"
                                  emptyMessage="#{msgs['MT.401']}"
-                                 rowStyleClass="#{requerimento.status ne 'Aberto' ? 'destacado' : null}">                               
-
+                                 rowStyleClass="#{requerimento.status eq 'Deferido' or requerimento.status eq 'Indeferido' or requerimento.status eq 'Cancelado' ? 'apagado' : requerimento.status ne 'Aberto' ? 'destacado' : null}" 
+                                 selectionMode="single">
 
                         <f:facet name="header" >                              
                             <h:commandLink style="color: #0000ff" id="btnAtualizar" action="#{consultarRequerimentoBean.atualizarLista()}">                                
                                 Lista de Requerimentos
                             </h:commandLink>
-                        </f:facet>
-
+                        </f:facet>                                                
+                        
                         <p:column styleClass="centralizar-texto" 
                                   sortBy="#{requerimento.numero}" 
                                   filterBy="#{requerimento.numero}"                                  
@@ -118,6 +119,7 @@
                         </p:column>
 
                     </p:dataTable>
+                    
                     <row>
 
                         <div class="span3 offset4">
@@ -134,7 +136,7 @@
                                     <p:dataExporter type="csv" target="dataTable" fileName="ManterDisciplinas" />  
                                 </h:commandLink>  
 
-                                <h:commandLink >  
+                                <h:commandLink>  
                                     <p:graphicImage value="/resources/img/pdf.png" />  
                                     <p:dataExporter type="pdf" target="dataTable" fileName="ManterDisciplinas" pageOnly="true" preProcessor="#{atribuirPerfilBean.preProcess}"/>  
                                 </h:commandLink>  
@@ -172,6 +174,7 @@
                         </div>                    
 
                     </row>    
+
                 </h:form>
             </div>
         </div>
