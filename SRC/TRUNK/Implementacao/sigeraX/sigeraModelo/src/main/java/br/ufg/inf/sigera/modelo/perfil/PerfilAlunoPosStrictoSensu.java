@@ -86,7 +86,7 @@ public class PerfilAlunoPosStrictoSensu extends Perfil {
         return null;
     }
 
-    public UsuarioSigera obtenhaOrientador(UsuarioSigera usuario) {
+    public UsuarioSigera obtenhaOrientador(UsuarioSigera usuario, BuscadorLdap buscadorLdap) {
         Professor orientador = null;
         EntityManager em = obtenhaEntityManager();
         StringBuilder consulta = new StringBuilder();
@@ -97,8 +97,7 @@ public class PerfilAlunoPosStrictoSensu extends Perfil {
         Query query = em.createQuery(consulta.toString());
         query.setParameter("idUsuario", usuario.getId());
         query.setParameter("idPerfil", EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
-        try {
-            BuscadorLdap buscadorLdap = usuario.getUsuarioLdap().getBuscadorLdap();
+        try {            
             Integer id = (Integer) query.getSingleResult();
             orientador = em.find(Professor.class, id);
             orientador.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(orientador.getUsuario().getId()));
@@ -115,4 +114,8 @@ public class PerfilAlunoPosStrictoSensu extends Perfil {
         return false;
     }
 
+    @Override
+    public boolean permiteFazerRequerimentoDaPos(){
+        return true;
+    }
 }

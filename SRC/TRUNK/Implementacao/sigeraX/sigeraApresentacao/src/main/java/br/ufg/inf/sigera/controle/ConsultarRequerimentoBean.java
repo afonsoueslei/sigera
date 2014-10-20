@@ -39,7 +39,7 @@ public class ConsultarRequerimentoBean {
     private SelectItem[] opcoesTipoStatus;
 
     static {
-        TIPOS_REQUERIMENTO = new String[8];
+        TIPOS_REQUERIMENTO = new String[9];
         TIPOS_REQUERIMENTO[0] = EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getNome();
         TIPOS_REQUERIMENTO[1] = EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getNome();
         TIPOS_REQUERIMENTO[2] = EnumTipoRequerimento.SEGUNDA_CHAMADA.getNome();
@@ -48,14 +48,16 @@ public class ConsultarRequerimentoBean {
         TIPOS_REQUERIMENTO[5] = EnumTipoRequerimento.EXTRATO_ACADEMICO.getNome();
         TIPOS_REQUERIMENTO[6] = EnumTipoRequerimento.DECLARACAO_MATRICULA.getNome();
         TIPOS_REQUERIMENTO[7] = EnumTipoRequerimento.PLANO.getNome();
+        TIPOS_REQUERIMENTO[8] = EnumTipoRequerimento.PRORROGACAO_DEFESA.getNome();
 
-        TIPOS_STATUS = new String[6];
+        TIPOS_STATUS = new String[7];
         TIPOS_STATUS[0] = EnumStatusRequerimento.ABERTO.getNome();
         TIPOS_STATUS[1] = EnumStatusRequerimento.DEFERIDO.getNome();
         TIPOS_STATUS[2] = EnumStatusRequerimento.INDEFERIDO.getNome();
         TIPOS_STATUS[3] = EnumStatusRequerimento.CANCELADO.getNome();
         TIPOS_STATUS[4] = EnumStatusRequerimento.CONFERIDO.getNome();
         TIPOS_STATUS[5] = EnumStatusRequerimento.CONCLUIDO.getNome();
+        TIPOS_STATUS[6] = EnumStatusRequerimento.AUTORIZADO.getNome();
     }
 
     public List<RequerimentoTelaConsulta> getRequerimentosTela() {
@@ -142,10 +144,11 @@ public class ConsultarRequerimentoBean {
         }
     }
 
-    public String visualizarDetalhes() {
+    public String visualizarDetalhes() {        
         return "detalhe_requerimento";
     }
     
+     
     public String atualizarLista(){
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");        
         return Paginas.getConsultarRequerimentos();

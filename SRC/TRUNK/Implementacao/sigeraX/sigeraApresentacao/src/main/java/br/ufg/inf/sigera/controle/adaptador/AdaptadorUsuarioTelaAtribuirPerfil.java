@@ -326,4 +326,9 @@ public class AdaptadorUsuarioTelaAtribuirPerfil implements UsuarioTelaAtribuirPe
         return possuiPerfil(EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
     }
 
+    @Override
+    public Curso getCursoPerfilAlunoRemover(Integer codigoPerfil) {
+        return obtenhaAssociacaoPerfilCurso(codigoPerfil).getCurso();
+    }
+
 }

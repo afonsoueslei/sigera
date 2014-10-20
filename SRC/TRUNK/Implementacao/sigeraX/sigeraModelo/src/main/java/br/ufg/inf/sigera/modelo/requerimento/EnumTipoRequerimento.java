@@ -12,7 +12,8 @@ public enum EnumTipoRequerimento {
     EXTRATO_ACADEMICO(5, "Extrato acadêmico"),
     EMENTAS(6, "Ementas de disciplinas"),
     ASSINATURA(7, "Assinatura de contratos/relatórios de estágio"),
-    PLANO(8,"Plano de Ensino");
+    PLANO(8,"Plano de Ensino"),
+    PRORROGACAO_DEFESA(9,"Prorrogação prazo defesa");
     
     private int codigo;
     private String nome;

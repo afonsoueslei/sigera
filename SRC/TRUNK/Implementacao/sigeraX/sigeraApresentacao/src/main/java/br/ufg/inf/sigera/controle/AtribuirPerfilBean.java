@@ -13,6 +13,7 @@ import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
 import br.ufg.inf.sigera.modelo.Professor;
+import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -106,10 +107,6 @@ public class AtribuirPerfilBean {
     public void setCodigoCurso(Integer codigoCurso) {
         if (codigoCurso != null) {
             this.cursoSelecionado = Curso.obtenhaCurso(codigoCurso);
-            //Caso por engano perfil ser definido com curso = mestrado ou doutorado entao modifica para curso POS
-            if (this.cursoSelecionado != null && this.cursoSelecionado.getPrefixo().endsWith("sc")) {
-                this.cursoSelecionado = Curso.obtenhaCursoPorPrefixo("POS");
-            }
 
         } else {
             this.cursoSelecionado = null;
@@ -137,9 +134,15 @@ public class AtribuirPerfilBean {
     }
 
     public List<Curso> getListaCursos() {
+        if (isPerfilAlunoPosStrictoSensu()) {
+            List<Curso> cursosPos = new ArrayList<Curso>();
+            cursosPos.add(Curso.obtenhaCursoPorPrefixo("MSC"));
+            cursosPos.add(Curso.obtenhaCursoPorPrefixo("DSC"));
+            return cursosPos;
+        }
         return Curso.buscaTodosCursos();
     }
-
+    
     public List<Professor> getListaOrientadores() {
         return Professor.buscaTodosProfessores(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
     }
@@ -250,6 +253,13 @@ public class AtribuirPerfilBean {
 
         for (UsuarioTelaAtribuirPerfil usuario : usuariosSelecionados) {
             usuario.modificarPerfil(this.perfilSelecionado, this.cursoSelecionado, this.orientadorSelecionado, concederPerfil);
+            
+            //Se o perfil que esta sendo atribuido for de Aluno Pos e o usuário já possui perfil de Aluno então esse será removido
+            if(this.perfilSelecionado.getId() == EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo() && usuario.getAluno()){                
+                Perfil perfilAlunoRemover =  GerenciadorPerfil.obtenhaPerfil(EnumPerfil.ALUNO.getCodigo());
+                Curso cursoPerfilAlunoRemover = usuario.getCursoPerfilAlunoRemover(EnumPerfil.ALUNO.getCodigo());                
+                usuario.modificarPerfil(perfilAlunoRemover, cursoPerfilAlunoRemover, null, false);
+            }
         }
         limparSelecao();
     }
@@ -307,6 +317,10 @@ public class AtribuirPerfilBean {
             }
         }
         return false;
+    }
+
+    public boolean isPerfilAlunoPosStrictoSensu() {
+        return (this.getCodigoPerfil() != null && this.getCodigoPerfil() == EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
     }
 
 }

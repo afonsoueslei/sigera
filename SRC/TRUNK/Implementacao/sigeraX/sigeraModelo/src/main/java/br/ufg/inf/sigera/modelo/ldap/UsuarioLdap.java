@@ -119,4 +119,10 @@ public class UsuarioLdap {
         }
         return true;
     }
+    
+    
+    public boolean isAlunoRegularPosStrictoSensu(){
+        return (this.getPrefixoCurso().endsWith("SC") || this.getPrefixoCurso().endsWith("sc")) && this.getUid().charAt(7) == '0';       
+    }
+    
 }

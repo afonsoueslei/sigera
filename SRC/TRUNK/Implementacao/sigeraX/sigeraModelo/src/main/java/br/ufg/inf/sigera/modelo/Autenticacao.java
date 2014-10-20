@@ -90,7 +90,7 @@ public class Autenticacao {
             EntityManager em = Persistencia.obterManager();
 
             if (em == null) {
-                return crieUsuarioFalhaBanco();                
+                return crieUsuarioFalhaBanco();
             }
 
             usuario = em.find(UsuarioSigera.class, Integer.valueOf(usuarioLdap.getUidNumber()));
@@ -104,8 +104,15 @@ public class Autenticacao {
 
                 if (usuarioLdap.getGrupo().equals(EnumGrupo.ALUNO)) {
                     Collection<AssociacaoPerfilCurso> perfis = new ArrayList<AssociacaoPerfilCurso>();
-                    AssociacaoPerfilCurso perfilEstudante = GerenciadorPerfil.criePerfilAluno(usuario);
-                    perfis.add(perfilEstudante);
+
+                    //se for aluno regular de Pos Stricto Sensu, cria perfil proprio e associa ao orientador (Administrador = uidNumber 1786)
+                    if (usuarioLdap.isAlunoRegularPosStrictoSensu()) {
+                         AssociacaoPerfilCurso perfilEstudantePosStrictoSensu = GerenciadorPerfil.criePerfilAlunoPosStrictoSensu(usuario,Professor.obtenhaProfessorPorIdUsuario(1786));
+                         perfis.add(perfilEstudantePosStrictoSensu);
+                    } else {                     
+                        AssociacaoPerfilCurso perfilEstudante = GerenciadorPerfil.criePerfilAluno(usuario);
+                        perfis.add(perfilEstudante);
+                    }
                     usuario.setPerfis(perfis);
                 }
             }
@@ -122,14 +129,14 @@ public class Autenticacao {
 
         } catch (javax.persistence.PersistenceException ex) {
             Logger.getLogger(Autenticacao.class.getName()).log(Level.SEVERE, null, ex);
-            return crieUsuarioFalhaBanco();            
+            return crieUsuarioFalhaBanco();
         }
     }
 
     //Usuario temporário apenas para informar que não há conexão com o banco
     public UsuarioSigera crieUsuarioFalhaBanco() {
         usuario = new UsuarioSigera();
-        usuario.setTelefoneComercial("falha-banco");     
+        usuario.setTelefoneComercial("falha-banco");
         return usuario;
     }
 }

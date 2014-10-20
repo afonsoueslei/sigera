@@ -1,5 +1,6 @@
 package br.ufg.inf.sigera.modelo.perfil;
 
+import br.ufg.inf.sigera.modelo.Professor;
 import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
@@ -70,7 +71,7 @@ public class PerfilProfessor extends Perfil {
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
 
         StringBuilder consulta2 = new StringBuilder();
-        consulta2.append("SELECT r");
+        consulta2.append(" SELECT r");
         consulta2.append(" FROM RequerimentoPlano as r  ");
         consulta2.append(" WHERE r.plano.turma.professor.usuario.id = :idUsuario ORDER BY r.status, r.id DESC");
 
@@ -82,7 +83,25 @@ public class PerfilProfessor extends Perfil {
         for (Requerimento rp : requerimentosPlanos) {
             requerimentos.add(rp);
         }
+        
+        StringBuilder consulta3 = new StringBuilder();
+        consulta3.append(" SELECT r");
+        consulta3.append(" FROM RequerimentoProrrogacaoDefesa as r  ");
+        consulta3.append(" WHERE r.usuario.id IN (SELECT apc.usuario.id ");
+        consulta3.append("                      FROM AssociacaoPerfilCurso as apc ");
+        consulta3.append("                      WHERE apc.orientador.id = :idProfessor )");
+        consulta3.append("                      ORDER BY r.status, r.id DESC");       
+        
+        Query query3 = em.createQuery(consulta3.toString());
+        
+        query3.setParameter("idProfessor", Professor.obtenhaProfessorPorIdUsuario(usuarioAutenticado.getId()).getId());
 
+        List<Requerimento> requerimentosProrrogacao = query3.getResultList();
+
+        for (Requerimento rp : requerimentosProrrogacao) {
+            requerimentos.add(rp);
+        }
+        
         for (Requerimento r : requerimentos) {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
         }

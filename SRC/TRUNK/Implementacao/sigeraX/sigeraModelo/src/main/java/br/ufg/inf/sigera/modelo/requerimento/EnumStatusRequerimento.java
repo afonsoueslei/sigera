@@ -10,7 +10,8 @@ public enum EnumStatusRequerimento {
     INDEFERIDO(3, "Indeferido"),
     CANCELADO(4,"Cancelado"),
     DEFERIDO(5, "Deferido"),
-    CONCLUIDO(6,"Concluído"); //Quando um plano foi concluído pelo professor.
+    CONCLUIDO(6,"Concluído"), //Quando um plano foi concluído pelo professor.
+    AUTORIZADO(7,"Autorizado"); //Quando um requerimento de prorrogação de defesa for validado pelo orientador.
     
     private int codigo;
     private String nome;

@@ -24,6 +24,7 @@ public class Paginas {
     private static final String ASSINATURA_FINALIZACAO = "assinatura_finalizacao";
     private static final String ATRIBUIR_PERFIL = "atribuir_perfil";
     private static final String CANCELAMENTO = "cancelamento";
+    private static final String PRORROGACAO = "prorrogacao_defesa";
     private static final String CONFIG = "config";
     private static final String CONSULTAR = "consultar";
     private static final String DECLARACAO_MATRICULA = "declaracao";
@@ -91,6 +92,11 @@ public class Paginas {
         return CANCELAMENTO;
     }
 
+    public static String getProrrogacao() {
+        return PRORROGACAO;
+    }
+
+    
     public static String getConfig() {
         return CONFIG;
     }

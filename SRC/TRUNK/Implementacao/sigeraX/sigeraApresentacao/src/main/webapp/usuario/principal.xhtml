@@ -136,7 +136,15 @@
                     </li>
                 </h:panelGroup>                    
             </h:panelGroup>    
-
+            <h:panelGroup rendered="#{loginBean.usuario.perfilAtual.perfil.permiteFazerRequerimentoDaPos()}">
+                <li class="span3 ">
+                    <div class="thumbnail">
+                        <h:link outcome="prorrogacao_defesa">
+                            <img src="#{request.contextPath}/resources/img/prorrogacao2.png" alt="Prorrogação Prazo Defesa" />
+                        </h:link>                    
+                    </div>
+                </li>
+            </h:panelGroup>
 
             <h:panelGroup rendered="#{loginBean.usuario.perfilAtual.perfil.permitePlanoDeAula()}">
                 <li class="span3">

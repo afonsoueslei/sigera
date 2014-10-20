@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<ui:composition template="/usuario/template/template_principal.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:param name="funcao" value="prorrogacao_defesa" />
+    <ui:param name="nomeImagem" value="prorrogacao.png" />
+    <ui:param name="paginaAtual" value="Prorrogacao Prazo Defesa" />
+
+    <ui:define name="conteudo">
+        <div class="row">
+            <div class="span12">                
+                <div >
+
+                    <div class='spacer20'></div>
+                    <div class="centralizar-texto">
+                        <h:outputLabel class="mensagem-documento negrito" value="ATENÇÃO"/>
+                        <p class="mensagem-documento "><h:outputText escape="false" value="#{msgs['MT.023']}" /></p>
+                    </div>                    
+                    
+                    <div class="spacer30"></div>
+                    
+                    <h:form id="form" enctype="multipart/form-data"> 
+                        <p:messages id="mensagem" closable="true" escape="false"/>
+
+                        <h:outputLabel value="Prazo prorrogação:" for="prazo" />
+                        <p:inputText id="prazo" styleClass="input-block-level" 
+                                     pt:placeholder="Informe a quantidade de meses (1 a 6) que deseja prorrogação."
+                                     value="#{prorrogacaoDefesaBean.prazoEmMeses}"
+                                     maxlength="1"
+                                     required="true" requiredMessage="Você deve informar o prazo de prorrogação desejado!"
+                                     onkeypress="return prazoProrrogacaoValido(event);"/> 
+                        
+                        <h:outputLabel value="Justificativa:" for="justificativa" />                    
+                        <h:inputTextarea  id="justificativa" class="area-justificativa"  value="#{prorrogacaoDefesaBean.justificativa}" pt:placeholder="Breve justificativa para o pedido de prorrogação."/>
+
+                        <div class="botao-anexar-arquivos">                        
+                            <p:fileUpload  id="fileUp"  
+                                           fileUploadListener="#{prorrogacaoDefesaBean.handleFileUpload}" 
+                                           mode="advanced"                             
+                                           multiple="true" 
+                                           auto="true"
+                                           previewWidth="30"
+                                           sizeLimit="10000000"
+                                           allowTypes="/(\.|\/)(jpe?g|gif|png|pdf|doc?x|xls?x|odt|ods)$/"
+                                           invalidFileMessage="Arquivo deve ser dos tipos: { jpg | gif | png | pdf | doc | xls | odt | ods } >>>"
+                                           invalidSizeMessage="Tamanho máximo permitido é de 10MB  >>>  "                
+                                           update="dataTable"
+                                           label="Anexar arquivos" />                               
+                        </div>
+
+                        <p:dataTable styleClass="largura-minima-tabela " 
+                                     id="dataTable" 
+                                     var="anexo" 
+                                     value="#{prorrogacaoDefesaBean.anexos}"
+                                     emptyMessage="#{msgs['MT.405']}"                          
+                                     >
+
+                            <f:facet name="header" >                            
+                                Anexos do requerimento
+                            </f:facet>
+
+                            <p:column sortBy="#{anexo.nome}">
+                                <f:facet name="header">  
+                                    <h:outputText value="Nome" />
+                                </f:facet> 
+                                <h:outputText value="#{anexo.nome}" />
+                            </p:column> 
+
+                            <p:column sortBy="#{anexo.tamanho}" width="15%" styleClass="centralizar-texto">
+                                <f:facet name="header">  
+                                    <h:outputText value="Tamanho" />
+                                </f:facet> 
+                                <h:outputText value="#{anexo.tamanho} KB" />
+                            </p:column> 
+
+                            <p:column width="4%" styleClass="centralizar-texto">
+                                <f:facet name="header">  
+                                    <h:outputText value="Ação" />
+                                </f:facet>                                        
+
+                                <h:commandLink title="Remover anexo" id="btnExcluir" 
+                                               action="#{prorrogacaoDefesaBean.remover}">
+                                    <h:graphicImage value="/resources/img/excluir2.png" />
+                                    <f:setPropertyActionListener target="#{prorrogacaoDefesaBean.anexoExcluir}"
+                                                                 value="#{anexo}" /> 
+                                </h:commandLink>
+                            </p:column>
+                        </p:dataTable>
+
+                        <div class="spacer30"></div>  
+
+                        <div class="form-actions">
+                            <h:commandButton styleClass="btn btn-primary botao-com-margem-direita" value="Confirmar requerimento" action="#{prorrogacaoDefesaBean.salvar}" />                
+                            <h:commandButton styleClass="btn" value="Voltar à página inicial" action="#{prorrogacaoDefesaBean.voltar}" /> 
+                        </div>
+                    </h:form>  
+                </div>
+            </div>
+        </div>
+    </ui:define>    
+
+</ui:composition>

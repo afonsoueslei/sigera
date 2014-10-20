@@ -1,6 +1,7 @@
 package br.ufg.inf.sigera.modelo;
 
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
+import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.io.Serializable;
 import java.util.Collections;
@@ -97,6 +98,29 @@ public class Professor implements Serializable, Comparable<Professor> {
         }
     }
 
+    public static List<Professor> buscaProfessoresMembrosCPG(BuscadorLdap buscadorLdap, Integer idCurso) {
+        EntityManager em = Persistencia.obterManager();
+        StringBuilder consulta = new StringBuilder();
+        consulta.append("SELECT p FROM Professor p ");
+        consulta.append("                  WHERE p.usuario.id  IN ");
+        consulta.append("                  (SELECT apc.usuario.id FROM AssociacaoPerfilCurso apc ");
+        consulta.append("                   WHERE apc.perfil.id = :idPerfil AND apc.curso.id = :idCurso) ");        
+        
+        Query query = em.createQuery(consulta.toString());
+        query.setParameter("idPerfil", EnumPerfil.SECRETARIA.getCodigo());
+        query.setParameter("idCurso", idCurso);
+
+        List<Professor> profs = query.getResultList();
+        
+        for (Professor p : profs) {
+            p.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(p.getUsuario().getId()));
+        }
+
+        Collections.sort(profs);
+
+        return profs;
+    }
+
     public static List<Professor> buscaTodosProfessores(BuscadorLdap buscadorLdap) {
         EntityManager em = Persistencia.obterManager();
         Query query = em.createQuery("SELECT p FROM Professor p");
@@ -109,7 +133,7 @@ public class Professor implements Serializable, Comparable<Professor> {
         Collections.sort(profs);
 
         return profs;
-    }    
+    }
 
     public int compareTo(Professor p) {
         return this.getNome().compareTo(p.getNome());
