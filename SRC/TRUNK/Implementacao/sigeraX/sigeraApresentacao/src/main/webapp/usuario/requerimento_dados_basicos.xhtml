@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml"      
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Dados básicos do requerimento-->
+    <table class="table table-bordered">                        
+        <tr>
+            <th class="lead tipo-requerimento">
+                <h:outputText value="#{detalheRequerimentoBean.requerimento.descricaoTipo}"/>
+            </th>
+        </tr>
+
+        <tr>
+            <td>
+                <h:outputText styleClass="negrito" value="Requisição &#35;#{detalheRequerimentoBean.requerimento.id}" />
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <h:outputText styleClass="negrito" value="Data de abertura: "/>
+                <h:outputText value="#{detalheRequerimentoBean.requerimento.dataAbertura}">
+                    <f:convertDateTime  locale="BR" pattern="dd/MM/yyyy HH:mm" timeZone="America/Sao_Paulo"/>                     
+                </h:outputText>                           
+            </td>                            
+        </tr>
+
+        <h:panelGroup rendered="#{detalheRequerimentoBean.requerimento.dataFechamento != null}">
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="Data de fechamento: "/>
+                    <h:outputText value="#{detalheRequerimentoBean.requerimento.dataFechamento}">
+                        <f:convertDateTime  locale="BR" pattern="dd/MM/yyyy HH:mm" timeZone="America/Sao_Paulo"/>                     
+                    </h:outputText>                           
+                </td>                            
+            </tr>
+        </h:panelGroup>
+
+        <tr class="#{detalheRequerimentoBean.cssStatus()}">
+            <td>
+                <h:outputText styleClass="negrito" value="Status: "/>
+                <h:outputText value="#{detalheRequerimentoBean.requerimento.descricaoStatus}"/>
+            </td>                            
+        </tr>
+
+        <h:panelGroup rendered="#{detalheRequerimentoBean.requerimentoEhPlano()}" >
+
+            <tr style="color:#004b82; background-color:#f0ffff ">
+                <td>
+                    <h:outputText styleClass="negrito " value="Turma: "/>
+                    <h:outputText value="#{detalheRequerimentoBean.requerimento.plano.turma.disciplina.nome}"/>
+                    <h:outputText value=" [ #{detalheRequerimentoBean.requerimento.plano.turma.nome} ] "/>
+                    <h:outputText styleClass="negrito" value="Curso: "/> 
+                    <h:outputText value="#{detalheRequerimentoBean.requerimento.plano.turma.disciplina.curso.nome} "/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="Requerente: "/>
+                    <h:outputText value="#{detalheRequerimentoBean.requerimento.usuario.usuarioLdap.cn}"/>
+                </td>                            
+            </tr>                                
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{!detalheRequerimentoBean.requerimentoEhPlano()}" >
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="Nome do estudante: "/>
+                    <h:outputText value="#{detalheRequerimentoBean.requerimento.usuario.usuarioLdap.cn}"/>
+                </td>                            
+            </tr>
+
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="Matrícula: "/>
+                    <h:outputText value="#{detalheRequerimentoBean.requerimento.usuario.usuarioLdap.matricula}"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="Curso: "/>
+                    <h:outputText value="#{detalheRequerimentoBean.requerimento.curso.nome}"/>
+                </td>
+            </tr>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{detalheRequerimentoBean.requerenteTemOrientador() != null}">
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="Orientador: "/>
+                    <h:outputText value="#{detalheRequerimentoBean.requerenteTemOrientador()}"/>
+                </td>
+            </tr>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{detalheRequerimentoBean.podeVisualizarTelefone()}">
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="E-mail: "/>
+                    <h:outputText value="#{detalheRequerimentoBean.requerimento.usuario.usuarioLdap.email}"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="Telefones: "/>                                        
+                    <h:panelGroup rendered="#{!empty detalheRequerimentoBean.requerimento.usuario.telefoneCelular}">
+                        <h:graphicImage title="Celular" styleClass="icones-telefones" url="/resources/img/mobile.png" />
+                        <h:outputText value="#{detalheRequerimentoBean.requerimento.usuario.telefoneCelular} " />                                        
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!empty detalheRequerimentoBean.requerimento.usuario.telefoneResidencial}">
+                        <h:graphicImage title="Residencial" styleClass="icones-telefones" url="/resources/img/home_small.png" />
+                        <h:outputText value="#{detalheRequerimentoBean.requerimento.usuario.telefoneResidencial} " />                                        
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{!empty detalheRequerimentoBean.requerimento.usuario.telefoneComercial}">
+                        <h:graphicImage title="Comercial" styleClass="icones-telefones" url="/resources/img/trabalho.png" />
+                        <h:outputText value="#{detalheRequerimentoBean.requerimento.usuario.telefoneComercial} "/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{detalheRequerimentoBean.requerimento.usuario.id == loginBean.usuario.id and empty detalheRequerimentoBean.requerimento.usuario.telefoneCelular and empty detalheRequerimentoBean.requerimento.usuario.telefoneResidencial and empty detalheRequerimentoBean.requerimento.usuario.telefoneComercial}">
+                        <h:commandLink action="editar_perfil">
+                            <h:outputText value="#{msgs['MT.406']}"/>
+                        </h:commandLink>
+                    </h:panelGroup>
+                </td>
+            </tr>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{detalheRequerimentoBean.requerimento.prazoRequeridoProrrogacaoDefesa != 0}">
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="Prazo requerido: "/>                                        
+                    <h:outputText class="prazo-requerido-destacado" value="#{detalheRequerimentoBean.requerimento.prazoRequeridoProrrogacaoDefesa} mes(es)"/>
+                </td>
+            </tr>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{detalheRequerimentoBean.requerimento.justificativa != null}">
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="Justificativa/Observações: "/>
+                    <h:outputText value="#{detalheRequerimentoBean.requerimento.justificativa}"/>
+                </td>
+            </tr>
+        </h:panelGroup>
+
+
+        <h:panelGroup rendered="#{detalheRequerimentoBean.dataProva != null}">
+            <tr>
+                <td>
+                    <h:outputText styleClass="negrito" value="Data da prova: "/> 
+                    <h:outputText value="#{detalheRequerimentoBean.dataProva}">
+                        <f:convertDateTime  locale="BR" pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo"/>                      
+                    </h:outputText>                                        
+                </td>
+            </tr>
+        </h:panelGroup>                            
+
+        <h:panelGroup rendered="#{detalheRequerimentoBean.turma != null}">
+            <tr>
+                <td>
+                    <h:outputText value="#{detalheRequerimentoBean.turma}"/>
+                </td>
+            </tr>
+        </h:panelGroup>
+    </table>                       
+
+
+</html>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml"      
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- Lista de pareceres-->
+    <h:panelGroup rendered="#{detalheRequerimentoBean.podeVisualizarPareceres()}">            
+        <table class="table table-bordered">                        
+            <tr>
+                <th>Andamentos do requerimento</th>
+            </tr>
+            <tr>
+                <th>Usuário</th>
+                <th>Data</th>
+                <th>Status</th>                                    
+            </tr>
+
+            <ui:repeat value="#{detalheRequerimentoBean.obtenhaPareceres()}" var="parecer">
+                <tr class="cabecalho-parecer">
+                    <td>                                           
+                        <h:outputText value="#{parecer.usuario.nome}" />
+                    </td>                                        
+                    <td>          
+                        <h:outputText value="#{parecer.dataParecer}">
+                            <f:convertDateTime  locale="BR" pattern="dd/MM/yyyy HH:mm" timeZone="America/Sao_Paulo"/>                     
+                        </h:outputText>                                             
+                    </td>                                        
+                    <td>                                           
+                        <h:outputText value="#{parecer.descricaoStatus}" />
+                    </td>                                        
+                </tr>
+                <h:panelGroup rendered="#{!empty parecer.conteudo}">
+                    <tr>
+                        <td colspan="3">                                           
+                            <pre class="pre-modificado"> <h:outputText value="#{parecer.conteudo}" /> </pre>
+                        </td>                                                                                
+                    </tr>
+                </h:panelGroup>
+            </ui:repeat>
+        </table> 
+    </h:panelGroup>
+
+</html>

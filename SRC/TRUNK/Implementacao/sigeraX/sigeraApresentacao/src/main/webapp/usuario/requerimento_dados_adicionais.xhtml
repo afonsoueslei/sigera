@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml"      
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+
+    <!-- Disciplinas-->
+    <h:panelGroup rendered="#{detalheRequerimentoBean.requerimento.disciplinas != null}">
+        <table class="table table-bordered">                        
+            <tr>
+                <th>Ementas Solicitadas</th>
+            </tr>
+
+            <tr>
+                <th>Disciplina</th>
+                <th>Curso</th>
+                <th>Ação</th>
+            </tr>
+
+            <ui:repeat value="#{detalheRequerimentoBean.requerimento.disciplinas}" var="disciplina">
+                <tr>
+                    <td>#{disciplina.nome}</td>
+                    <td>#{disciplina.curso.nome}</td>
+
+                    <h:panelGroup id="panel-visualizar-ementa" rendered="#{!loginBean.usuario.perfilAtual.perfil.permiteImprimirEmenta()}"> 
+                        <td>
+                            <h:link target="_blank" styleClass="btn centralizado" value="Visualizar ementa" outcome="#{detalheRequerimentoBean.visualizarEmenta()}">
+                                <f:param name="id" value="#{disciplina.id}" />                                                
+                            </h:link>                                            
+                        </td>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="panel-imprimir-ementa" rendered="#{loginBean.usuario.perfilAtual.perfil.permiteImprimirEmenta()}"> 
+                        <td>
+                            <h:commandLink target="_blank" styleClass="btn centralizado"  value="Imprimir ementa " 
+                                           action="#{detalheRequerimentoBean.imprimirEmenta(disciplina.id)}">
+                                <h:graphicImage library="img" name="printer.png" height="20px" width="20px"/>                                                     
+                                <f:param name="id" value="#{disciplina.id}" />                                                                                    
+                            </h:commandLink>                                            
+                        </td>
+                    </h:panelGroup>
+
+                </tr>
+            </ui:repeat>
+        </table>                             
+    </h:panelGroup>   
+
+    <!-- Turmas-->
+    <h:panelGroup rendered="#{detalheRequerimentoBean.turmasComStatus.size() > 0}">
+        <table class="table table-bordered">                        
+            <tr>
+                <th>Turmas Solicitadas</th>
+            </tr>
+
+            <tr>
+                <th>Disciplina</th>
+                <th>Professor</th>
+                <th>Turma</th>
+
+                <h:panelGroup rendered="#{detalheRequerimentoBean.podeVisualizarPareceres()}">
+                    <th>Status</th>
+                </h:panelGroup>  
+
+                <h:panelGroup rendered="#{detalheRequerimentoBean.usuarioPodeDarParecerAcertoMatricula()}">
+                    <th>Consultar</th>
+                </h:panelGroup>  
+
+
+            </tr>
+
+            <ui:repeat value="#{detalheRequerimentoBean.turmasComStatus}" var="infoTurma">
+                <tr>
+                    <td>#{infoTurma.turma.disciplina.nome}</td>
+                    <td>#{infoTurma.turma.professor.nome}</td>
+                    <td>#{infoTurma.turma.nome}</td>
+                    <h:panelGroup rendered="#{detalheRequerimentoBean.podeVisualizarPareceres()}">
+                        <td>#{infoTurma.descricaoStatus}</td>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{detalheRequerimentoBean.usuarioPodeDarParecerAcertoMatricula()}">
+                        <td >
+                            <p:commandButton id="extrato-turma" styleClass="btn centralizado link_turmas" title="Extrato pedidos abertos dessa turma." value="Mais informações" action="#{detalheRequerimentoBean.visualizarExtrato(infoTurma.turma.id)}">
+                                <f:param name="id" value="#{infoTurma.turma.id}" />                                                
+                                <p:overlayPanel for="extrato-turma" dynamic="true" hideEffect="fade" >
+                                    <h:outputLabel value="#{inforTurma.turma.nome}"/>
+                                    <h:outputLabel value=" Pedidos de Acréscimo em aberto.......: " style="display: inline"/>
+                                    <h:outputLabel value="#{detalheRequerimentoBean.qtdePedidosAcrescimo}" style="font-weight: bold; color: #0044cc ; display:inline"/>
+                                    <br/>
+                                    <h:outputLabel value=" Pedidos de Cancelamento em aberto.: " style="display:inline"/>
+                                    <h:outputLabel value="#{detalheRequerimentoBean.qtdePedidosCancelamento}" style="font-weight: bold; color: #e9322d; display:inline"/>                                                                                                                
+                                </p:overlayPanel>
+                            </p:commandButton>
+                        </td>
+                    </h:panelGroup>  
+
+                </tr>
+            </ui:repeat>
+        </table> 
+    </h:panelGroup> 
+
+    <!-- Anexos-->
+    <h:panelGroup rendered="#{detalheRequerimentoBean.podeVisualizarAnexos()}">            
+        <table class="table table-bordered">                        
+            <tr>
+                <th>Arquivos anexos</th>
+            </tr>
+
+            <ui:repeat value="#{detalheRequerimentoBean.requerimento.anexos}" var="anexo">
+                <tr>
+                    <td>
+                        <p:commandLink id="linkArquivo" ajax="false">
+                            <h:outputText value="#{anexo.nome}" />
+                            <p:fileDownload value="#{segundaChamadaBean.download(anexo)}" />                                                  
+                        </p:commandLink>
+                    </td>                                        
+                </tr>
+            </ui:repeat>
+        </table> 
+    </h:panelGroup>   
+</html>
