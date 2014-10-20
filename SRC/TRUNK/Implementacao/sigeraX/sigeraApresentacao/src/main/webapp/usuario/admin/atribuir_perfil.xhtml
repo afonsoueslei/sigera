@@ -28,29 +28,36 @@
                                                var="p"
                                                itemLabel="#{p.nome}"
                                                itemValue="#{p.id}"/>
-                                <f:ajax event="change" render="cursos orientadores" />
+                                <f:ajax event="change" render="cursos orientadores painelCursos painelOrientadores" />
                             </h:selectOneMenu>
 
-                            <h:outputLabel styleClass="label-selecione-perfil" for="cursos" value="Curso:" />
-                            <h:selectOneMenu styleClass="selecao-perfil" id="cursos"  value="#{atribuirPerfilBean.codigoCurso}" disabled="#{!atribuirPerfilBean.selecaoCursosHabilitada}">
-                                <f:selectItem itemLabel="" noSelectionOption="true"/>
-                                <f:selectItems value="#{atribuirPerfilBean.listaCursos}" 
-                                               var="c"                                           
-                                               itemLabel="#{c.nome}"
-                                               itemValue="#{c.id}"/>                            
-                                    <f:ajax event="change" render="orientadores" />
-                            </h:selectOneMenu>
+                            <div id="organizaPainelCursos" >
+                                <p:panel id="painelCursos" styleClass="painelOrganizado" visible="#{atribuirPerfilBean.selecaoCursosHabilitada}">
+                                    <h:outputLabel styleClass="label-selecione-perfil" for="cursos" value="Curso:" />
+                                    <h:selectOneMenu styleClass="selecao-perfil" id="cursos"  value="#{atribuirPerfilBean.codigoCurso}" >
+                                        <f:selectItem itemLabel=" " noSelectionOption="true"/>
+                                        <f:selectItems value="#{atribuirPerfilBean.listaCursos}"                                                                                               
+                                                       var="c"                                           
+                                                       itemLabel="#{c.nome}"
+                                                       itemValue="#{c.id}"/>                            
+                                        <f:ajax event="change" render="orientadores painelOrientadores"/>
+                                    </h:selectOneMenu>
+                                </p:panel>
+                            </div>
 
-                            <h:outputLabel styleClass="label-selecione-perfil" for="orientadores" value="Orientador:" />
-                            <h:selectOneMenu styleClass="selecao-perfil" id="orientadores"  
-                                             value="#{atribuirPerfilBean.codigoOrientador}" 
-                                             disabled="#{!atribuirPerfilBean.selecaoOrientadoresHabilitada}">
-                                <f:selectItem itemLabel="" noSelectionOption="true"/>
-                                <f:selectItems value="#{atribuirPerfilBean.listaOrientadores}" 
-                                               var="ori"
-                                               itemLabel="#{ori.nome}"
-                                               itemValue="#{ori.id}"/>                            
-                            </h:selectOneMenu>
+                            <div id="organizaPainelOrientadores">
+                                <p:panel id="painelOrientadores" styleClass="painelOrganizado"  visible="#{atribuirPerfilBean.selecaoOrientadoresHabilitada}">
+                                    <h:outputLabel styleClass="label-selecione-perfil" for="orientadores" value="Orientador:" />
+                                    <h:selectOneMenu styleClass="selecao-perfil" id="orientadores"  
+                                                     value="#{atribuirPerfilBean.codigoOrientador}" >
+                                        <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                        <f:selectItems value="#{atribuirPerfilBean.listaOrientadores}" 
+                                                       var="ori"
+                                                       itemLabel="#{ori.nome}"
+                                                       itemValue="#{ori.id}"/>                            
+                                    </h:selectOneMenu>
+                                </p:panel>
+                            </div>
                             
                             <h:commandButton styleClass="btn btn-success botao-margem-direita" value="Atribuir perfil" action="#{atribuirPerfilBean.definirPerfilSelecionados(true)}" />
                             <h:commandButton styleClass="btn btn-inverse" value="Remover perfil" action="#{atribuirPerfilBean.definirPerfilSelecionados(false)}" />
@@ -135,9 +142,10 @@
                                 <h:outputText title="#{usuario.nomeCursoSecretaria}"  id="output-secretaria" styleClass="#{usuario.secretaria ? 'destacar-perfil' : 'conteudo-tabela-atribuir-perfil'}" value="#{usuario.descricaoSecretaria}"/>                            
                             </p:column>                        
 
-                            <p:column sortBy="#{usuario.descricaoSecretaria}" styleClass="centralizar-texto"
-                                      filterBy="#{usuario.descricaoSecretaria}"
-                                      filterMatchMode="exact">
+                            <p:column sortBy="#{usuario.descricaoSecretariaGraduacao}" styleClass="centralizar-texto"
+                                      filterBy="#{usuario.descricaoSecretariaGraduacao}"
+                                      filterMatchMode="exact"
+                                      filterOptions="#{atribuirPerfilBean.opcoesPerfil}">  
                                 <f:facet name="header">  
                                     <h:outputText value="Sec. Graduação" styleClass="cabecalho-atribuir-perfil" />
                                 </f:facet>                          
