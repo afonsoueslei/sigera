@@ -215,6 +215,14 @@
 
     <navigation-rule> 
         <navigation-case>
+            <from-outcome>prorrogacao_defesa</from-outcome>
+            <to-view-id>/usuario/requisicoes/prorrogacao_defesa.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>    
+
+    <navigation-rule> 
+        <navigation-case>
             <from-outcome>config</from-outcome>
             <to-view-id>/usuario/admin/configuracao.xhtml</to-view-id>
             <redirect/>

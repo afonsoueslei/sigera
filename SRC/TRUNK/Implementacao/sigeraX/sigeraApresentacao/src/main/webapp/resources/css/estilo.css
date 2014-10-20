@@ -631,6 +631,12 @@ legend {
     background-image: none !important;    
 }
 
+.apagado{        
+    color:#BCBCBC !important;
+    background-image: none !important;   
+    background-color: #F5F5F5 !important;
+}
+
 .font-white{
     color: #ffffff !important;
 }
@@ -711,4 +717,50 @@ legend {
     bottom: 0px !important;
     position: relative !important;
 
+}
+
+#barra-brasil{
+    background:#7F7F7F; 
+    height: 20px; 
+    padding:0 0 0 10px;
+    display:block;
+}
+#menu-barra-temp{
+    list-style:none;
+}
+
+#barra-brasil-portal{
+    display:inline; 
+    float:left;
+    padding-right:10px; 
+    margin-right:10px; 
+    border-right:1px solid #EDEDED
+}
+.barra-brasil-font{
+    font-family:sans, sans-serif; 
+    text-decoration:none; 
+    color:white;
+}
+.prazo-requerido-destacado{
+    font-weight: bold;
+    color: #d14;
+}
+
+#organizaPainelCursos{
+    display:inline-block;     
+    width: 340px; 
+    margin: -5px -35px -5px -10px;
+}
+
+#organizaPainelOrientadores{
+    display:inline-block;     
+    width: 375px; 
+    margin: -5px -10px -5px 0
+}
+
+.painelOrganizado{
+    padding:0 !important; 
+    border:none; 
+    background: none; 
+    margin: 0
 }

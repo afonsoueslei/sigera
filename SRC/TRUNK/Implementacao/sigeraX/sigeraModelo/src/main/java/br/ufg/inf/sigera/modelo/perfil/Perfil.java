@@ -5,6 +5,7 @@ import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
 import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,7 +73,42 @@ public abstract class Perfil implements Serializable {
         return false;
     }
 
+    public static boolean usuarioTemPerfilDoCurso(UsuarioSigera usuario, Integer idPerfil, Integer idCurso) {
+        EntityManager em = obtenhaEntityManager();
+        Query query;
+        StringBuilder consulta = new StringBuilder();
+        consulta.append(" SELECT apc.perfil.id ");
+        consulta.append(" FROM AssociacaoPerfilCurso as apc ");
+        consulta.append(" WHERE (apc.perfil.id = :idPerfil AND apc.curso.id = :idCurso AND apc.usuario.id = :idUsuario ) ");
+
+        query = em.createQuery(consulta.toString());
+        query.setParameter("idPerfil", idPerfil);
+        query.setParameter("idUsuario", usuario.getId());
+        query.setParameter("idCurso", idCurso);
+
+        List<String> resultados = new ArrayList<String>();
+
+        resultados = query.getResultList();
+
+        if ( (!resultados.isEmpty()) && resultados.size()>0 ) {
+            try {
+                Integer codigoPerfil = (Integer) query.getSingleResult();
+                if (codigoPerfil == idPerfil) {
+                    return true;
+                }
+            } catch (NoResultException nre) {
+                Logger.getLogger(Perfil.class.getName()).log(Level.WARNING, "Erro ao executar consulta: usuarioTemPerfil", nre);
+                return false;
+            }
+        }
+        return false;
+    }
+
     public abstract boolean permiteFazerRequerimento();
+
+    public boolean permiteFazerRequerimentoDaPos() {
+        return false;
+    }
 
     public abstract boolean permiteConfigurarSistema();
 
@@ -80,7 +116,7 @@ public abstract class Perfil implements Serializable {
 
     public abstract boolean permiteEditarPlanoDeAula();
 
-    public abstract boolean permiteEditarTurma();        
+    public abstract boolean permiteEditarTurma();
 
     public abstract List<Requerimento> obtenhaRequerimentos(UsuarioSigera usuario);
 
@@ -89,6 +125,6 @@ public abstract class Perfil implements Serializable {
     public abstract boolean permiteManterUsuarios();
 
     public abstract boolean permiteImprimirEmenta();
-    
+
     public abstract boolean permiteCancelarRequerimento();
 }

@@ -26,6 +26,7 @@ public interface UsuarioTelaAtribuirPerfil {
     String getNomeCursoCoordenadorCurso();
     String getNomeCursoCoordenadorEstagio();
     String getNomeCursoSecretaria();
+    Curso getCursoPerfilAlunoRemover(Integer codigoPerfil);
 
     String getDescricaoAdministrador();
     String getDescricaoAluno();    

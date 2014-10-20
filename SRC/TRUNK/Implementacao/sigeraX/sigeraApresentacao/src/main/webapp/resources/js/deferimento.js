@@ -19,6 +19,7 @@ function escondaControlesConferir() {
     modifiqueVisualizacaoControlesDeferimento('mostrar-parecer-assinatura', 'controles-parecer-assinatura');
 }
 
+
 function mostreControlesDeferimentoAcerto() {   
     modifiqueVisualizacaoControlesDeferimento('controles-parecer-acerto', 'mostrar-parecer-acerto');
 }
@@ -26,3 +27,22 @@ function mostreControlesDeferimentoAcerto() {
 function escondaControlesDeferimentoAcerto() {    
     modifiqueVisualizacaoControlesDeferimento('mostrar-parecer-acerto', 'controles-parecer-acerto');
 }
+
+
+function mostreControlesProrrogacao() {   
+    modifiqueVisualizacaoControlesDeferimento('controles-parecer-prorrogacao', 'mostrar-parecer-prorrogacao');
+}
+
+function escondaControlesProrrogacao() {   
+    modifiqueVisualizacaoControlesDeferimento('mostrar-parecer-prorrogacao', 'controles-parecer-prorrogacao');
+}
+
+function mostreControlesDelegarProrrogacao() {   
+    modifiqueVisualizacaoControlesDeferimento('controles-parecer-delegacao', 'mostrar-parecer');
+}
+
+function escondaControlesDelegarProrrogacao() {   
+    modifiqueVisualizacaoControlesDeferimento('mostrar-parecer', 'controles-parecer-delegacao');
+}
+
+

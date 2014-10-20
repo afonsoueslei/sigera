@@ -40,11 +40,19 @@
                             <h:inputText styleClass="input-block-level" id="curso2" value="#{loginBean.usuario.perfilAtual.curso.nome}" disabled="true" />
                         </h:panelGroup>
 
-                        <h:panelGroup rendered="#{editarPerfilBean.alunoPosStrictoSensu and editarPerfilBean.temOrientador() ne null}">
+                        <h:panelGroup rendered="#{editarPerfilBean.alunoPosStrictoSensu}">
                             <h:outputLabel value="Orientador:" for="orientador" />
-                            <h:inputText styleClass="input-block-level" id="orientador" value="#{editarPerfilBean.temOrientador()}" disabled="true" />                            
+                            <h:selectOneMenu styleClass="input-block-level" id="orientadores"  
+                                             value="#{editarPerfilBean.codigoOrientador}"
+                                             disabled="#{!loginBean.usuario.perfilAtual.perfil.permiteManterUsuarios()}">
+                                <f:selectItem itemLabel="" noSelectionOption="true"/>
+                                <f:selectItems value="#{editarPerfilBean.listaOrientadores}"
+                                               var="ori"
+                                               itemLabel="#{ori.nome}"
+                                               itemValue="#{ori.id}"/>                            
+                            </h:selectOneMenu>
                         </h:panelGroup>
-                        
+
                         <h:outputLabel for="primeiro_acesso" value="Primeiro Acesso:" />                                     
                         <h:inputText styleClass="input-block-level"  id="primeiro_acesso"  value="#{editarPerfilBean.usuarioEdicao.primeiroAcesso}" disabled="true" >
                             <f:convertDateTime  locale="BR" pattern="dd/MM/yyyy - HH:mm" timeZone="America/Sao_Paulo"/>                     

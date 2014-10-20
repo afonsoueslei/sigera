@@ -69,7 +69,7 @@ public class GerenciadorPerfil {
     }
     
     public static AssociacaoPerfilCurso criePerfilAlunoPosStrictoSensu(UsuarioSigera usuario, Professor orientador) {
-        return new AssociacaoPerfilCurso(new PerfilAluno(), obtenhaCurso(usuario.getUsuarioLdap().getUid()), orientador, usuario);
+        return new AssociacaoPerfilCurso(new PerfilAlunoPosStrictoSensu(), obtenhaCurso(usuario.getUsuarioLdap().getUid()), orientador, usuario);
     }
         
 
@@ -122,12 +122,7 @@ public class GerenciadorPerfil {
 
     private static Curso obtenhaCurso(String uid) {
         String prefixoCurso = UsuarioLdap.obtenhaPrefixoCurso(uid);
-
-        //Se for aluno de mestrado ou doutorado então seu prefixo/curso será setado como POS      
-        if (prefixoCurso.equalsIgnoreCase("msc") || prefixoCurso.equalsIgnoreCase("dsc")) {
-            prefixoCurso = "POS";
-        }
-        
+       
         EntityManager em = obtenhaEntityManager();
         String consulta = " SELECT c FROM Curso as c WHERE c.prefixo = :prefixo ";
         Query query = em.createQuery(consulta);

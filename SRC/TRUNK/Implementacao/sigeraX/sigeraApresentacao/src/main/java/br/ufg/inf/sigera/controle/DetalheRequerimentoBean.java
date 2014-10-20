@@ -17,8 +17,11 @@ import br.ufg.inf.sigera.controle.servico.Paginas;
 import br.ufg.inf.sigera.controle.servico.Sessoes;
 import br.ufg.inf.sigera.modelo.Disciplina;
 import br.ufg.inf.sigera.modelo.Plano;
+import br.ufg.inf.sigera.modelo.Professor;
+import br.ufg.inf.sigera.modelo.perfil.PerfilAlunoPosStrictoSensu;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoAcrescimoDisciplina;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoCancelamentoDisciplina;
+import br.ufg.inf.sigera.modelo.requerimento.RequerimentoProrrogacaoDefesa;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,6 +65,7 @@ public class DetalheRequerimentoBean {
     //Mostrar número de pedidos aberto por disciplina/turma
     private Integer qtdePedidosAcrescimo;
     private Integer qtdePedidosCancelamento;
+    private Professor membroSelecionado;
 
     public DetalheRequerimentoBean() {
         listaStatus = new ArrayList<EnumStatusRequerimento>();
@@ -219,7 +223,8 @@ public class DetalheRequerimentoBean {
         //somente o próprio usuário, o administrador, o coordenador Geral 
         return usuarioLogado.getId() == requerimento.getUsuario().getId()
                 || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo()
-                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo();
+                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo()
+                || this.requerimento.usuarioEhOrientadorDoRequerente(usuarioLogado);
     }
 
     public LoginBean getLoginBean() {
@@ -243,54 +248,6 @@ public class DetalheRequerimentoBean {
             this.turmas = this.requerimento.getTurmasAcertoMatricula(this.loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
         }
         return this.turmas;
-    }
-
-    public String cancelar() {
-        if (this.requerimento != null && this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()) {
-            this.requerimento.setStatus(EnumStatusRequerimento.CANCELADO.getCodigo());
-            
-            //Se usuário é o proprio aluno que abriu o requerimento.
-            if (this.requerimento.getUsuario().getId() == this.loginBean.getUsuario().getId()) {
-                return cancelarRequerente();
-            } 
-            //Se usuário é alguem que tem autorização para cancelar
-            return cancelarAutorizado();
-            
-        }
-        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.510"), Paginas.getDetalheRequerimento());
-        return enderecoRedirecionamento();
-    }
-
-    public String cancelarRequerente() {
-        if (this.requerimento.salvar()) {
-            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.509"), Paginas.getDetalheRequerimento());
-            return enderecoRedirecionamento();
-        }
-        Sessoes.limparBeanConsultarRequerimento();
-        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
-        return Paginas.getConsultarRequerimentos();
-    }
-
-    public String cancelarAutorizado() {
-
-        this.setJustificativaDeferimento(Mensagens.obtenha("MT.800"));
-        Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaDeferimento, EnumStatusRequerimento.CANCELADO.getCodigo());
-        this.requerimento.adicionarParecer(parecer);
-
-        if (this.requerimento.salvar()) {
-            if (loginBean.getConfiguracao().isEnviarEmail()) {
-                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
-                gerenciadorEmail.adicionarEmailParecer(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), requerimento);
-                gerenciadorEmail.enviarEmails();
-            }
-            //Limpar o bean para atualizar a lista de requerimentos
-            Sessoes.limparBeanConsultarRequerimento();
-            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.004.Cancelar"), Paginas.getDetalheRequerimento());
-            return enderecoRedirecionamento();
-        }
-        Sessoes.limparBeanConsultarRequerimento();
-        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
-        return Paginas.getConsultarRequerimentos();
     }
 
     public String voltar() {
@@ -357,14 +314,57 @@ public class DetalheRequerimentoBean {
     public boolean usuarioPodeDarParecerAcertoMatricula() {
         return this.requerimento.autorizaDarParecerAcertoMatricula(loginBean.getUsuario());
     }
+    
+    public boolean usuarioPodeDelegarProrrogacaoDefesaAoMembro(){
+        return this.requerimento.getPrazoRequeridoProrrogacaoDefesa() <5
+                && this.requerimento.getTipo() == EnumTipoRequerimento.PRORROGACAO_DEFESA.getCodigo() 
+                && this.requerimento.getStatus() == EnumStatusRequerimento.AUTORIZADO.getCodigo();
+    }
 
     public boolean usuarioPodeEditarPlano() {
         return this.requerimento.autorizaEditarPlano(loginBean.getUsuario());
     }
 
-    public void cancelarParecer() {
-        this.statusParecer = 0;
-        this.justificativaDeferimento = null;
+    public Collection<Parecer> obtenhaPareceres() {
+        return this.requerimento.obtenhaPareceres(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+    }
+
+    public boolean usuarioPodeConferirDocumentos() {
+        return this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()
+                && this.requerimento.usuarioPodeConferirDocumentos(this.loginBean.getUsuario());
+    }
+
+    public boolean usuarioPodeValidaPedidoProrrogacaoDefesa() {
+        return this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()
+                && this.requerimento.usuarioEhOrientadorDoRequerente(loginBean.getUsuario())
+                && loginBean.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.PROFESSOR.getCodigo();
+    }
+
+    private boolean validarParecer() {
+        return this.statusParecer != 0;
+    }
+
+    public boolean validarConferencia() {
+        return this.documentosConferidos && validarNotificacao();
+    }
+
+    public boolean validarNotificacao() {
+        return this.coordenadorEstagio || this.diretor;
+    }
+
+    public boolean validarStatusParecerAcerto() {
+        if (this.turmasComStatus == null || this.turmasComStatus.isEmpty()) {
+            return false;
+        }
+
+        for (TurmaComStatus turmaI : this.getTurmasComStatus()) {
+            if (turmaI.getStatus() != EnumStatusRequerimento.DEFERIDO.getCodigo()
+                    && turmaI.getStatus() != EnumStatusRequerimento.INDEFERIDO.getCodigo()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public String confirmarParecer() {
@@ -392,32 +392,32 @@ public class DetalheRequerimentoBean {
         return Paginas.getConsultarRequerimentos();
     }
 
-    private boolean validarParecer() {
-        return this.statusParecer != 0;
+    public String confirmarParecerDelegacao() {        
+        Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaDeferimento, EnumStatusRequerimento.CONFERIDO.getCodigo());
+        this.requerimento.adicionarParecer(parecer);
+
+        UsuarioSigera membroCPG = membroSelecionado.getUsuario();
+        ((RequerimentoProrrogacaoDefesa)this.requerimento).setMembroAvaliador(membroCPG.getId());
+
+        if (this.requerimento.salvar()) {
+
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailRequerimento(requerimento, membroCPG);
+                gerenciadorEmail.enviarEmails();
+            }
+            //Limpar o bean para atualizar a lista de requerimentos
+            Sessoes.limparBeanConsultarRequerimento();
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT004), Paginas.getDetalheRequerimento());
+            return enderecoRedirecionamento();
+        }
+        Sessoes.limparBeanConsultarRequerimento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
+        return Paginas.getConsultarRequerimentos();
     }
 
-    public Collection<Parecer> obtenhaPareceres() {
-        return this.requerimento.obtenhaPareceres(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
-    }
+    public String confirmarParecerConferencia() {
 
-    public void cancelarConferencia() {
-        limparControlesConferencia();
-    }
-
-    public boolean usuarioPodeConferirDocumentos() {
-        return this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()
-                && this.requerimento.usuarioPodeConferirDocumentos(this.loginBean.getUsuario());
-    }
-
-    public boolean validarConferencia() {
-        return this.documentosConferidos && validarNotificacao();
-    }
-
-    public boolean validarNotificacao() {
-        return this.coordenadorEstagio || this.diretor;
-    }
-
-    public String confirmarConferencia() {
         if (!this.documentosConferidos) {
             mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.512"), Paginas.getDetalheRequerimento());
             return enderecoRedirecionamento();
@@ -461,23 +461,34 @@ public class DetalheRequerimentoBean {
         return Paginas.getConsultarRequerimentos();
     }
 
-    private String enderecoRedirecionamento() {
-        return Paginas.getAbrirRequerimentoID() + requerimento.getId();
-    }
+    public String confirmarParecerValidacaoProrrogacaoPrazoDefesa() {
 
-    public boolean validarStatusParecerAcerto() {
-        if (this.turmasComStatus == null || this.turmasComStatus.isEmpty()) {
-            return false;
+        //Significa que Orientador não validou o requerimento do aluno
+        if (this.statusParecer == EnumStatusRequerimento.INDEFERIDO.getCodigo()) {
+            return cancelarAutorizado();
         }
 
-        for (TurmaComStatus turmaI : this.getTurmasComStatus()) {
-            if (turmaI.getStatus() != EnumStatusRequerimento.DEFERIDO.getCodigo()
-                    && turmaI.getStatus() != EnumStatusRequerimento.INDEFERIDO.getCodigo()) {
-                return false;
+        Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaConferencia, EnumStatusRequerimento.AUTORIZADO.getCodigo());
+        this.requerimento.adicionarParecer(parecer);
+        if (this.requerimento.salvar()) {
+
+            List<UsuarioSigera> presidentesCPG
+                    = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.COORDENADOR_CURSO.getCodigo(),
+                            requerimento.getCurso().getId(),
+                            loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailRequerimento(requerimento, presidentesCPG);
+                gerenciadorEmail.enviarEmails();
             }
+            Sessoes.limparBeanConsultarRequerimento();
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.024"), Paginas.getDetalheRequerimento());
+            return enderecoRedirecionamento();
         }
-
-        return true;
+        Sessoes.limparBeanConsultarRequerimento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
+        return Paginas.getConsultarRequerimentos();
     }
 
     public String confirmarParecerAcerto() {
@@ -510,6 +521,70 @@ public class DetalheRequerimentoBean {
     public void cancelarParecerAcerto() {
         this.turmasComStatus = null;
         this.justificativaParecerAcerto = null;
+    }
+
+    public void cancelarParecer() {
+        this.statusParecer = 0;
+        this.justificativaDeferimento = null;
+        this.justificativaConferencia = null;
+        this.membroSelecionado = null;
+    }
+
+    public void cancelarConferencia() {
+        limparControlesConferencia();
+    }
+
+    public String cancelar() {
+        if (this.requerimento != null && this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()) {
+            this.requerimento.setStatus(EnumStatusRequerimento.CANCELADO.getCodigo());
+
+            //Se usuário é o proprio aluno que abriu o requerimento.
+            if (this.requerimento.getUsuario().getId() == this.loginBean.getUsuario().getId()) {
+                return cancelarRequerente();
+            }
+            //Se usuário é alguem que tem autorização para cancelar
+            return cancelarAutorizado();
+
+        }
+        mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.510"), Paginas.getDetalheRequerimento());
+        return enderecoRedirecionamento();
+    }
+
+    public String cancelarRequerente() {
+        if (this.requerimento.salvar()) {
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.509"), Paginas.getDetalheRequerimento());
+            return enderecoRedirecionamento();
+        }
+        Sessoes.limparBeanConsultarRequerimento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
+        return Paginas.getConsultarRequerimentos();
+    }
+
+    public String cancelarAutorizado() {
+        if (this.justificativaDeferimento.isEmpty()) {
+            this.setJustificativaDeferimento(Mensagens.obtenha("MT.800"));
+        }
+        Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaDeferimento, EnumStatusRequerimento.CANCELADO.getCodigo());
+        this.requerimento.adicionarParecer(parecer);
+
+        if (this.requerimento.salvar()) {
+            if (loginBean.getConfiguracao().isEnviarEmail()) {
+                GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
+                gerenciadorEmail.adicionarEmailParecer(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), requerimento);
+                gerenciadorEmail.enviarEmails();
+            }
+            //Limpar o bean para atualizar a lista de requerimentos
+            Sessoes.limparBeanConsultarRequerimento();
+            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.004.Cancelar"), Paginas.getDetalheRequerimento());
+            return enderecoRedirecionamento();
+        }
+        Sessoes.limparBeanConsultarRequerimento();
+        mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha(MT709, EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getDetalheRequerimento());
+        return Paginas.getConsultarRequerimentos();
+    }
+
+    private String enderecoRedirecionamento() {
+        return Paginas.getAbrirRequerimentoID() + requerimento.getId();
     }
 
     private int obtenhaStatusParecerAcerto() {
@@ -569,7 +644,8 @@ public class DetalheRequerimentoBean {
         }
 
         if (this.requerimento.getStatus() == EnumStatusRequerimento.CONFERIDO.getCodigo()
-                || this.requerimento.getStatus() == EnumStatusRequerimento.CONCLUIDO.getCodigo()) {
+                || this.requerimento.getStatus() == EnumStatusRequerimento.CONCLUIDO.getCodigo()
+                || this.requerimento.getStatus() == EnumStatusRequerimento.AUTORIZADO.getCodigo()) {
             return "info";
         }
 
@@ -590,6 +666,37 @@ public class DetalheRequerimentoBean {
 
     public void imprimirComprovanteRequerimento() throws IOException {
         this.requerimento.imprimir(loginBean.getUsuario());
+    }
+
+    public String requerenteTemOrientador() {
+        BuscadorLdap buscadorLdap = loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap();
+        UsuarioSigera orientador = new PerfilAlunoPosStrictoSensu().obtenhaOrientador(this.requerimento.getUsuario(), buscadorLdap);
+        if (orientador != null) {
+            return orientador.getUsuarioLdap().getCn();
+        }
+        return null;
+    }
+
+    public List<Professor> getListaMembrosCPG() {
+        if (loginBean.getUsuario().getPerfilAtual().getCurso() == null) {
+            return null;
+        }
+        return Professor.buscaProfessoresMembrosCPG(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), loginBean.getUsuario().getPerfilAtual().getCurso().getId());
+    }
+
+    public Integer getCodigoMembroCPG() {
+        if (membroSelecionado != null) {
+            return membroSelecionado.getId();
+        }
+        return null;
+    }
+
+    public void setCodigoMembroCPG(Integer codigoMembro) {
+        if (codigoMembro != null) {
+            this.membroSelecionado = Professor.obtenhaProfessor(codigoMembro);
+        } else {
+            this.membroSelecionado = null;
+        }
     }
 
 }

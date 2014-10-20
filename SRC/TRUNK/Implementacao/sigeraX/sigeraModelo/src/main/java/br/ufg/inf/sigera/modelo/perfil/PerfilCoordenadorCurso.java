@@ -65,18 +65,20 @@ public class PerfilCoordenadorCurso extends Perfil {
         //perfilAdmin para exibir os requerimentos de plano, que são solicitados por administradores do sistema
         consulta.append(" SELECT r ");
         consulta.append(" FROM Requerimento as r ");
-        consulta.append(" WHERE r.tipo IN (:tipo1, :tipo2, :tipo3 ) ");
+        consulta.append(" WHERE r.tipo IN (:tipo1, :tipo2, :tipo3, :tipo4 ) ");
         consulta.append(" AND r.usuario.id IN (SELECT apc.usuario.id ");
         consulta.append("                      FROM AssociacaoPerfilCurso as apc ");
         consulta.append("                      WHERE apc.perfil.id = :perfilAdmin ");
-        consulta.append("                      OR (apc.perfil.id = :perfilAluno AND apc.curso.id = :idCurso ) ) ORDER BY r.status, r.id DESC");
+        consulta.append("                      OR ((apc.perfil.id = :perfilAluno OR apc.perfil.id = :perfilAlunoPos)  AND apc.curso.id = :idCurso ) ) ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("tipo1", EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo());
         query.setParameter("tipo2", EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getCodigo());
         query.setParameter("tipo3", EnumTipoRequerimento.PLANO.getCodigo());
+        query.setParameter("tipo4", EnumTipoRequerimento.PRORROGACAO_DEFESA.getCodigo());
         query.setParameter("idCurso", idCurso);
         query.setParameter("perfilAluno", EnumPerfil.ALUNO.getCodigo());
+        query.setParameter("perfilAlunoPos", EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
         query.setParameter("perfilAdmin", EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo());
 
         List<Requerimento> requerimentos = query.getResultList();
