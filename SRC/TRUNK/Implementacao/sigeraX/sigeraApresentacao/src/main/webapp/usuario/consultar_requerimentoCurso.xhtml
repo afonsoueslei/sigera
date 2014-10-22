@@ -8,8 +8,8 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:param name="funcao" value="consultar" />
-    <ui:param name="nomeImagem" value="consultar.png" />
-    <ui:param name="paginaAtual" value="Consultar Requerimento" />
+    <ui:param name="nomeImagem" value="consultarCoord.png" />
+    <ui:param name="paginaAtual" value="Consultar Requerimentos do Curso" />
 
     <ui:define name="conteudo">
 
@@ -21,19 +21,19 @@
 
 
                     <p:dataTable styleClass="largura-minima-tabela"                                 
-                                 id="dataTable" var="requerimento" value="#{consultarRequerimentoBean.dataModel}"                                 
+                                 id="dataTable" var="requerimento" value="#{consultarRequerimentoCursoBean.dataModel}"                                 
                                  paginator="true" rows="10"  
                                  currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} [{currentPage}/{totalPages}]"
                                  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                                 rowsPerPageTemplate="10,20,30,#{consultarRequerimentoBean.requerimentosTela.size() > 30 ? consultarRequerimentoBean.requerimentosTela.size() : ''}"
-                                 filteredValue="#{consultarRequerimentoBean.requerimentosFiltrados}"
+                                 rowsPerPageTemplate="10,20,30,#{consultarRequerimentoCursoBean.requerimentosTela.size() > 30 ? consultarRequerimentoCursoBean.requerimentosTela.size() : ''}"
+                                 filteredValue="#{consultarRequerimentoCursoBean.requerimentosFiltrados}"
                                  emptyMessage="#{msgs['MT.401']}"
                                  rowStyleClass="#{requerimento.status eq 'Deferido' or requerimento.status eq 'Indeferido' or requerimento.status eq 'Cancelado' ? 'apagado' : requerimento.status ne 'Aberto' ? 'destacado' : null}" 
                                  selectionMode="single">
 
                         <f:facet name="header" >                              
-                            <h:commandLink style="color: #0000ff" id="btnAtualizar" action="#{consultarRequerimentoBean.atualizarLista()}">                                
-                                Lista dos meus Requerimentos
+                            <h:commandLink style="color: #0000ff" id="btnAtualizar" action="#{consultarRequerimentoCursoBean.atualizarLista()}">                                
+                                Lista dos Requerimentos do Curso
                             </h:commandLink>
                         </f:facet>                                                
                         
@@ -68,7 +68,7 @@
 
                         <p:column sortBy="#{requerimento.tipo}"
                                   filterBy="#{requerimento.tipo}"                                     
-                                  filterOptions="#{consultarRequerimentoBean.listaTipos}"  
+                                  filterOptions="#{consultarRequerimentoCursoBean.listaTipos}"  
                                   filterMatchMode="exact">  
                             <f:facet name="header">  
                                 <h:outputText value="Tipo" />
@@ -97,7 +97,7 @@
 
                         <p:column styleClass="centralizar-texto" sortBy="#{requerimento.status}" 
                                   filterBy="#{requerimento.status}"                                  
-                                  filterOptions="#{consultarRequerimentoBean.listaStatus}"
+                                  filterOptions="#{consultarRequerimentoCursoBean.listaStatus}"
                                   filterMatchMode="exact">
                             <f:facet name="header">  
                                 <h:outputText value="Status" />
@@ -112,7 +112,7 @@
                             </f:facet>
 
                             <p:tooltip for="btnDetalhe" value="Visualizar detalhes"/>
-                            <h:link id="btnDetalhe" outcome="#{consultarRequerimentoBean.visualizarDetalhes()}">
+                            <h:link id="btnDetalhe" outcome="#{consultarRequerimentoCursoBean.visualizarDetalhes()}">
                                 <h:graphicImage value="/resources/img/detalhes.png" />
                                 <f:param name="numero" value="#{requerimento.numero}" />
                             </h:link>

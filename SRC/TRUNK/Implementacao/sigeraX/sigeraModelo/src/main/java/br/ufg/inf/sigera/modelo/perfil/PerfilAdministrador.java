@@ -87,6 +87,11 @@ public class PerfilAdministrador extends Perfil {
     }
 
     @Override
+    public List<Requerimento> obtenhaRequerimentosDoCurso(UsuarioSigera usuario) {
+        return null;
+    }
+
+    @Override
     public boolean permiteCancelarRequerimento() {
         return true;
     }

@@ -351,6 +351,7 @@ public abstract class Requerimento implements Serializable {
             if (this.getUsuario().getId() == usuario.getId()
                     || perfilPermiteDarParecer(usuario)
                     || usuarioEhDaSecretariaDoCurso(usuario)
+                    || usuarioEhCoordenadorDoCursoDoRequerente(usuario)
                     || usuarioEhAdministrador) {
                 return true;
             }
@@ -393,7 +394,8 @@ public abstract class Requerimento implements Serializable {
     public boolean autorizaVisualizarAnexos(UsuarioSigera usuario) {
         if (this.getAnexos() != null && this.getAnexos().size() > 0) {
             if (this.getUsuario().getId() == usuario.getId()
-                    || perfilPermiteDarParecer(usuario)) {
+                    || perfilPermiteDarParecer(usuario)
+                    || usuarioEhCoordenadorDoCursoDoRequerente(usuario)) {
                 return true;
             }
         }
@@ -437,6 +439,12 @@ public abstract class Requerimento implements Serializable {
 
     public boolean usuarioPodeConferirDocumentos(UsuarioSigera usuarioLogado) {
         return false;
+    }
+
+    public boolean usuarioEhCoordenadorDoCursoDoRequerente(UsuarioSigera usuarioLogado) {
+        return usuarioLogado.getPerfilAtual().getCurso() != null 
+                && this.getCurso().getId() == usuarioLogado.getPerfilAtual().getCurso().getId() 
+                && usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo();
     }
 
     public boolean usuarioEhOrientadorDoRequerente(UsuarioSigera usuarioLogado) {

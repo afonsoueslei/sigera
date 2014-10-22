@@ -6,9 +6,11 @@ import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import br.ufg.inf.sigera.modelo.perfil.Perfil;
 import br.ufg.inf.sigera.modelo.perfil.PerfilAlunoPosStrictoSensu;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
@@ -20,8 +22,8 @@ public class RequerimentoProrrogacaoDefesa extends Requerimento {
 
     @Column(name = "prazo_em_meses")
     private Integer prazoEmMeses;
-    
-    @Column(name="membro_avaliador")
+
+    @Column(name = "membro_avaliador")
     private Integer membroAvaliador;
 
     public RequerimentoProrrogacaoDefesa() {
@@ -49,7 +51,7 @@ public class RequerimentoProrrogacaoDefesa extends Requerimento {
     public void setMembroAvaliador(Integer membroAvaliador) {
         this.membroAvaliador = membroAvaliador;
     }
-    
+
     @Override
     public String getDescricaoTipo() {
         return EnumTipoRequerimento.PRORROGACAO_DEFESA.getNome();
@@ -81,7 +83,7 @@ public class RequerimentoProrrogacaoDefesa extends Requerimento {
     public boolean autorizaDarParecer(UsuarioSigera usuario) {
         //Coordenador de curso pode dar parecer tanto para os requerimetos com status autorizado quanto para os que conferiu 
         if (usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo()
-                && ( this.getStatus() == codigoStatusQuePermiteParecer() || this.getStatus() == EnumStatusRequerimento.AUTORIZADO.getCodigo()) ) {
+                && (this.getStatus() == codigoStatusQuePermiteParecer() || this.getStatus() == EnumStatusRequerimento.AUTORIZADO.getCodigo())) {
             return true;
 
         }
@@ -89,8 +91,7 @@ public class RequerimentoProrrogacaoDefesa extends Requerimento {
     }
 
     @Override
-    public boolean autorizaVisualizarParecer(UsuarioSigera usuario
-    ) {
+    public boolean autorizaVisualizarParecer(UsuarioSigera usuario) {
         //Quem pode visualizar: o Requerente, os Destinatários do requerimento e o Administrador
         boolean usuarioEhAdministrador = (usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo());
 
@@ -106,8 +107,7 @@ public class RequerimentoProrrogacaoDefesa extends Requerimento {
     }
 
     @Override
-    public boolean autorizaVisualizarAnexos(UsuarioSigera usuario
-    ) {
+    public boolean autorizaVisualizarAnexos(UsuarioSigera usuario) {
         if (this.getAnexos() != null && this.getAnexos().size() > 0) {
             if (this.getUsuario().getId() == usuario.getId()
                     || autorizaDarParecer(usuario)
@@ -119,17 +119,24 @@ public class RequerimentoProrrogacaoDefesa extends Requerimento {
     }
 
     @Override
-    public boolean usuarioEhOrientadorDoRequerente(UsuarioSigera usuario
-    ) {
+    public boolean usuarioEhOrientadorDoRequerente(UsuarioSigera usuario) {
         BuscadorLdap buscadorLdap = usuario.getUsuarioLdap().getBuscadorLdap();
         UsuarioSigera orientador = new PerfilAlunoPosStrictoSensu().obtenhaOrientador(this.getUsuario(), buscadorLdap);
         return orientador.getId() == usuario.getId();
     }
 
     @Override
-    public boolean perfilPermiteEditarPlano(UsuarioSigera usuario
-    ) {
+    public boolean perfilPermiteEditarPlano(UsuarioSigera usuario) {
         return false;
     }
 
+    
+    public static RequerimentoProrrogacaoDefesa obtenhaRequerimentoProrrogacao(BuscadorLdap buscadorLdap, Integer idReq) {
+        EntityManager em = Persistencia.obterManager();
+        RequerimentoProrrogacaoDefesa reqProrrogacao = em.find(RequerimentoProrrogacaoDefesa.class, idReq);
+        if (reqProrrogacao != null) {
+            reqProrrogacao.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(reqProrrogacao.getUsuario().getId()));
+        }
+        return reqProrrogacao;
+    }
 }

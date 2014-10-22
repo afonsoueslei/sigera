@@ -6,6 +6,7 @@ import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import static br.ufg.inf.sigera.modelo.perfil.Perfil.obtenhaEntityManager;
 import br.ufg.inf.sigera.modelo.requerimento.EnumTipoRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -78,6 +79,20 @@ public class PerfilCoordenadorGeral extends Perfil {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
         }
 
+        return requerimentos;
+    }
+
+    @Override
+    public List<Requerimento> obtenhaRequerimentosDoCurso(UsuarioSigera usuarioAutenticado) {
+        BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
+        EntityManager em = obtenhaEntityManager();
+        String consulta = " SELECT r FROM Requerimento as r ORDER BY r.status, r.id DESC ";
+        Query query = em.createQuery(consulta);
+        List<Requerimento> requerimentos = query.getResultList();
+
+        for (Requerimento r : requerimentos) {
+            r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
+        }
         return requerimentos;
     }
 

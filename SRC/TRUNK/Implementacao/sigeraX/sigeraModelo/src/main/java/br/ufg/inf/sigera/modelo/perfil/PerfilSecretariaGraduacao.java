@@ -92,6 +92,11 @@ public class PerfilSecretariaGraduacao extends Perfil {
     }
 
     @Override
+    public List<Requerimento> obtenhaRequerimentosDoCurso(UsuarioSigera usuario) {
+        return null;
+    }
+
+    @Override
     public List<RequerimentoPlano> obtenhaRequerimentosPlanos(UsuarioSigera usuario) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

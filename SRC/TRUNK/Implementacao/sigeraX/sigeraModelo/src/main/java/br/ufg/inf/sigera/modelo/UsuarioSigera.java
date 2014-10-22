@@ -60,7 +60,7 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
 
     public UsuarioSigera() {
     }
- 
+
     public String getTelefoneCelular() {
         return telefoneCelular;
     }
@@ -153,11 +153,11 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     }
 
     public String getCursoAluno() {
-        if (this.getUsuarioLdap().getGrupo().equals(EnumGrupo.ALUNO )) {
-            return Curso.obtenhaCursoPorPrefixo(this.usuarioLdap.getPrefixoCurso()).getNome();            
+        if (this.getUsuarioLdap().getGrupo().equals(EnumGrupo.ALUNO)) {
+            return Curso.obtenhaCursoPorPrefixo(this.usuarioLdap.getPrefixoCurso()).getNome();
         }
         //isso só ocorre se for dado a alguém que não é aluno o perfil de aluno da pós stricto sensu
-        if(Perfil.usuarioTemPerfil(this, EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo())){
+        if (Perfil.usuarioTemPerfil(this, EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo())) {
             return Curso.obtenhaCursoPorPrefixo("POS").getNome();
         }
         return "";
@@ -229,6 +229,10 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
         return this.perfilAtual.getPerfil().obtenhaRequerimentos(this);
     }
 
+    public List<Requerimento> obtenhaRequerimentosCurso() {
+        return this.perfilAtual.getPerfil().obtenhaRequerimentosDoCurso(this);
+    }
+
     public List<RequerimentoPlano> obtenhaRequerimentosPlanos() {
         return this.perfilAtual.getPerfil().obtenhaRequerimentosPlanos(this);
     }
@@ -241,5 +245,5 @@ public class UsuarioSigera implements Serializable, Comparable<UsuarioSigera> {
     public int compareTo(UsuarioSigera u) {
         return this.getNome().compareTo(u.getNome());
     }
-    
+
 }

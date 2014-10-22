@@ -311,6 +311,14 @@
     
     <navigation-rule> 
         <navigation-case>
+            <from-outcome>consultarCurso</from-outcome>
+            <to-view-id>/usuario/consultar_requerimentoCurso.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>  
+    
+    <navigation-rule> 
+        <navigation-case>
             <from-outcome>editar_disciplina</from-outcome>
             <to-view-id>/usuario/admin/editar_disciplina.xhtml</to-view-id>
             <redirect/>

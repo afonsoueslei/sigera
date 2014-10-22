@@ -121,6 +121,8 @@ public abstract class Perfil implements Serializable {
     public abstract List<Requerimento> obtenhaRequerimentos(UsuarioSigera usuario);
 
     public abstract List<RequerimentoPlano> obtenhaRequerimentosPlanos(UsuarioSigera usuario);
+    
+    public abstract List<Requerimento> obtenhaRequerimentosDoCurso(UsuarioSigera usuario);
 
     public abstract boolean permiteManterUsuarios();
 
