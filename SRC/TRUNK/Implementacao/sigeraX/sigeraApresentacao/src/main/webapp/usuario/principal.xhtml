@@ -17,10 +17,30 @@
             <li class="span3">
                 <div class="thumbnail">
                     <h:link outcome="consultar">
-                        <img src="#{request.contextPath}/resources/img/consultar2.png" alt="Consultar Requerimentos" />
+                        <img src="#{request.contextPath}/resources/img/consultar2.png" alt="Consultar Meus Requerimentos" />
                     </h:link>                       
                 </div>
             </li>
+            <!-- mostra se usuario é coordenador de curso-->
+            <h:panelGroup rendered="#{loginBean.usuarioEhCoordenadorDeCurso()}">
+                <li class="span3">
+                    <div class="thumbnail">
+                        <h:link outcome="consultarCurso">
+                            <img src="#{request.contextPath}/resources/img/consultarCoord2.png" alt="Consultar Requerimentos do Curso" />
+                        </h:link>                       
+                    </div>
+                </li>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{loginBean.usuarioEhSecretarioGraduação()}">
+                <li class="span3">
+                    <div class="thumbnail">
+                        <h:link outcome="consultar_usuarios">
+                            <img src="#{request.contextPath}/resources/img/manter_usuarios2.png" alt="Manter usuários" />
+                        </h:link>                       
+                    </div>
+                </li>
+            </h:panelGroup>
 
             <h:panelGroup rendered="#{loginBean.usuario.perfilAtual.perfil.permiteConfigurarSistema()}">
 
@@ -100,13 +120,25 @@
                     </div>                         
                 </li>
 
-                <li class="span3 sem-margem-esquerda">
-                    <div class="thumbnail">
-                        <h:link outcome="assinatura">
-                            <img src="#{request.contextPath}/resources/img/assinatura2.png" alt="Assinatura de contratos/relatórios de estágio" />
-                        </h:link>                                            
-                    </div>                
-                </li>
+                <h:panelGroup rendered="#{loginBean.usuario.perfilAtual.perfil.permiteFazerRequerimentoDaPos()}">
+                    <li class="span3 sem-margem-esquerda">
+                        <div class="thumbnail">
+                            <h:link outcome="prorrogacao_defesa">
+                                <img src="#{request.contextPath}/resources/img/prorrogacao2.png" alt="Prorrogação Prazo Defesa" />
+                            </h:link>                    
+                        </div>
+                    </li>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{!loginBean.usuario.perfilAtual.perfil.permiteFazerRequerimentoDaPos()}">
+                    <li class="span3 sem-margem-esquerda">
+                        <div class="thumbnail">
+                            <h:link outcome="assinatura">
+                                <img src="#{request.contextPath}/resources/img/assinatura2.png" alt="Assinatura de contratos/relatórios de estágio" />
+                            </h:link>                                            
+                        </div>                
+                    </li>
+                </h:panelGroup>
 
                 <h:panelGroup rendered="#{loginBean.configuracao.periodoPermiteAbrirRequerimentos()}"> 
                     <li class="span3">
@@ -135,16 +167,7 @@
                         </div>
                     </li>
                 </h:panelGroup>                    
-            </h:panelGroup>    
-            <h:panelGroup rendered="#{loginBean.usuario.perfilAtual.perfil.permiteFazerRequerimentoDaPos()}">
-                <li class="span3 ">
-                    <div class="thumbnail">
-                        <h:link outcome="prorrogacao_defesa">
-                            <img src="#{request.contextPath}/resources/img/prorrogacao2.png" alt="Prorrogação Prazo Defesa" />
-                        </h:link>                    
-                    </div>
-                </li>
-            </h:panelGroup>
+            </h:panelGroup>                
 
             <h:panelGroup rendered="#{loginBean.usuario.perfilAtual.perfil.permitePlanoDeAula()}">
                 <li class="span3">

@@ -26,7 +26,7 @@ import javax.servlet.ServletContext;
 
 @ManagedBean
 @SessionScoped
-public class ConsultarRequerimentoBean {
+public class ConsultarRequerimentoCursoBean {
 
     @ManagedProperty(value = "#{loginBean}")
     private LoginBean loginBean;
@@ -50,7 +50,7 @@ public class ConsultarRequerimentoBean {
         TIPOS_REQUERIMENTO[7] = EnumTipoRequerimento.PLANO.getNome();
         TIPOS_REQUERIMENTO[8] = EnumTipoRequerimento.PRORROGACAO_DEFESA.getNome();
 
-        TIPOS_STATUS = new String[7];
+        TIPOS_STATUS = new String[7];        
         TIPOS_STATUS[0] = EnumStatusRequerimento.ABERTO.getNome();
         TIPOS_STATUS[1] = EnumStatusRequerimento.CONFERIDO.getNome();
         TIPOS_STATUS[2] = EnumStatusRequerimento.AUTORIZADO.getNome();
@@ -76,7 +76,7 @@ public class ConsultarRequerimentoBean {
         this.requerimentosFiltrados = requerimentosFiltrados;
     }
 
-    public ConsultarRequerimentoBean() {
+    public ConsultarRequerimentoCursoBean() {
         this.opcoesTipoRequerimento = crieOpcoesFiltro(TIPOS_REQUERIMENTO);
         this.opcoesTipoStatus = crieOpcoesFiltro(TIPOS_STATUS);
     }
@@ -92,7 +92,7 @@ public class ConsultarRequerimentoBean {
     public RequerimentoTelaConsultaDataModel getDataModel() {
         if (dataModel == null) {
             try {
-                List<Requerimento> requerimentos = this.loginBean.getUsuario().obtenhaRequerimentos();
+                List<Requerimento> requerimentos = this.loginBean.getUsuario().obtenhaRequerimentosCurso();
                 this.requerimentosTela = new ArrayList<RequerimentoTelaConsulta>();
                 for (Requerimento requerimento : requerimentos) {
                     this.requerimentosTela.add(new AdaptadorRequerimentoTelaConsulta(requerimento));
@@ -100,7 +100,7 @@ public class ConsultarRequerimentoBean {
                 this.dataModel = new RequerimentoTelaConsultaDataModel(this.requerimentosTela);
             } catch (Exception ie) {
                 Paginas.redirecionePaginaErro();
-                Logger.getLogger(ConsultarRequerimentoBean.class.getName()).log(Level.SEVERE, null, ie);
+                Logger.getLogger(ConsultarRequerimentoCursoBean.class.getName()).log(Level.SEVERE, null, ie);
             }
         }
         return dataModel;
@@ -136,11 +136,11 @@ public class ConsultarRequerimentoBean {
             String logo = servletContext.getRealPath("") + "/resources/img/cabecalho.png";
             pdf.add(Image.getInstance(logo));
         } catch (IOException ex) {
-            Logger.getLogger(ConsultarRequerimentoBean.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ConsultarRequerimentoCursoBean.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BadElementException badEx) {
-            Logger.getLogger(ConsultarRequerimentoBean.class.getName()).log(Level.SEVERE, null, badEx);
+            Logger.getLogger(ConsultarRequerimentoCursoBean.class.getName()).log(Level.SEVERE, null, badEx);
         } catch (DocumentException docEx) {
-            Logger.getLogger(ConsultarRequerimentoBean.class.getName()).log(Level.SEVERE, null, docEx);
+            Logger.getLogger(ConsultarRequerimentoCursoBean.class.getName()).log(Level.SEVERE, null, docEx);
         }
     }
 
@@ -150,8 +150,8 @@ public class ConsultarRequerimentoBean {
     
      
     public String atualizarLista(){
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoBean");        
-        return Paginas.getConsultarRequerimentos();
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("consultarRequerimentoCursoBean");        
+        return Paginas.getConsultarRequerimentosCurso();
     }
     
 

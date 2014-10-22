@@ -1,6 +1,5 @@
 package br.ufg.inf.sigera.modelo.perfil;
 
-import br.ufg.inf.sigera.modelo.AssociacaoPerfilCurso;
 import br.ufg.inf.sigera.modelo.Curso;
 import br.ufg.inf.sigera.modelo.Professor;
 import br.ufg.inf.sigera.modelo.requerimento.EnumTipoRequerimento;
@@ -8,8 +7,6 @@ import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
-import br.ufg.inf.sigera.modelo.requerimento.RequerimentoProrrogacaoDefesa;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -61,10 +58,10 @@ public class PerfilSecretaria extends Perfil {
         StringBuilder consulta = new StringBuilder();
         Integer idCursoPos = Curso.obtenhaCursoPorPrefixo("POS").getId();
 
-        if(secretarioEhProfessorMembroDeComissao(usuarioAutenticado)){
+        if (secretarioEhProfessorMembroDeComissao(usuarioAutenticado)) {
             return obtenhaRequerimentosMembroComissao(usuarioAutenticado);
         }
-        
+
         consulta.append(" SELECT r ");
         consulta.append(" FROM Requerimento as r  ");
         consulta.append(" WHERE r.tipo IN (:tipo1, :tipo2, :tipo3, :tipo4) ");
@@ -106,7 +103,7 @@ public class PerfilSecretaria extends Perfil {
     public List<Requerimento> obtenhaRequerimentosMembroComissao(UsuarioSigera usuarioAutenticado) {
         EntityManager em = obtenhaEntityManager();
         StringBuilder consulta = new StringBuilder();
-        
+
         consulta.append(" SELECT r ");
         consulta.append(" FROM Requerimento as r, RequerimentoProrrogacaoDefesa as rp  ");
         consulta.append(" WHERE r.id = rp.id AND rp.membroAvaliador = :idUsuario");
@@ -116,8 +113,8 @@ public class PerfilSecretaria extends Perfil {
 
         List<Requerimento> requerimentos = query.getResultList();
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
-                        
-        for (Requerimento r : requerimentos) {            
+
+        for (Requerimento r : requerimentos) {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
         }
 
@@ -128,6 +125,11 @@ public class PerfilSecretaria extends Perfil {
         return (Professor.obtenhaProfessorPorIdUsuario(usuarioAutenticado.getId()) != null
                 && (usuarioAutenticado.getPerfilAtual().getCurso().getId() == Curso.obtenhaCursoPorPrefixo("msc").getId()
                 || usuarioAutenticado.getPerfilAtual().getCurso().getId() == Curso.obtenhaCursoPorPrefixo("dsc").getId()));
+    }
+
+    @Override
+    public List<Requerimento> obtenhaRequerimentosDoCurso(UsuarioSigera usuario) {
+        return null;
     }
 
     @Override

@@ -10,7 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 @Entity
-@DiscriminatorValue(value="2")
+@DiscriminatorValue(value = "2")
 public class PerfilAluno extends Perfil {
 
     public PerfilAluno() {
@@ -27,31 +27,32 @@ public class PerfilAluno extends Perfil {
     public boolean permiteConfigurarSistema() {
         return false;
     }
+
     @Override
     public boolean permitePlanoDeAula() {
         return false;
     }
-    
+
     @Override
     public boolean permiteEditarPlanoDeAula() {
         return false;
     }
-    
+
     @Override
     public boolean permiteEditarTurma() {
         return false;
     }
-    
+
     @Override
     public boolean permiteManterUsuarios() {
         return false;
     }
-   
+
     @Override
     public boolean permiteImprimirEmenta() {
         return false;
     }
-    
+
     @Override
     public List<Requerimento> obtenhaRequerimentos(UsuarioSigera usuario) {
         EntityManager em = obtenhaEntityManager();
@@ -65,17 +66,21 @@ public class PerfilAluno extends Perfil {
         }
 
         return requerimentos;
-    }    
+    }
 
     @Override
     public List<RequerimentoPlano> obtenhaRequerimentosPlanos(UsuarioSigera usuario) {
-       return null;
-    }        
+        return null;
+    }
 
     @Override
-    public boolean permiteCancelarRequerimento() {        
+    public List<Requerimento> obtenhaRequerimentosDoCurso(UsuarioSigera usuario) {
+        return null;
+    }
+
+    @Override
+    public boolean permiteCancelarRequerimento() {
         return false;
     }
-    
-    
+
 }

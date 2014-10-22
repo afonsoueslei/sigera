@@ -289,5 +289,14 @@ public class LoginBean {
             Logger.getLogger(LoginBean.class.getName()).log(Level.SEVERE, null, iex);
         }
     }
+    
+    public boolean usuarioEhCoordenadorDeCurso(){
+        return this.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo() ||
+               this.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo();
+    }
 
+    public boolean usuarioEhSecretarioGraduação(){
+        return this.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA_GRADUACAO.getCodigo();
+    }
+    
 }

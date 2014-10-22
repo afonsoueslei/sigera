@@ -215,16 +215,17 @@ public class DetalheRequerimentoBean {
     public Boolean usuarioPodeVerRequerimento() {
         UsuarioSigera usuarioLogado = loginBean.getUsuario();
         return perfilAutorizadoVerRequerimento(usuarioLogado)
-                || requerimento.perfilPermiteDarParecer(usuarioLogado)
+                || requerimento.perfilPermiteDarParecer(usuarioLogado)                
                 || requerimento.usuarioPodeConferirDocumentos(usuarioLogado);
     }
 
     private Boolean perfilAutorizadoVerRequerimento(UsuarioSigera usuarioLogado) {
-        //somente o próprio usuário, o administrador, o coordenador Geral 
+        //somente o próprio usuário, o administrador, os coordenadores de Curso e  Geral 
         return usuarioLogado.getId() == requerimento.getUsuario().getId()
-                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo()
+                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo()                
                 || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo()
-                || this.requerimento.usuarioEhOrientadorDoRequerente(usuarioLogado);
+                || this.requerimento.usuarioEhOrientadorDoRequerente(usuarioLogado)
+                || this.requerimento.usuarioEhCoordenadorDoCursoDoRequerente(usuarioLogado);
     }
 
     public LoginBean getLoginBean() {

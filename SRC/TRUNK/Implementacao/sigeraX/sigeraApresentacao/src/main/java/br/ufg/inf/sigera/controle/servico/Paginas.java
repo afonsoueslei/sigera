@@ -27,6 +27,7 @@ public class Paginas {
     private static final String PRORROGACAO = "prorrogacao_defesa";
     private static final String CONFIG = "config";
     private static final String CONSULTAR = "consultar";
+    private static final String CONSULTAR_CURSO = "consultarCurso";
     private static final String DECLARACAO_MATRICULA = "declaracao";
     private static final String DECLARACAO_MATRICULA_FINALIZACAO = "declaracao_finalizacao";
     private static final String DETALHE_REQUERIMENTO = "detalhe_requerimento";
@@ -103,6 +104,10 @@ public class Paginas {
 
     public static String getConsultarRequerimentos() {
         return CONSULTAR;
+    }
+
+    public static String getConsultarRequerimentosCurso() {
+        return CONSULTAR_CURSO;
     }
 
     public static String getDeclaracaoMatricula() {
