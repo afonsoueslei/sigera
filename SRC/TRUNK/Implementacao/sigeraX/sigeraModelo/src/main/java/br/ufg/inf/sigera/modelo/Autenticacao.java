@@ -24,7 +24,7 @@ public class Autenticacao {
 
     public Autenticacao(String nomeUsuario, String senha) {
         this.efetueLogin(nomeUsuario, senha);
-    }
+        }
 
     public UsuarioSigera getUsuarioSigera() {
         return usuario;
@@ -86,6 +86,9 @@ public class Autenticacao {
         if (usuarioLdap == null) {
             return null;
         }
+        if(usuarioLdap.getUid().equalsIgnoreCase("FalhaConexaoLDAP")){
+            return crieUsuarioFalhaConexaoLdap();
+        }
         try {
             EntityManager em = Persistencia.obterManager();
 
@@ -137,6 +140,12 @@ public class Autenticacao {
     public UsuarioSigera crieUsuarioFalhaBanco() {
         usuario = new UsuarioSigera();
         usuario.setTelefoneComercial("falha-banco");
+        return usuario;
+    }
+   
+    public UsuarioSigera crieUsuarioFalhaConexaoLdap() {
+        usuario = new UsuarioSigera();
+        usuario.setTelefoneComercial("falha-conexao-ldap");
         return usuario;
     }
 }

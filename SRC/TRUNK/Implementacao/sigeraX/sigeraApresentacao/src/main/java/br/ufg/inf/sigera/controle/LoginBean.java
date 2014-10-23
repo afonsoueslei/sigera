@@ -129,6 +129,10 @@ public class LoginBean {
             if (!temConexaoBanco()) {
                 return Paginas.getLogin();
             }
+            if(!temConexaoLdap()){
+                return Paginas.getLogin();
+            }
+            
             return possuiPerfil(perfis);
         } else {
             if (autenticador.getUsuarioLdap() != null) {
@@ -149,6 +153,16 @@ public class LoginBean {
         return true;
     }
 
+    private boolean temConexaoLdap() {
+        //se houve falha na conexão com o banco de dados
+        if (this.usuario.getTelefoneComercial() != null && "falha-conexao-ldap".equalsIgnoreCase(this.usuario.getTelefoneComercial())) {
+            mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.700.ldap"), Paginas.getLogin());
+            return false;
+        }
+        return true;
+    }
+
+    
     private String possuiPerfil(Collection<AssociacaoPerfilCurso> perfis) {
         if (perfis == null || perfis.isEmpty()) {
             mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.211"), Paginas.getLogin());

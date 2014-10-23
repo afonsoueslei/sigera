@@ -3,6 +3,7 @@ package br.ufg.inf.sigera.modelo.perfil;
 import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
+import br.ufg.inf.sigera.modelo.requerimento.EnumStatusRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
 import java.util.List;
 import javax.persistence.DiscriminatorValue;
@@ -60,9 +61,10 @@ public class PerfilDiretor extends Perfil {
         StringBuilder consulta = new StringBuilder();
 
         consulta.append(" SELECT r ");
-        consulta.append(" FROM RequerimentoAssinatura as r  ORDER BY r.status, r.id DESC");
+        consulta.append(" FROM RequerimentoAssinatura as r WHERE r.status != :statusAberto ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
+        query.setParameter("statusAberto", EnumStatusRequerimento.ABERTO.getCodigo());
         List<Requerimento> requerimentos = query.getResultList();
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
 
