@@ -96,8 +96,8 @@ public class PerfilCoordenadorCurso extends Perfil {
             if (reqPlano != null && reqPlano.getPlano().getTurma().getDisciplina().getCurso().getId() == idCurso) {
                 requerimentos2.add(r);
             }
-            //Se for requerimento de Prorrogação só enteressa ao coordenador se ele já estiver autorizado pelo orientador
-            if (reqProrrogacao != null && reqProrrogacao.getStatus() == EnumStatusRequerimento.AUTORIZADO.getCodigo()) {
+            //Se for requerimento de Prorrogação só interessa ao coordenador se ele já estiver autorizado pelo orientador
+            if (reqProrrogacao != null && reqProrrogacao.getStatus() != EnumStatusRequerimento.ABERTO.getCodigo()) {
                 requerimentos2.add(r);
             }
             //Se não for nem de Plano nem de Prorrogação então adiciona a resposta

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.AuthenticationException;
+import javax.naming.CommunicationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -23,24 +24,26 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-public class AutenticacaoLdap {    
-    
-    public UsuarioLdap efetuaLogin(String login, String senha)  {
+public class AutenticacaoLdap {
+
+    public UsuarioLdap efetuaLogin(String login, String senha) {
         String pathUser = "uid=" + login + ", ou=Users, dc=inf, dc=ufg, dc=br";
         UsuarioLdap usuario = null;
         try {
             DirContext dir = this.getContext(pathUser, senha);
             Attributes matchAttrs = new BasicAttributes(false);
             usuario = buscaDados(login, dir, matchAttrs);
-
-        } catch (NamingException ex) {
-            Logger.getLogger(AutenticacaoLdap.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (CommunicationException cex) {
+            Logger.getLogger(AutenticacaoLdap.class.getName()).log(Level.SEVERE, null, cex);
+            return new UsuarioLdap("FalhaConexaoLDAP", "FalhaConexaoLDAP", "FalhaConexaoLDAP", "FalhaConexaoLDAP", EnumGrupo.OUTROS, "FalhaConexaoLDAP");
+        } catch (NamingException nex) {
+            Logger.getLogger(AutenticacaoLdap.class.getName()).log(Level.SEVERE, null, nex);
         }
         return usuario;
     }
 
-    public DirContext getContext(String login, String senha) throws NamingException  {
-        Hashtable env = new Hashtable(11);        
+    public DirContext getContext(String login, String senha) throws NamingException {
+        Hashtable env = new Hashtable(11);
         Conexoes.lerParametros();
         env.put(Context.INITIAL_CONTEXT_FACTORY, Conexoes.getINITIAL_CTX());
         env.put(Context.PROVIDER_URL, Conexoes.getSERVIDOR_LDAP());
@@ -65,7 +68,7 @@ public class AutenticacaoLdap {
         return new InitialDirContext(env);
     }
 
-    private UsuarioLdap buscaDados(String login, DirContext ctx, Attributes matchAttrs)  {
+    private UsuarioLdap buscaDados(String login, DirContext ctx, Attributes matchAttrs) {
         UsuarioLdap usuario = null;
         Conexoes.lerParametros();
         String[] atributosRetorno = new String[]{"uid", "mail", "cn", "uidNumber", "gidNumber", "registeredAddress"};
@@ -95,7 +98,7 @@ public class AutenticacaoLdap {
         return null;
     }
 
-    public void alterarCampoUsuarioLdap(String login, DirContext ctx, String campoQueSeraAlterado, String novoValor){
+    public void alterarCampoUsuarioLdap(String login, DirContext ctx, String campoQueSeraAlterado, String novoValor) {
 
         String pathUser = "uid=" + login + ", ou=Users, dc=inf, dc=ufg, dc=br";
 
@@ -156,13 +159,13 @@ public class AutenticacaoLdap {
         Map<String, UsuarioLdap> usuariosPorUid;
         Map<Integer, UsuarioLdap> usuariosPorUidNumber;
 
-        private CacheLdap(String login, DirContext ctx, Attributes matchAttrs){
+        private CacheLdap(String login, DirContext ctx, Attributes matchAttrs) {
             this.usuariosLdap = buscaDadosTodosUsuarios(login, ctx, matchAttrs);
             this.usuariosPorUid = construaMapaUsuariosPorUid(this.usuariosLdap);
             this.usuariosPorUidNumber = construaMapaUsuariosPorUidNumber(this.usuariosLdap);
         }
 
-        private List<UsuarioLdap> buscaDadosTodosUsuarios(String login, DirContext ctx, Attributes matchAttrs){
+        private List<UsuarioLdap> buscaDadosTodosUsuarios(String login, DirContext ctx, Attributes matchAttrs) {
             List<UsuarioLdap> usuarios = new ArrayList<UsuarioLdap>();
             String[] atributosRetorno = new String[]{"uid", "mail", "cn", "uidNumber", "gidNumber", "registeredAddress"};
             Conexoes.lerParametros();
