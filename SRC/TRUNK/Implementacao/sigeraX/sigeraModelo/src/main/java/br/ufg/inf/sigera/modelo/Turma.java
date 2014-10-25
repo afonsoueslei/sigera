@@ -191,6 +191,7 @@ public class Turma implements Serializable, Comparable<Turma> {
         StringBuilder consulta = new StringBuilder();
         int codCursoMestrado = 0;
         int codCursoDoutorado = 0;
+        int codCursoPos = 0;
 
         consulta.append(" SELECT t ");
         consulta.append(" FROM Turma as t  ");
@@ -200,6 +201,10 @@ public class Turma implements Serializable, Comparable<Turma> {
         if (codCurso != 0) {
             consulta.append(" AND ( t.disciplina.curso.id = :codCurso ");
 
+            if (Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("msc") || Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("dsc")) {
+                consulta.append(" OR t.disciplina.curso.id = :codPos");
+                codCursoPos = Curso.obtenhaCursoPorPrefixo("pos").getId();
+            }
             if (Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("POS")) {
                 codCursoMestrado = Curso.obtenhaCursoPorPrefixo("msc").getId();
                 codCursoDoutorado = Curso.obtenhaCursoPorPrefixo("dsc").getId();
@@ -219,6 +224,9 @@ public class Turma implements Serializable, Comparable<Turma> {
             if (Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("POS")) {
                 query.setParameter("codCursoMestrado", codCursoMestrado);
                 query.setParameter("codCursoDoutorado", codCursoDoutorado);
+            }
+            if (Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("msc") || Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("dsc")) {
+                query.setParameter("codPos", codCursoPos);
             }
         }
 

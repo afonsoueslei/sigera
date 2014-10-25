@@ -122,7 +122,7 @@ public class UsuarioLdap {
     
     
     public boolean isAlunoRegularPosStrictoSensu(){
-        return (this.getPrefixoCurso().endsWith("SC") || this.getPrefixoCurso().endsWith("sc")) && this.getUid().charAt(7) == '0';       
+        return this.getPrefixoCurso()!= null && (this.getPrefixoCurso().endsWith("SC") || this.getPrefixoCurso().endsWith("sc")) && this.getUid().charAt(7) == '0';       
     }
     
 }

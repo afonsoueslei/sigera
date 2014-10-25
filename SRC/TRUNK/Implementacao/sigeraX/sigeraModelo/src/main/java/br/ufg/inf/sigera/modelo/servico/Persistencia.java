@@ -5,7 +5,6 @@
  */
 package br.ufg.inf.sigera.modelo.servico;
 
-import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
