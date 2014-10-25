@@ -235,7 +235,7 @@ public class EditarPerfilBean implements Serializable {
     }
 
     public Integer getCodigoOrientador() {
-        if (orientadorSelecionado != null || !usuarioEdicaoTemOrientador().isEmpty()) {
+        if (orientadorSelecionado != null || usuarioEdicaoTemOrientador() != null) {
             if (orientadorSelecionado == null) {
                 BuscadorLdap buscadorLdap = loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap();
                 UsuarioSigera orientador = new PerfilAlunoPosStrictoSensu().obtenhaOrientador(usuarioEdicao, buscadorLdap);
