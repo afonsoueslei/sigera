@@ -9,6 +9,7 @@ import br.ufg.inf.sigera.modelo.Turma;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
+import br.ufg.inf.sigera.modelo.perfil.PerfilAlunoPosStrictoSensu;
 import br.ufg.inf.sigera.modelo.servico.Conexoes;
 import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import com.mysql.jdbc.Connection;
@@ -236,8 +237,8 @@ public abstract class Requerimento implements Serializable {
 
     public static Requerimento obtenha(BuscadorLdap buscadorLdap, Integer id) {
         EntityManager em = criarManager();
-        Requerimento req = em.find(Requerimento.class, id);
-        if (req != null) {
+        Requerimento req = em.find(Requerimento.class, id);       
+        if (req != null && req.getUsuario().getUsuarioLdap() == null) {
             req.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(req.getUsuario().getId()));
         }
         return req;
@@ -442,13 +443,19 @@ public abstract class Requerimento implements Serializable {
     }
 
     public boolean usuarioEhCoordenadorDoCursoDoRequerente(UsuarioSigera usuarioLogado) {
-        return usuarioLogado.getPerfilAtual().getCurso() != null 
-                && this.getCurso().getId() == usuarioLogado.getPerfilAtual().getCurso().getId() 
+        return usuarioLogado.getPerfilAtual().getCurso() != null
+                && this.getCurso().getId() == usuarioLogado.getPerfilAtual().getCurso().getId()
                 && usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo();
     }
 
     public boolean usuarioEhOrientadorDoRequerente(UsuarioSigera usuarioLogado) {
-        return false;
+        BuscadorLdap buscadorLdap = usuarioLogado.getUsuarioLdap().getBuscadorLdap();
+        UsuarioSigera orientador = new PerfilAlunoPosStrictoSensu().obtenhaOrientador(this.getUsuario(), buscadorLdap);
+        if (orientador != null) {
+            return orientador.getId() == usuarioLogado.getId();
+        } else {
+            return false;
+        }
     }
 
     public List<TurmaComStatus> getTurmasComStatus(BuscadorLdap buscadorLdap) {

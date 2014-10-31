@@ -15,9 +15,11 @@ import br.ufg.inf.sigera.modelo.requerimento.RequerimentoSegundaChamada;
 import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
 import br.ufg.inf.sigera.controle.servico.Sessoes;
+import br.ufg.inf.sigera.modelo.Curso;
 import br.ufg.inf.sigera.modelo.Disciplina;
 import br.ufg.inf.sigera.modelo.Plano;
 import br.ufg.inf.sigera.modelo.Professor;
+import br.ufg.inf.sigera.modelo.perfil.Perfil;
 import br.ufg.inf.sigera.modelo.perfil.PerfilAlunoPosStrictoSensu;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoAcrescimoDisciplina;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoCancelamentoDisciplina;
@@ -77,6 +79,10 @@ public class DetalheRequerimentoBean {
     @PostConstruct
     public void init() {
         obtenhaRequerimento();
+        if (usuarioEhSecretarioRequerimentoDaPosTemParecerDoOrientador(this.loginBean.getUsuario())) {
+            listaStatus.removeAll(listaStatus);
+            listaStatus.add(EnumStatusRequerimento.DEFERIDO);
+        }
         if (requerimento == null || !usuarioPodeVerRequerimento()) {
             redirecioneParaPaginaConsulta();
         }
@@ -215,17 +221,27 @@ public class DetalheRequerimentoBean {
     public Boolean usuarioPodeVerRequerimento() {
         UsuarioSigera usuarioLogado = loginBean.getUsuario();
         return perfilAutorizadoVerRequerimento(usuarioLogado)
-                || requerimento.perfilPermiteDarParecer(usuarioLogado)                
+                || requerimento.perfilPermiteDarParecer(usuarioLogado)
                 || requerimento.usuarioPodeConferirDocumentos(usuarioLogado);
     }
 
     private Boolean perfilAutorizadoVerRequerimento(UsuarioSigera usuarioLogado) {
         //somente o próprio usuário, o administrador, os coordenadores de Curso e  Geral 
+        //Excepcionalmente o secretario de POS qdo o requerimento for de um aluno regular da pos
+        //e este requerimento já estiver com um parecer do orientador 
         return usuarioLogado.getId() == requerimento.getUsuario().getId()
-                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo()                
+                || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo()
                 || usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo()
                 || this.requerimento.usuarioEhOrientadorDoRequerente(usuarioLogado)
-                || this.requerimento.usuarioEhCoordenadorDoCursoDoRequerente(usuarioLogado);
+                || this.requerimento.usuarioEhCoordenadorDoCursoDoRequerente(usuarioLogado)
+                || usuarioEhSecretarioRequerimentoDaPosTemParecerDoOrientador(usuarioLogado);
+    }
+
+    public Boolean usuarioEhSecretarioRequerimentoDaPosTemParecerDoOrientador(UsuarioSigera usuarioLogado) {
+        return Perfil.usuarioTemPerfilDoCurso(usuarioLogado, EnumPerfil.SECRETARIA.getCodigo(), Curso.obtenhaCursoPorPrefixo("pos").getId())
+                && usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA.getCodigo()
+                && requerimentoEhDeUmAlunoRegularPosStrictoSensu()
+                && this.requerimento.getStatus() != EnumStatusRequerimento.ABERTO.getCodigo();
     }
 
     public LoginBean getLoginBean() {
@@ -315,10 +331,10 @@ public class DetalheRequerimentoBean {
     public boolean usuarioPodeDarParecerAcertoMatricula() {
         return this.requerimento.autorizaDarParecerAcertoMatricula(loginBean.getUsuario());
     }
-    
-    public boolean usuarioPodeDelegarProrrogacaoDefesaAoMembro(){
-        return this.requerimento.getPrazoRequeridoProrrogacaoDefesa() <5
-                && this.requerimento.getTipo() == EnumTipoRequerimento.PRORROGACAO_DEFESA.getCodigo() 
+
+    public boolean usuarioPodeDelegarProrrogacaoDefesaAoMembro() {
+        return this.requerimento.getPrazoRequeridoProrrogacaoDefesa() < 5
+                && this.requerimento.getTipo() == EnumTipoRequerimento.PRORROGACAO_DEFESA.getCodigo()
                 && this.requerimento.getStatus() == EnumStatusRequerimento.AUTORIZADO.getCodigo();
     }
 
@@ -336,7 +352,8 @@ public class DetalheRequerimentoBean {
     }
 
     public boolean usuarioPodeValidaPedidoProrrogacaoDefesa() {
-        return this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()
+        return this.requerimento instanceof RequerimentoProrrogacaoDefesa
+                && this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()
                 && this.requerimento.usuarioEhOrientadorDoRequerente(loginBean.getUsuario())
                 && loginBean.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.PROFESSOR.getCodigo();
     }
@@ -393,12 +410,12 @@ public class DetalheRequerimentoBean {
         return Paginas.getConsultarRequerimentos();
     }
 
-    public String confirmarParecerDelegacao() {        
+    public String confirmarParecerDelegacao() {
         Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaDeferimento, EnumStatusRequerimento.CONFERIDO.getCodigo());
         this.requerimento.adicionarParecer(parecer);
 
         UsuarioSigera membroCPG = membroSelecionado.getUsuario();
-        ((RequerimentoProrrogacaoDefesa)this.requerimento).setMembroAvaliador(membroCPG.getId());
+        ((RequerimentoProrrogacaoDefesa) this.requerimento).setMembroAvaliador(membroCPG.getId());
 
         if (this.requerimento.salvar()) {
 
@@ -493,22 +510,42 @@ public class DetalheRequerimentoBean {
     }
 
     public String confirmarParecerAcerto() {
+        boolean enviarParaSecretariosDaPos = false;
         if (!validarStatusParecerAcerto()) {
             mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.019"), Paginas.getDetalheRequerimento());
             return enderecoRedirecionamento();
         }
 
         int statusParecerAcerto = obtenhaStatusParecerAcerto();
+
+        //muda status de deferido para autorizado se condição for satisfeita        
+        //e seta para true enviarParaSecretariosDaPos
+        if (isPrimeiroParecerAcertoDeAlunoPosStrictoSensu()) {
+            statusParecerAcerto = EnumStatusRequerimento.AUTORIZADO.getCodigo();
+            enviarParaSecretariosDaPos = true;
+        }
+
         this.requerimento.setTurmasComStatus(this.turmasComStatus);
 
         Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaParecerAcerto, statusParecerAcerto);
         this.requerimento.adicionarParecer(parecer);
         if (this.requerimento.salvar()) {
+
             if (loginBean.getConfiguracao().isEnviarEmail()) {
                 GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
-                gerenciadorEmail.adicionarEmailParecer(null, requerimento);
+
+                //encaminha email do requerimento para secretarios da pos se condição for satisfeita        
+                if (enviarParaSecretariosDaPos) {
+                    List<UsuarioSigera> secretariosPos = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
+                            Curso.obtenhaCursoPorPrefixo("Pos").getId(),
+                            loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+                    gerenciadorEmail.adicionarEmailRequerimento(requerimento, secretariosPos);
+                } else {
+                    gerenciadorEmail.adicionarEmailParecer(null, requerimento);
+                }
                 gerenciadorEmail.enviarEmails();
             }
+
             Sessoes.limparBeanConsultarRequerimento();
             mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT004), Paginas.getDetalheRequerimento());
             return enderecoRedirecionamento();
@@ -698,6 +735,22 @@ public class DetalheRequerimentoBean {
         } else {
             this.membroSelecionado = null;
         }
+    }
+
+    public boolean isPrimeiroParecerAcertoDeAlunoPosStrictoSensu() {
+        // Se o requerimento é de um aluno regular de Pos Stricto Sensu &
+        // Se é o "primeiro" parecer & 
+        // Se alguma turma teve parecer deferido        
+        int statusParecerAcerto = obtenhaStatusParecerAcerto();
+
+        return requerimentoEhDeUmAlunoRegularPosStrictoSensu()
+                && this.requerimento.getPareceres().isEmpty()
+                && statusParecerAcerto == EnumStatusRequerimento.DEFERIDO.getCodigo();
+    }
+
+    public Boolean requerimentoEhDeUmAlunoRegularPosStrictoSensu() {
+        return this.requerimento.getUsuario().getUsuarioLdap().isAlunoRegularPosStrictoSensu()
+                || Perfil.usuarioTemPerfilDoCurso(this.requerimento.getUsuario(), EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo(), Curso.obtenhaCursoPorPrefixo("pos").getId());
     }
 
 }

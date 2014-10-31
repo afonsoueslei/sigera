@@ -7,11 +7,11 @@ import java.util.Map;
 public enum EnumStatusRequerimento {
     ABERTO(1, "Aberto"),
     CONFERIDO(2,"Conferido"),    
-    INDEFERIDO(3, "Autorizado"), //Quando um requerimento de prorrogação de defesa for validado pelo orientador.
-    CANCELADO(4,"Concluído"),    //Quando um plano foi concluído pelo professor.
+    AUTORIZADO(3, "Autorizado"), //Quando um requerimento de prorrogação de defesa for validado pelo orientador.
+    CONCLUIDO(4,"Concluído"),    //Quando um plano foi concluído pelo professor.
     DEFERIDO(5, "Deferido"),
-    CONCLUIDO(6,"Indeferido"), 
-    AUTORIZADO(7,"Cancelado"); 
+    INDEFERIDO(6,"Indeferido"), 
+    CANCELADO(7,"Cancelado"); 
     
     private int codigo;
     private String nome;

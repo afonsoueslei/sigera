@@ -150,7 +150,25 @@
                     </li>
                 </h:panelGroup>
 
-                <h:panelGroup rendered="#{loginBean.configuracao.permiteRequererAcrescimoOuCancelamentoDisciplinas()}">                
+                <h:panelGroup rendered="#{loginBean.configuracao.permiteRequererAcrescimoOuCancelamentoDisciplinas() and !loginBean.usuario.perfilAtual.perfil.permiteFazerRequerimentoDaPos()}">
+                    <li class="span3">
+                        <div class="thumbnail">
+                            <h:link outcome="acrescimo">
+                                <img src="#{request.contextPath}/resources/img/acrescimo2.png" alt="Acréscimo de disciplinas" />
+                            </h:link>                    
+                        </div>
+                    </li>
+
+                    <li class="span3">
+                        <div class="thumbnail">
+                            <h:link outcome="cancelamento">
+                                <img src="#{request.contextPath}/resources/img/cancelamento2.png" alt="Cancelamento de disciplinas" />
+                            </h:link>                    
+                        </div>
+                    </li>
+                </h:panelGroup> 
+                
+                <h:panelGroup rendered="#{loginBean.configuracao.permiteRequererAcrescimoOuCancelamentoDisciplinasPos() and loginBean.usuario.perfilAtual.perfil.permiteFazerRequerimentoDaPos()}">
                     <li class="span3">
                         <div class="thumbnail">
                             <h:link outcome="acrescimo">

@@ -18,6 +18,8 @@ public class CalendarioBean {
     private LoginBean loginBean;
     private Date dataInicial;
     private Date dataFinal;
+    private Date dataInicialPosStrictoSensu;
+    private Date dataFinalPosStrictoSensu;
     private Date dataInicialSemestre;
     private Date dataFinalSemestre;
     private int anoCorrente;
@@ -100,7 +102,6 @@ public class CalendarioBean {
         if (getConfiguracao() != null) {
             data = loginBean.getConfiguracao().getDataInicial();
         }
-
         return data;
     }
 
@@ -121,13 +122,40 @@ public class CalendarioBean {
         this.dataFinal = dataFinal;
     }
 
+    public Date getDataInicialPosStrictoSensu() {
+        Date data = null;
+        if (getConfiguracao() != null) {
+            data = loginBean.getConfiguracao().getDataInicialPosStrictoSensu();
+        }
+
+        return data;                
+    }
+
+    public void setDataInicialPosStrictoSensu(Date dataInicialPosStrictoSensu) {
+        this.dataInicialPosStrictoSensu = dataInicialPosStrictoSensu;
+    }
+
+    public Date getDataFinalPosStrictoSensu() {
+        Date data = null;
+        if (getConfiguracao() != null) {
+            data = loginBean.getConfiguracao().getDataFinalPosStrictoSensu();
+        }
+
+        return data;        
+    }
+
+    public void setDataFinalPosStrictoSensu(Date dataFinalPosStrictoSensu) {
+        this.dataFinalPosStrictoSensu = dataFinalPosStrictoSensu;
+    }
+
+    
     public CalendarioBean() {
     }
 
     public void salvar() {
         Sessoes.limparBeans();
         Configuracao configuracao = new Configuracao();
-        configuracao.atualizar(dataInicial, dataFinal, dataInicialSemestre, dataFinalSemestre, anoCorrente, semestreCorrente, enviarEmail);
+        configuracao.atualizar(dataInicial, dataFinal, dataInicialPosStrictoSensu, dataFinalPosStrictoSensu, dataInicialSemestre, dataFinalSemestre, anoCorrente, semestreCorrente, enviarEmail);
         loginBean.setConfiguracao(configuracao);
         loginBean.getConfiguracao();
         mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.212"), Paginas.getConfig());

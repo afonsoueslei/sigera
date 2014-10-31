@@ -11,39 +11,41 @@
     <ui:param name="paginaAtual" value="Painel de Configuração" />
 
     <ui:define name="conteudo">        
-        <div class="row ">
-            <div class="span12 deslocar-40-direita">
 
-                <p:messages closable="true" escape="false" />
+        <p:messages closable="true" escape="false" />
 
-                <ul class="nav nav-tabs">
-                    <li class="active">
-                        <h:link outcome="config">Painel principal</h:link>
-                    </li>
-                    <li>
-                        <h:link outcome="importacao">Importação de Dados</h:link>
-                    </li>            
-                </ul>                
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <h:link outcome="config">Painel principal</h:link>
+            </li>
+            <li>
+                <h:link outcome="importacao">Importação de Dados</h:link>
+            </li>            
+        </ul>                
 
-                <h:form>
+        <h:form>
+            <strong> Ativar o envio de email: </strong>                    
+            <p:selectBooleanButton value="#{calendarioBean.enviarEmail}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"/>                                              
 
-                    <strong> Ativar o envio de email: </strong>                    
-                    <p:selectBooleanButton value="#{calendarioBean.enviarEmail}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close"/>                                              
-                    
-                    <hr/>
-                    
+            <hr/>
+            <div class="row ">
+                <div class="span6 deslocar-40-direita"  >    
                     <fieldset>
-                        <strong><legend>Período para acréscimo e cancelamento de disciplinas</legend></strong>
-
+                        <strong><legend>Período ajuste matrícula Graduação</legend></strong>
                         <h:outputLabel for="data_inicial_ajustes_matricula" value="Início: "/>
-                        <p:calendar value="#{calendarioBean.dataInicial}" id="data_inicial_ajustes_matricula" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" />                                                  
-
-
+                        <p:calendar value="#{calendarioBean.dataInicial}" id="data_inicial_ajustes_matricula" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" />
                         <h:outputLabel for="data_final_ajustes_matricula" value="Fim:" />
                         <p:calendar value="#{calendarioBean.dataFinal}" id="data_final_ajustes_matricula" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" /> 
-
                     </fieldset>
-
+                    <fieldset>
+                        <strong><legend>Período ajuste matrícula Pos Stricto Sensu</legend></strong>
+                        <h:outputLabel for="data_inicial_ajustes_matricula_pos" value="Início: "/>
+                        <p:calendar value="#{calendarioBean.dataInicialPosStrictoSensu}" id="data_inicial_ajustes_matricula_pos" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" />                                                  
+                        <h:outputLabel for="data_final_ajustes_matricula_pos" value="Fim:" />
+                        <p:calendar value="#{calendarioBean.dataFinalPosStrictoSensu}" id="data_final_ajustes_matricula_pos" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" /> 
+                    </fieldset>
+                </div>  
+                <div class="span6 deslocar-40-direita" >    
                     <fieldset>
                         <strong><legend>Semestre Letivo</legend></strong>
 
@@ -60,16 +62,13 @@
                         <h:inputText styleClass="input-block-level-modificado" id="semestre_corrente" value="#{calendarioBean.semestreCorrente}" />
 
                     </fieldset>
-
-                    <div class="form-actions" >                            
-                        <h:commandLink styleClass="btn btn-primary botao-com-margem-direita" value="Salvar" action="#{calendarioBean.salvar}" />
-                        <h:commandButton styleClass="btn" value="Cancelar" action="#{calendarioBean.cancelar}" />
-                    </div>            
-
-                </h:form>
-
+                </div>
             </div>
-        </div>
+            <div class="form-actions">                            
+                <h:commandLink styleClass="btn btn-primary botao-com-margem-direita" value="Salvar" action="#{calendarioBean.salvar}" />
+                <h:commandButton styleClass="btn" value="Cancelar" action="#{calendarioBean.cancelar}" />
+            </div>            
+        </h:form>
 
     </ui:define>    
 </ui:composition>
