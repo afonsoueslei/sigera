@@ -119,18 +119,10 @@ public class RequerimentoProrrogacaoDefesa extends Requerimento {
     }
 
     @Override
-    public boolean usuarioEhOrientadorDoRequerente(UsuarioSigera usuario) {
-        BuscadorLdap buscadorLdap = usuario.getUsuarioLdap().getBuscadorLdap();
-        UsuarioSigera orientador = new PerfilAlunoPosStrictoSensu().obtenhaOrientador(this.getUsuario(), buscadorLdap);
-        return orientador.getId() == usuario.getId();
-    }
-
-    @Override
     public boolean perfilPermiteEditarPlano(UsuarioSigera usuario) {
         return false;
     }
 
-    
     public static RequerimentoProrrogacaoDefesa obtenhaRequerimentoProrrogacao(BuscadorLdap buscadorLdap, Integer idReq) {
         EntityManager em = Persistencia.obterManager();
         RequerimentoProrrogacaoDefesa reqProrrogacao = em.find(RequerimentoProrrogacaoDefesa.class, idReq);

@@ -5,6 +5,7 @@ import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import static br.ufg.inf.sigera.modelo.perfil.Perfil.obtenhaEntityManager;
+import br.ufg.inf.sigera.modelo.requerimento.EnumTipoRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
 import java.util.List;
 import javax.persistence.DiscriminatorValue;
@@ -59,54 +60,40 @@ public class PerfilProfessor extends Perfil {
     @Override
     public List<Requerimento> obtenhaRequerimentos(UsuarioSigera usuarioAutenticado) {
         EntityManager em = obtenhaEntityManager();
-        StringBuilder consulta = new StringBuilder();
-
-        consulta.append(" SELECT r ");
-        consulta.append(" FROM RequerimentoSegundaChamada as r  ");
-        consulta.append(" WHERE r.turma.professor.usuario.id = :id ORDER BY r.status, r.id DESC");
-
-        Query query = em.createQuery(consulta.toString());
-        query.setParameter("id", usuarioAutenticado.getId());
-        List<Requerimento> requerimentos = query.getResultList();
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
+        StringBuilder consulta = new StringBuilder();
+        Integer idProfessor = Professor.obtenhaProfessorPorIdUsuario(usuarioAutenticado.getId()).getId();
+        //Busca todos os req de segunda chamada cujo professor da turma é o usuario autenticado
+        consulta.append("SELECT * FROM Requerimento AS r WHERE r.id IN ");
+        consulta.append("(SELECT requerimento_id FROM Req_Segunda_Chamada AS rsq WHERE rsq.turma_id IN ");
+        consulta.append("(SELECT id FROM turma AS t WHERE t.professor_id = ");
+        consulta.append(idProfessor).append(" ) ) ");
+        //Busca todos os req de plano cujo professor da turma associada ao plano é o usuario autenticado
+        consulta.append(" UNION ");
+        consulta.append("SELECT * FROM Requerimento AS r WHERE r.id IN ");
+        consulta.append("(SELECT requerimento_id FROM Req_plano AS rp WHERE rp.plano_id IN ");
+        consulta.append("(SELECT id FROM plano AS p WHERE p.turma_id IN ");
+        consulta.append("(SELECT id FROM turma AS t WHERE t.professor_id = ");
+        consulta.append(idProfessor).append(" ) ) ) ");
+        //Busca todos os req de acerto e prorrogacao cujo orientador seja o usuario autenticado
+        consulta.append(" UNION ");
+        consulta.append("SELECT * FROM Requerimento AS r WHERE r.tipo IN ( ");
+        consulta.append(EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo()).append(" , ");
+        consulta.append(EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getCodigo()).append(" , ");
+        consulta.append(EnumTipoRequerimento.PRORROGACAO_DEFESA.getCodigo()).append(" ) ");
+        consulta.append("AND r.usuario_id IN (SELECT usuario_id FROM ");
+        consulta.append("Usuario_perfil AS apc WHERE apc.professor_id = ");
+        consulta.append(idProfessor).append(" ) ");
+        consulta.append("ORDER BY status_req, id DESC ");
 
-        StringBuilder consulta2 = new StringBuilder();
-        consulta2.append(" SELECT r");
-        consulta2.append(" FROM RequerimentoPlano as r  ");
-        consulta2.append(" WHERE r.plano.turma.professor.usuario.id = :idUsuario ORDER BY r.status, r.id DESC");
+        Query query = em.createNativeQuery(consulta.toString(), Requerimento.class);
+        List<Requerimento> requerimentosResposta = query.getResultList();
 
-        Query query2 = em.createQuery(consulta2.toString());
-        query2.setParameter("idUsuario", usuarioAutenticado.getId());
-
-        List<Requerimento> requerimentosPlanos = query2.getResultList();
-
-        for (Requerimento rp : requerimentosPlanos) {
-            requerimentos.add(rp);
-        }
-        
-        StringBuilder consulta3 = new StringBuilder();
-        consulta3.append(" SELECT r");
-        consulta3.append(" FROM RequerimentoProrrogacaoDefesa as r  ");
-        consulta3.append(" WHERE r.usuario.id IN (SELECT apc.usuario.id ");
-        consulta3.append("                      FROM AssociacaoPerfilCurso as apc ");
-        consulta3.append("                      WHERE apc.orientador.id = :idProfessor )");
-        consulta3.append("                      ORDER BY r.status, r.id DESC");       
-        
-        Query query3 = em.createQuery(consulta3.toString());
-        
-        query3.setParameter("idProfessor", Professor.obtenhaProfessorPorIdUsuario(usuarioAutenticado.getId()).getId());
-
-        List<Requerimento> requerimentosProrrogacao = query3.getResultList();
-
-        for (Requerimento rp : requerimentosProrrogacao) {
-            requerimentos.add(rp);
-        }
-        
-        for (Requerimento r : requerimentos) {
+        //Seta usuario Ldap em cada requerimento
+        for (Requerimento r : requerimentosResposta) {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
         }
-
-        return requerimentos;
+        return requerimentosResposta;
     }
 
     @Override
@@ -132,12 +119,11 @@ public class PerfilProfessor extends Perfil {
         return planos;
     }
 
-    
     @Override
     public List<Requerimento> obtenhaRequerimentosDoCurso(UsuarioSigera usuario) {
         return null;
     }
-    
+
     @Override
     public boolean permiteCancelarRequerimento() {
         return false;

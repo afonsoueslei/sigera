@@ -6,6 +6,7 @@ import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import br.ufg.inf.sigera.modelo.perfil.EnumPerfil;
 import br.ufg.inf.sigera.modelo.perfil.Perfil;
+import br.ufg.inf.sigera.modelo.perfil.PerfilAlunoPosStrictoSensu;
 import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,16 +77,27 @@ public class RequerimentoCancelamentoDisciplina extends Requerimento {
 
     @Override
     public boolean autorizaDarParecer(UsuarioSigera usuario) {
+        if (usuarioEhSecretarioRequerimentoDaPosTemParecerDoOrientador(usuario)) {
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean autorizaDarParecerAcertoMatricula(UsuarioSigera usuario) {
+
         if (this.getStatus() != codigoStatusQuePermiteParecer()) {
             return false;
         } else {
             return perfilPermiteDarParecer(usuario);
         }
+    }
+
+    public boolean usuarioEhSecretarioRequerimentoDaPosTemParecerDoOrientador(UsuarioSigera usuarioLogado) {
+        return Perfil.usuarioTemPerfilDoCurso(usuarioLogado, EnumPerfil.SECRETARIA.getCodigo(), Curso.obtenhaCursoPorPrefixo("pos").getId())
+                && usuarioLogado.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA.getCodigo()
+                && this.getUsuario().getUsuarioLdap().isAlunoRegularPosStrictoSensu()
+                && this.getStatus() == EnumStatusRequerimento.AUTORIZADO.getCodigo();
     }
 
     @Override
@@ -95,6 +107,13 @@ public class RequerimentoCancelamentoDisciplina extends Requerimento {
 
         Perfil perfilUsuario = usuario.getPerfilAtual().getPerfil();
         Curso cursoUsuario = usuario.getPerfilAtual().getCurso();
+        PerfilAlunoPosStrictoSensu p = new PerfilAlunoPosStrictoSensu();
+        UsuarioSigera orientador = p.obtenhaOrientador(this.getUsuario(), usuario.getUsuarioLdap().getBuscadorLdap());
+
+        if (usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.PROFESSOR.getCodigo()
+                && orientador.getId() == usuario.getId()) {
+            return true;
+        }
 
         if (perfilUsuario.getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo()
                 && cursoUsuario.getId() == getCurso().getId()) {
@@ -137,16 +156,15 @@ public class RequerimentoCancelamentoDisciplina extends Requerimento {
     public static Integer consultarPedidosAberto(Integer idTurma) {
         EntityManager em = Persistencia.obterManager();
         StringBuilder consulta = new StringBuilder();
-        Integer statusAberto = 1;
-
-        consulta.append(" SELECT COUNT (r.id) FROM Requerimento as r WHERE r.status = :aberto AND r.id IN ( ");
+        
+        consulta.append(" SELECT COUNT (r.id) FROM Requerimento as r WHERE r.status = :statusAberto AND r.id IN ( ");
         consulta.append(" SELECT rt.reqCancelamento.id ");
         consulta.append(" FROM AssociacaoReqCancelamentoTurma as rt");
         consulta.append(" WHERE rt.turma.id = :idTurma )");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("idTurma", idTurma);
-        query.setParameter("aberto", statusAberto);
+        query.setParameter("statusAberto", EnumStatusRequerimento.ABERTO.getCodigo());
         Long x = (Long) query.getSingleResult();
         Integer y = x.intValue();
         return y;

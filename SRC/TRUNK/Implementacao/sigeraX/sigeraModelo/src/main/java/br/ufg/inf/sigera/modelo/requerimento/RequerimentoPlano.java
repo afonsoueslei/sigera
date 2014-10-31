@@ -1,5 +1,6 @@
 package br.ufg.inf.sigera.modelo.requerimento;
 
+import br.ufg.inf.sigera.modelo.Curso;
 import br.ufg.inf.sigera.modelo.Plano;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
@@ -62,7 +63,10 @@ public class RequerimentoPlano extends Requerimento {
         // Só os usuários autenticados com perfil de coordenador de curso do mesmo curso 
         // do plano ou Coordenador Geral podem dar parecer sobre requerimentos de avaliacao de plano de disciplina.
         Perfil perfilUsuario = usuario.getPerfilAtual().getPerfil();
-        Integer idCursoUsuario = usuario.getPerfilAtual().getCurso().getId();
+        Integer idCursoUsuario = 0; 
+        if  (usuario.getPerfilAtual().getCurso() != null){
+            idCursoUsuario = usuario.getPerfilAtual().getCurso().getId();
+        }
 
         return (perfilUsuario.getId() == EnumPerfil.COORDENADOR_GERAL.getCodigo()
                 || (perfilUsuario.getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo() && idCursoUsuario == this.getPlano().getTurma().getDisciplina().getCurso().getId()));

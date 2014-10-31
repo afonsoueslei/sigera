@@ -23,6 +23,12 @@ public class Configuracao {
     @Column(name = "data_final_ajustes_matricula")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dataFinal;
+    @Column(name = "data_inicial_ajustes_matricula_pos")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dataInicialPosStrictoSensu;
+    @Column(name = "data_final_ajustes_matricula_pos")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dataFinalPosStrictoSensu;
     @Column(name = "data_inicial_semestre")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dataInicialSemestre;
@@ -65,6 +71,23 @@ public class Configuracao {
         this.dataFinalSemestre = dataFinalSemestre;
     }
 
+    public Date getDataInicialPosStrictoSensu() {
+        return dataInicialPosStrictoSensu;
+    }
+
+    public void setDataInicialPosStrictoSensu(Date dataInicialPosStrictoSensu) {
+        this.dataInicialPosStrictoSensu = dataInicialPosStrictoSensu;
+    }
+
+    public Date getDataFinalPosStrictoSensu() {
+        return dataFinalPosStrictoSensu;
+    }
+
+    public void setDataFinalPosStrictoSensu(Date dataFinalPosStrictoSensu) {
+        this.dataFinalPosStrictoSensu = dataFinalPosStrictoSensu;
+    }
+
+    
     public boolean isEnviarEmail() {
         return enviarEmail;
     }
@@ -104,11 +127,13 @@ public class Configuracao {
         this.id = ID;
     }
 
-    public void atualizar(Date dataInicial, Date dataFinal,
+    public void atualizar(Date dataInicial, Date dataFinal,Date dataInicialPos, Date dataFinalPos,
             Date dataInicialSemestre, Date dataFinalSemestre,
             int anoCorrente, int semestreCorrente, boolean enviarEmail) {
         setDataInicial(dataInicial);
         setDataFinal(dataFinal);
+        setDataInicialPosStrictoSensu(dataInicialPos);
+        setDataFinalPosStrictoSensu(dataFinalPos);
         setDataInicialSemestre(dataInicialSemestre);
         setDataFinalSemestre(dataFinalSemestre);
         setAnoCorrente(anoCorrente);
@@ -131,6 +156,10 @@ public class Configuracao {
 
     public boolean permiteRequererAcrescimoOuCancelamentoDisciplinas() {
         return conferirDatas(dataInicial, dataFinal);
+    }
+    
+    public boolean permiteRequererAcrescimoOuCancelamentoDisciplinasPos() {
+        return conferirDatas(dataInicialPosStrictoSensu, dataFinalPosStrictoSensu);
     }
 
     public boolean periodoPermiteAbrirRequerimentos() {

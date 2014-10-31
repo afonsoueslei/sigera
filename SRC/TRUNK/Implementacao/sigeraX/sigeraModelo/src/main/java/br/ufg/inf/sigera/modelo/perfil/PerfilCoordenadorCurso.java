@@ -6,6 +6,8 @@ import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import static br.ufg.inf.sigera.modelo.perfil.Perfil.obtenhaEntityManager;
 import br.ufg.inf.sigera.modelo.requerimento.EnumStatusRequerimento;
+import br.ufg.inf.sigera.modelo.requerimento.RequerimentoAcrescimoDisciplina;
+import br.ufg.inf.sigera.modelo.requerimento.RequerimentoCancelamentoDisciplina;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoProrrogacaoDefesa;
 import java.util.ArrayList;
@@ -64,6 +66,7 @@ public class PerfilCoordenadorCurso extends Perfil {
         EntityManager em = obtenhaEntityManager();
         StringBuilder consulta = new StringBuilder();
         Integer idCurso = usuarioAutenticado.getPerfilAtual().getCurso().getId();
+        boolean requerimentoAcertoEhDeAlunoRegularPosStrictoSensu = false;
         //perfilAdmin para exibir os requerimentos de plano, que são solicitados por administradores do sistema
         consulta.append(" SELECT r ");
         consulta.append(" FROM Requerimento as r ");
@@ -71,7 +74,8 @@ public class PerfilCoordenadorCurso extends Perfil {
         consulta.append(" AND r.usuario.id IN (SELECT apc.usuario.id ");
         consulta.append("                      FROM AssociacaoPerfilCurso as apc ");
         consulta.append("                      WHERE apc.perfil.id = :perfilAdmin ");
-        consulta.append("                      OR ((apc.perfil.id = :perfilAluno OR apc.perfil.id = :perfilAlunoPos)  AND apc.curso.id = :idCurso ) ) ORDER BY r.status, r.id DESC");
+        consulta.append("                      OR ( apc.perfil.id IN (:perfilAluno, :perfilAlunoPos) AND apc.curso.id = :idCurso ) ) ");
+        consulta.append("                      ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("tipo1", EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo());
@@ -83,29 +87,41 @@ public class PerfilCoordenadorCurso extends Perfil {
         query.setParameter("perfilAlunoPos", EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
         query.setParameter("perfilAdmin", EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo());
 
-        List<Requerimento> requerimentos = query.getResultList();
-        List<Requerimento> requerimentos2 = new ArrayList<Requerimento>();
+        List<Requerimento> requerimentosBuscados = query.getResultList();
+        List<Requerimento> requerimentosDaResposta = new ArrayList<Requerimento>();
 
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
 
-        for (Requerimento r : requerimentos) {
+        for (Requerimento r : requerimentosBuscados) {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
+            
             RequerimentoPlano reqPlano = RequerimentoPlano.obtenhaRequerimentoPlano(buscadorLdap, r.getId());
             RequerimentoProrrogacaoDefesa reqProrrogacao = RequerimentoProrrogacaoDefesa.obtenhaRequerimentoProrrogacao(buscadorLdap, r.getId());
+
             //Se for requerimento de Plano e esse for do curso do coordenador. Quem faz esse tipo de req é o administrador q não tem curso         
             if (reqPlano != null && reqPlano.getPlano().getTurma().getDisciplina().getCurso().getId() == idCurso) {
-                requerimentos2.add(r);
+                requerimentosDaResposta.add(r);
+                continue;
             }
-            //Se for requerimento de Prorrogação só interessa ao coordenador se ele já estiver autorizado pelo orientador
+
+            //Se for requerimento de Prorrogação só interessa ao coordenador se ele já estiver autorizado pelo orientador           
             if (reqProrrogacao != null && reqProrrogacao.getStatus() != EnumStatusRequerimento.ABERTO.getCodigo()) {
-                requerimentos2.add(r);
+                requerimentosDaResposta.add(r);
+                continue;
             }
-            //Se não for nem de Plano nem de Prorrogação então adiciona a resposta
-            if (reqPlano == null && reqProrrogacao == null) {
-                requerimentos2.add(r);
+
+            //Se for requerimento de Acerto só interessa os que não são dos Alunos regulares de pos
+            if ((r instanceof RequerimentoAcrescimoDisciplina || r instanceof RequerimentoCancelamentoDisciplina ) && r.getUsuario().getUsuarioLdap().isAlunoRegularPosStrictoSensu()) {
+                requerimentoAcertoEhDeAlunoRegularPosStrictoSensu = true;
             }
+            
+            //Se não for nem de Plano nem de Prorrogação e nem de aluno pos então adiciona a resposta
+            if (reqPlano == null && reqProrrogacao == null && !requerimentoAcertoEhDeAlunoRegularPosStrictoSensu) {
+                requerimentosDaResposta.add(r);
+            }
+
         }
-        return requerimentos2;
+        return requerimentosDaResposta;
     }
 
     @Override

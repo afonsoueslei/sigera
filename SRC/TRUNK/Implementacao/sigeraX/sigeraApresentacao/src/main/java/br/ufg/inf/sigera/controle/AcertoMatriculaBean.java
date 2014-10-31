@@ -14,6 +14,8 @@ import br.ufg.inf.sigera.modelo.requerimento.RequerimentoAcrescimoDisciplina;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoCancelamentoDisciplina;
 import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
+import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
+import br.ufg.inf.sigera.modelo.perfil.PerfilAlunoPosStrictoSensu;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -134,6 +136,8 @@ public class AcertoMatriculaBean implements Serializable {
 
     public String salvar() {
         String msg = null;
+        BuscadorLdap buscadorLdap = loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap();
+
         if (!validarRequerimento()) {
             return this.tipoRequerimento;
         }
@@ -152,12 +156,19 @@ public class AcertoMatriculaBean implements Serializable {
         //persiste requerimento no banco                
         if (requerimentoAcerto != null && requerimentoAcerto.salvar()) {
 
-            List<UsuarioSigera> destinatarios
-                    = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.COORDENADOR_CURSO.getCodigo(),
-                            requerimentoAcerto.getCurso().getId(),
-                            loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
+            List<UsuarioSigera> destinatarios = new ArrayList<UsuarioSigera>();
 
-            if (loginBean.getConfiguracao().isEnviarEmail()) {
+            //Se o requerimento for de um aluno regular da POS então o requerimento deve ser validado 
+            //pelo orientador antes de ir para o coordenador
+            if (loginBean.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo()) {
+                UsuarioSigera orientador = new PerfilAlunoPosStrictoSensu().obtenhaOrientador(loginBean.getUsuario(), buscadorLdap);
+                destinatarios.add(orientador);            
+            } else {
+                destinatarios.addAll(AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.COORDENADOR_CURSO.getCodigo(),
+                        requerimentoAcerto.getCurso().getId(), buscadorLdap));
+            }
+
+            if (loginBean.getConfiguracao().isEnviarEmail() && destinatarios.size()>0) {
                 GerenciadorEmail gerenciadorEmail = new GerenciadorEmail();
                 gerenciadorEmail.adicionarEmailRequerimento(requerimentoAcerto, destinatarios);
                 gerenciadorEmail.enviarEmails();
