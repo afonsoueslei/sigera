@@ -4,6 +4,7 @@ import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import static br.ufg.inf.sigera.modelo.perfil.Perfil.obtenhaEntityManager;
+import br.ufg.inf.sigera.modelo.requerimento.EnumStatusRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
 import java.util.List;
 import javax.persistence.DiscriminatorValue;
@@ -62,13 +63,14 @@ public class PerfilCoordenadorEstagio extends Perfil {
 
         consulta.append(" SELECT r ");
         consulta.append(" FROM RequerimentoAssinatura as r ");
-        consulta.append(" WHERE r.usuario.id IN (SELECT apc.usuario.id ");
+        consulta.append(" WHERE r.status != :statusAberto AND r.usuario.id IN (SELECT apc.usuario.id ");
         consulta.append("                        FROM AssociacaoPerfilCurso as apc ");
         consulta.append("                        WHERE apc.curso.id = :idCurso ");
         consulta.append("                        AND apc.perfil.id = :perfilAluno) ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
-        query.setParameter("idCurso", usuarioAutenticado.getPerfilAtual().getCurso().getId());
+        query.setParameter("statusAberto", EnumStatusRequerimento.ABERTO.getCodigo());
+        query.setParameter("idCurso", usuarioAutenticado.getPerfilAtual().getCurso().getId());        
         query.setParameter("perfilAluno", EnumPerfil.ALUNO.getCodigo());
 
         List<Requerimento> requerimentos = query.getResultList();

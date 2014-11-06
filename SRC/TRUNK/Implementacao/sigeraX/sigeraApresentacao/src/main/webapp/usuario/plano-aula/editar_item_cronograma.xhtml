@@ -28,6 +28,8 @@
                     <h:outputLabel value="Início:" for="inicio" />
                     <p:calendar id="inicio" value="#{planoBean.itemEditavel.inicio}" 
                                 locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" 
+                                mindate="#{calendarioBean.dataInicialSemestre}"
+                                maxdate="#{calendarioBean.dataFinalSemestre}"
                                 required="true" requiredMessage="Data de início é obrigatório."/>  
 
                     <h:outputLabel value="Procedimentos Didático" for="procedimento"/>

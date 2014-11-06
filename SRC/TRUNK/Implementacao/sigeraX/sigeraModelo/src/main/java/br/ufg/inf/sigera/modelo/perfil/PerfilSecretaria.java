@@ -67,43 +67,51 @@ public class PerfilSecretaria extends Perfil {
         if (secretarioEhProfessorMembroDeComissao(usuarioAutenticado)) {
             return obtenhaRequerimentosMembroComissao(usuarioAutenticado);
         }
-
-        consulta.append("SELECT * FROM requerimento AS r WHERE r.tipo IN ( ");
-        consulta.append(EnumTipoRequerimento.DECLARACAO_MATRICULA.getCodigo()).append(" , ");
-        consulta.append(EnumTipoRequerimento.EXTRATO_ACADEMICO.getCodigo()).append(" , ");
-        consulta.append(EnumTipoRequerimento.EMENTAS.getCodigo()).append(" , ");
-        consulta.append(EnumTipoRequerimento.ASSINATURA.getCodigo()).append(" ) ");
-        consulta.append("AND r.usuario_id IN ( SELECT apc.usuario_id FROM usuario_perfil AS apc WHERE  apc.curso_id IN ( ");
+        //busca todos os requerimento de declaração, extrato, ementas e de assinatura que sejam
+        //do mesmo curso do usuarioAutenticado
+        consulta.append("SELECT r FROM Requerimento AS r ");
+        consulta.append("         WHERE r.tipo IN ( :tipo1 , :tipo2, :tipo3, :tipo4 ) ");
+        consulta.append("         AND r.usuario.id IN ( ");
+        consulta.append("                             SELECT apc.usuario.id FROM AssociacaoPerfilCurso AS apc ");
+        consulta.append("                                                   WHERE apc.curso.id IN ( ");
+        //Se o usuario logado for secretario da pos busca os requerimento dos curso de pos, msc e dsc
         if (usuarioAutenticadoEhSecretarioDaPos) {
-            consulta.append(Curso.obtenhaCursoPorPrefixo("msc").getId()).append(" , ");
-            consulta.append(Curso.obtenhaCursoPorPrefixo("dsc").getId()).append(" , ");
-            consulta.append(idCursoPos).append(" ) ");
+            consulta.append(" :idMSC , :idDSC, :idPos ) ");
         } else {
-            consulta.append(usuarioAutenticado.getPerfilAtual().getCurso().getId()).append(" ) ");
+            consulta.append(" :idCursoUsuarioAutenticado ) ");
         }
-        consulta.append("AND apc.perfil_id  IN ( ");
-        consulta.append(EnumPerfil.ALUNO.getCodigo()).append(" , ");
-        consulta.append(EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo()).append(" ) ) ");
+        consulta.append("AND apc.perfil.id  IN ( :idAluno , :idAlunoPos ) )");
 
+        //Se o usuario logado for secretario da pos busca ainda os de acrescimo que já foram
+        //autorizados pelo orientador
         if (usuarioAutenticadoEhSecretarioDaPos) {
-            consulta.append("UNION ");
-            consulta.append("SELECT * FROM requerimento AS r WHERE r.tipo IN ( ");
-            consulta.append(EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo()).append(" , ");
-            consulta.append(EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getCodigo()).append(" ) ");
-            consulta.append("AND r.usuario_id IN ( SELECT apc.usuario_id FROM usuario_perfil AS apc WHERE apc.curso_id IN ( ");
-            consulta.append(Curso.obtenhaCursoPorPrefixo("msc").getId()).append(" , ");
-            consulta.append(Curso.obtenhaCursoPorPrefixo("dsc").getId()).append(" , ");
-            consulta.append(idCursoPos).append(" ) ");
-            consulta.append("AND apc.perfil_id = ");
-            consulta.append(EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo()).append(" ) ");
-            consulta.append("AND r.status_req != ");
-            consulta.append(EnumStatusRequerimento.ABERTO.getCodigo());
+            consulta.append("OR r.tipo IN ( :tipo5 , :tipo6  ) ");
+            consulta.append("AND r.usuario.id IN ( SELECT apc.usuario.id FROM AssociacaoPerfilCurso AS apc ");
+            consulta.append("WHERE apc.curso.id IN ( :idMSC , :idDSC, :idPos ) ");
+            consulta.append("AND apc.perfil.id = :idAlunoPos ) ");
+            consulta.append("AND r.status != :statusAberto ");
         }
-        consulta.append(" ORDER BY status_req, id DESC");
+        consulta.append("ORDER BY r.status, r.id DESC");
 
-        Query query2 = em.createNativeQuery(consulta.toString(), Requerimento.class);
+        Query query = em.createQuery(consulta.toString());
+        query.setParameter("tipo1", EnumTipoRequerimento.DECLARACAO_MATRICULA.getCodigo());
+        query.setParameter("tipo2", EnumTipoRequerimento.EXTRATO_ACADEMICO.getCodigo());
+        query.setParameter("tipo3", EnumTipoRequerimento.EMENTAS.getCodigo());
+        query.setParameter("tipo4", EnumTipoRequerimento.ASSINATURA.getCodigo());
+        if (usuarioAutenticadoEhSecretarioDaPos) {
+            query.setParameter("tipo5", EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo());
+            query.setParameter("tipo6", EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getCodigo());
+            query.setParameter("idMSC", Curso.obtenhaCursoPorPrefixo("msc").getId());
+            query.setParameter("idDSC", Curso.obtenhaCursoPorPrefixo("dsc").getId());
+            query.setParameter("idPos", idCursoPos);
+            query.setParameter("statusAberto", EnumStatusRequerimento.ABERTO.getCodigo());
+        } else {
+            query.setParameter("idCursoUsuarioAutenticado", usuarioAutenticado.getPerfilAtual().getCurso().getId());
+        }
+        query.setParameter("idAluno", EnumPerfil.ALUNO.getCodigo());
+        query.setParameter("idAlunoPos", EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
 
-        List<Requerimento> requerimentos = query2.getResultList();
+        List<Requerimento> requerimentos = query.getResultList();
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
         for (Requerimento r : requerimentos) {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));

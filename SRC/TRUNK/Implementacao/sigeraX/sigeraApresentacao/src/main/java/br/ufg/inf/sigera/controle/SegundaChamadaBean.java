@@ -119,12 +119,11 @@ public class SegundaChamadaBean implements Serializable {
                 = new RequerimentoSegundaChamada(loginBean.getUsuario(),
                         turma,
                         this.getDataProva(),
-                        this.getJustificativa());                        
-        
+                        this.getJustificativa());
+
         requerimento.setAnexos(this.getAnexos());
-        
-        if (requerimento.salvar()) {
-            limpar();
+
+        if (requerimento.salvar()) {            
 
             List<UsuarioSigera> destinatarios = new ArrayList<UsuarioSigera>();
             destinatarios.add(turma.getProfessor().getUsuario());
@@ -136,7 +135,7 @@ public class SegundaChamadaBean implements Serializable {
             }
 
             mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.002", EnumTipoRequerimento.SEGUNDA_CHAMADA.getNome()), Paginas.getDetalheRequerimento());
-
+            limpar();
             return Paginas.getAbrirRequerimentoID() + requerimento.getId();
         }
         mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.002.Falha", EnumTipoRequerimento.obtenha(requerimento.getTipo()).getNome().toUpperCase()), Paginas.getPrincipal());
@@ -187,6 +186,10 @@ public class SegundaChamadaBean implements Serializable {
             return false;
         }
         return true;
+    }
+
+    public Date validarDataProva() {
+        return new Date();        
     }
 
     public String confirmar() {

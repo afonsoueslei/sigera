@@ -32,11 +32,12 @@
                                  selectionMode="single">
 
                         <f:facet name="header" >                              
-                            <h:commandLink style="color: #0000ff" id="btnAtualizar" action="#{consultarRequerimentoCursoBean.atualizarLista()}">                                
+                            <h:commandLink style="color: #0000ff" id="btnAtualizar" action="#{consultarRequerimentoCursoBean.atualizarLista()}"
+                                           title="Clique aqui para atualizar a lista de requerimentos.">                                
                                 Lista dos Requerimentos do Curso
                             </h:commandLink>
                         </f:facet>                                                
-                        
+
                         <p:column styleClass="centralizar-texto" 
                                   sortBy="#{requerimento.numero}" 
                                   filterBy="#{requerimento.numero}"                                  
@@ -119,7 +120,7 @@
                         </p:column>
 
                     </p:dataTable>
-                    
+
                     <row>
 
                         <div class="span3 offset4">

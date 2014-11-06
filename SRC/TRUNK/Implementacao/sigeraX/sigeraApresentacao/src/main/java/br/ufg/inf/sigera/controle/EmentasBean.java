@@ -13,6 +13,7 @@ import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoEmenta;
 import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
+import br.ufg.inf.sigera.modelo.Curso;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -99,12 +100,17 @@ public class EmentasBean implements Serializable {
         }
 
         Requerimento requerimento = new RequerimentoEmenta(loginBean.getUsuario(), obtenhaDisciplinasEscolhidas(), this.getJustificativa());
+        Integer idCursoRequerente = requerimento.getCurso().getId();
 
         if (requerimento.salvar()) {
+            //adição da regra para que professor&secretario(membros comissão) não recebam e-mails desse tipo de requerimento
+            if (requerimento.getCurso().getPrefixo().equalsIgnoreCase("msc") || requerimento.getCurso().getPrefixo().equalsIgnoreCase("dsc")) {
+                idCursoRequerente = Curso.obtenhaCursoPorPrefixo("POS").getId();
+            }
 
             List<UsuarioSigera> destinatarios
                     = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
-                            requerimento.getCurso().getId(),
+                            idCursoRequerente,
                             loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
 
             if (loginBean.getConfiguracao().isEnviarEmail()) {

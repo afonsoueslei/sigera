@@ -436,6 +436,9 @@ public class PlanoBean implements Serializable {
     }
 
     public Boolean essePlanoPodeSerEditado() {
+        if (planoSelecionado == null) {
+            return false;
+        }
         RequerimentoPlano req = Plano.buscarRequerimentoDessePlano(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), planoSelecionado);
         return req.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo() && this.usuarioPodeEditar();
     }
@@ -521,5 +524,15 @@ public class PlanoBean implements Serializable {
             }
         }
         return destinatarios;
+    }
+
+    public Boolean podeVisualizarRequerimentoDessePlano() {
+        //Se for um coordenador de MSC ou DSC vendo um plano da POS então ele não irá ver o requerimento associado
+        //isso é ele não poderá dar o parecer que ficará a cargo do coordenador da POS ou do Coordenador Geral
+        if (loginBean.getUsuario().getPerfilAtual().getCurso() != null && 
+            this.planoEditavel.getTurma().getDisciplina().getCurso().getId() == loginBean.getUsuario().getPerfilAtual().getCurso().getId()){
+            return false;
+        }
+        return true;
     }
 }

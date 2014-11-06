@@ -323,4 +323,8 @@ public class AtribuirPerfilBean {
         return (this.getCodigoPerfil() != null && this.getCodigoPerfil() == EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
     }
 
+    public String atualizarLista(){
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("atribuirPerfilBean");        
+        return Paginas.getAtribuirPerfil();
+    }
 }

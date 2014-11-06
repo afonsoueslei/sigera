@@ -77,7 +77,7 @@ public class TurmaBean {
 
     public List<Disciplina> getListaDisciplinas() {
         Integer codCurso;
-        if (this.listaDisciplinas == null) {
+        if (this.listaDisciplinas == null || this.listaDisciplinas.isEmpty()) {
             if (loginBean.getUsuario().getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo()) {
                 codCurso = loginBean.getUsuario().getPerfilAtual().getCurso().getId();
                 this.listaDisciplinas = Disciplina.buscaDisciplinasDoCurso(codCurso);

@@ -167,11 +167,13 @@ public class GerenciadorEmail {
             } else {
                 emailDestinatario = requerimento.getUsuario().getUsuarioLdap().getEmail();
                 String nomeUsuario = requerimento.getUsuario().getUsuarioLdap().getCn();
+                String idRequerimento = Integer.toString(requerimento.getId());
                 mensagem = MessageFormat.format(prop.getProperty("ME.002.Corpo"),
                         nomeUsuario,
                         requerimento.getDescricaoTipo(),
                         statusRequerimento,
-                        linkRequerimento);
+                        linkRequerimento,
+                        idRequerimento);
             }
             adicionarEmail(emailDestinatario, assunto, mensagem);
 

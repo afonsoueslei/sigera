@@ -152,7 +152,6 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
     public void setVersao(int versao) {
         this.versao = versao;
     }
-    
 
     public static List<Disciplina> buscaTodosDisciplinas() {
         EntityManager em = Persistencia.obterManager();
@@ -165,10 +164,15 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
         StringBuilder consulta = new StringBuilder();
         int codCursoMestrado = 0;
         int codCursoDoutorado = 0;
+        int codCursoPos = 0;
 
         consulta.append(" SELECT d ");
         consulta.append(" FROM Disciplina as d  ");
         consulta.append(" WHERE ( d.curso.id = :codCurso ");
+        if (Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("msc") || Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("dsc")) {
+            consulta.append(" OR d.curso.id = :codPos ");
+            codCursoPos = Curso.obtenhaCursoPorPrefixo("pos").getId();
+        }
         if (Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("POS")) {
             codCursoMestrado = Curso.obtenhaCursoPorPrefixo("msc").getId();
             codCursoDoutorado = Curso.obtenhaCursoPorPrefixo("dsc").getId();
@@ -182,6 +186,9 @@ public class Disciplina implements Serializable, Comparable<Disciplina> {
         if (Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("POS")) {
             query.setParameter("codCursoMestrado", codCursoMestrado);
             query.setParameter("codCursoDoutorado", codCursoDoutorado);
+        }
+        if (Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("msc") || Curso.obtenhaCurso(codCurso).getPrefixo().equalsIgnoreCase("dsc")) {
+            query.setParameter("codPos", codCursoPos);
         }
         return query.getResultList();
     }
