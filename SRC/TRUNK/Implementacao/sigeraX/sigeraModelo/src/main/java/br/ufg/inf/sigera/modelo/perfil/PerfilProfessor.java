@@ -62,38 +62,36 @@ public class PerfilProfessor extends Perfil {
         EntityManager em = obtenhaEntityManager();
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
         StringBuilder consulta = new StringBuilder();
-        Integer idProfessor = Professor.obtenhaProfessorPorIdUsuario(usuarioAutenticado.getId()).getId();
         //Busca todos os req de segunda chamada cujo professor da turma é o usuario autenticado
-        consulta.append("SELECT * FROM Requerimento AS r WHERE r.id IN ");
-        consulta.append("(SELECT requerimento_id FROM Req_Segunda_Chamada AS rsq WHERE rsq.turma_id IN ");
-        consulta.append("(SELECT id FROM turma AS t WHERE t.professor_id = ");
-        consulta.append(idProfessor).append(" ) ) ");
+        consulta.append(" SELECT r FROM Requerimento AS r WHERE r.id IN ( ");
+        consulta.append("        SELECT rsq.id FROM RequerimentoSegundaChamada as rsq  ");
+        consulta.append("               WHERE rsq.turma.professor.usuario.id = :id ) ");
         //Busca todos os req de plano cujo professor da turma associada ao plano é o usuario autenticado
-        consulta.append(" UNION ");
-        consulta.append("SELECT * FROM Requerimento AS r WHERE r.id IN ");
-        consulta.append("(SELECT requerimento_id FROM Req_plano AS rp WHERE rp.plano_id IN ");
-        consulta.append("(SELECT id FROM plano AS p WHERE p.turma_id IN ");
-        consulta.append("(SELECT id FROM turma AS t WHERE t.professor_id = ");
-        consulta.append(idProfessor).append(" ) ) ) ");
+        consulta.append(" OR r.id IN ( ");
+        consulta.append("        SELECT rp.id FROM RequerimentoPlano as rp  ");
+        consulta.append("               WHERE rp.plano.turma.professor.usuario.id = :id ) ");
         //Busca todos os req de acerto e prorrogacao cujo orientador seja o usuario autenticado
-        consulta.append(" UNION ");
-        consulta.append("SELECT * FROM Requerimento AS r WHERE r.tipo IN ( ");
-        consulta.append(EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo()).append(" , ");
-        consulta.append(EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getCodigo()).append(" , ");
-        consulta.append(EnumTipoRequerimento.PRORROGACAO_DEFESA.getCodigo()).append(" ) ");
-        consulta.append("AND r.usuario_id IN (SELECT usuario_id FROM ");
-        consulta.append("Usuario_perfil AS apc WHERE apc.professor_id = ");
-        consulta.append(idProfessor).append(" ) ");
-        consulta.append("ORDER BY status_req, id DESC ");
+        consulta.append(" OR r.id IN ( ");
+        consulta.append("        SELECT r.id FROM Requerimento as r ");
+        consulta.append("                    WHERE r.tipo IN ( :tipo1, :tipo2, :tipo3 ) ");        
+        consulta.append("                    AND r.usuario.id IN (  " );
+        consulta.append("                        SELECT apc.usuario.id ");
+        consulta.append("                               FROM AssociacaoPerfilCurso as apc ");
+        consulta.append("                                     WHERE apc.orientador.id = :idProfessor ) ) ");
+        consulta.append(" ORDER BY r.status, r.id DESC");
 
-        Query query = em.createNativeQuery(consulta.toString(), Requerimento.class);
-        List<Requerimento> requerimentosResposta = query.getResultList();
+        Query query = em.createQuery(consulta.toString());
+        query.setParameter("id", usuarioAutenticado.getId());
+        query.setParameter("idProfessor", Professor.obtenhaProfessorPorIdUsuario(usuarioAutenticado.getId()).getId());
+        query.setParameter("tipo1", EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo());
+        query.setParameter("tipo2", EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getCodigo());
+        query.setParameter("tipo3", EnumTipoRequerimento.PRORROGACAO_DEFESA.getCodigo());
+        List<Requerimento> requerimentos = query.getResultList();
 
-        //Seta usuario Ldap em cada requerimento
-        for (Requerimento r : requerimentosResposta) {
+        for (Requerimento r : requerimentos) {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
         }
-        return requerimentosResposta;
+        return requerimentos;
     }
 
     @Override

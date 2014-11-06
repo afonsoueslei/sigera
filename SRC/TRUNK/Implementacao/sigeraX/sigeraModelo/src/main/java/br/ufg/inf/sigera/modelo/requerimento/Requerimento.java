@@ -277,7 +277,7 @@ public abstract class Requerimento implements Serializable {
             }
         }
 
-        if (curso == null && this.getTipo() == EnumTipoRequerimento.PLANO.getCodigo()) {
+        if (this.getTipo() == EnumTipoRequerimento.PLANO.getCodigo()) {
             curso = this.getPlano().getTurma().getDisciplina().getCurso();
         }
 
@@ -591,5 +591,4 @@ public abstract class Requerimento implements Serializable {
 
         return parametros;
     }
-
 }

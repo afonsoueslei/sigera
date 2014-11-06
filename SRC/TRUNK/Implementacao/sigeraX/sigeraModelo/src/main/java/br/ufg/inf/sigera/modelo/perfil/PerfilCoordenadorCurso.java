@@ -1,15 +1,13 @@
 package br.ufg.inf.sigera.modelo.perfil;
 
+import br.ufg.inf.sigera.modelo.Curso;
 import br.ufg.inf.sigera.modelo.requerimento.EnumTipoRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import static br.ufg.inf.sigera.modelo.perfil.Perfil.obtenhaEntityManager;
 import br.ufg.inf.sigera.modelo.requerimento.EnumStatusRequerimento;
-import br.ufg.inf.sigera.modelo.requerimento.RequerimentoAcrescimoDisciplina;
-import br.ufg.inf.sigera.modelo.requerimento.RequerimentoCancelamentoDisciplina;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
-import br.ufg.inf.sigera.modelo.requerimento.RequerimentoProrrogacaoDefesa;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.DiscriminatorValue;
@@ -64,64 +62,41 @@ public class PerfilCoordenadorCurso extends Perfil {
     @Override
     public List<Requerimento> obtenhaRequerimentos(UsuarioSigera usuarioAutenticado) {
         EntityManager em = obtenhaEntityManager();
+        BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
         StringBuilder consulta = new StringBuilder();
         Integer idCurso = usuarioAutenticado.getPerfilAtual().getCurso().getId();
-        boolean requerimentoAcertoEhDeAlunoRegularPosStrictoSensu = false;
-        //perfilAdmin para exibir os requerimentos de plano, que são solicitados por administradores do sistema
-        consulta.append(" SELECT r ");
-        consulta.append(" FROM Requerimento as r ");
-        consulta.append(" WHERE r.tipo IN (:tipo1, :tipo2, :tipo3, :tipo4 ) ");
-        consulta.append(" AND r.usuario.id IN (SELECT apc.usuario.id ");
-        consulta.append("                      FROM AssociacaoPerfilCurso as apc ");
-        consulta.append("                      WHERE apc.perfil.id = :perfilAdmin ");
-        consulta.append("                      OR ( apc.perfil.id IN (:perfilAluno, :perfilAlunoPos) AND apc.curso.id = :idCurso ) ) ");
-        consulta.append("                      ORDER BY r.status, r.id DESC");
+        //Se for requerimento de Plano e esse for do curso do coordenador. Esse req é feito pelo Administrador do sistema         
+        consulta.append(" SELECT r FROM Requerimento AS r WHERE r.id IN ( ");
+        consulta.append("        SELECT rp.id FROM RequerimentoPlano AS rp ");
+        consulta.append("               WHERE rp.plano.turma.disciplina.curso.id = :idCursoUsuarioAutenticado )");
+        //Se for requerimento de Acerto só interessa os que não são dos Alunos regulares de pos
+        consulta.append(" OR r.id IN (  ");
+        consulta.append("         SELECT r.id FROM Requerimento AS r ");
+        consulta.append("                WHERE r.tipo IN ( :tipo1, :tipo2 ) AND r.usuario.id IN ( ");
+        consulta.append("                      SELECT apc.usuario.id FROM AssociacaoPerfilCurso AS apc ");
+        consulta.append("                             WHERE apc.perfil.id = :idPerfilAluno  AND apc.curso.id = :idCursoUsuarioAutenticado ) )");
+        //Se for requerimento de Prorrogação só interessa ao coordenador se ele já estiver autorizado pelo orientador           
+        consulta.append(" OR r.id IN (  ");
+        consulta.append("         SELECT rpd.id FROM RequerimentoProrrogacaoDefesa AS rpd ");
+        consulta.append("                WHERE r.status != :statusAberto  AND r.usuario.id IN ( ");
+        consulta.append("                      SELECT apc.usuario.id FROM AssociacaoPerfilCurso AS apc ");
+        consulta.append("                             WHERE apc.perfil.id = :idPerfilAlunoPos AND apc.curso.id = :idCursoUsuarioAutenticado ) ) ");
+        consulta.append(" ORDER BY r.status, r.id DESC ");
 
         Query query = em.createQuery(consulta.toString());
+        query.setParameter("idCursoUsuarioAutenticado", idCurso);
         query.setParameter("tipo1", EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo());
         query.setParameter("tipo2", EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getCodigo());
-        query.setParameter("tipo3", EnumTipoRequerimento.PLANO.getCodigo());
-        query.setParameter("tipo4", EnumTipoRequerimento.PRORROGACAO_DEFESA.getCodigo());
-        query.setParameter("idCurso", idCurso);
-        query.setParameter("perfilAluno", EnumPerfil.ALUNO.getCodigo());
-        query.setParameter("perfilAlunoPos", EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
-        query.setParameter("perfilAdmin", EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo());
+        query.setParameter("statusAberto", EnumStatusRequerimento.ABERTO.getCodigo());
+        query.setParameter("idPerfilAluno", EnumPerfil.ALUNO.getCodigo());
+        query.setParameter("idPerfilAlunoPos", EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
 
-        List<Requerimento> requerimentosBuscados = query.getResultList();
-        List<Requerimento> requerimentosDaResposta = new ArrayList<Requerimento>();
+        List<Requerimento> requerimentosResposta = query.getResultList();
 
-        BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
-
-        for (Requerimento r : requerimentosBuscados) {
+        for (Requerimento r : requerimentosResposta) {
             r.getUsuario().setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(r.getUsuario().getId()));
-            
-            RequerimentoPlano reqPlano = RequerimentoPlano.obtenhaRequerimentoPlano(buscadorLdap, r.getId());
-            RequerimentoProrrogacaoDefesa reqProrrogacao = RequerimentoProrrogacaoDefesa.obtenhaRequerimentoProrrogacao(buscadorLdap, r.getId());
-
-            //Se for requerimento de Plano e esse for do curso do coordenador. Quem faz esse tipo de req é o administrador q não tem curso         
-            if (reqPlano != null && reqPlano.getPlano().getTurma().getDisciplina().getCurso().getId() == idCurso) {
-                requerimentosDaResposta.add(r);
-                continue;
-            }
-
-            //Se for requerimento de Prorrogação só interessa ao coordenador se ele já estiver autorizado pelo orientador           
-            if (reqProrrogacao != null && reqProrrogacao.getStatus() != EnumStatusRequerimento.ABERTO.getCodigo()) {
-                requerimentosDaResposta.add(r);
-                continue;
-            }
-
-            //Se for requerimento de Acerto só interessa os que não são dos Alunos regulares de pos
-            if ((r instanceof RequerimentoAcrescimoDisciplina || r instanceof RequerimentoCancelamentoDisciplina ) && r.getUsuario().getUsuarioLdap().isAlunoRegularPosStrictoSensu()) {
-                requerimentoAcertoEhDeAlunoRegularPosStrictoSensu = true;
-            }
-            
-            //Se não for nem de Plano nem de Prorrogação e nem de aluno pos então adiciona a resposta
-            if (reqPlano == null && reqProrrogacao == null && !requerimentoAcertoEhDeAlunoRegularPosStrictoSensu) {
-                requerimentosDaResposta.add(r);
-            }
-
         }
-        return requerimentosDaResposta;
+        return requerimentosResposta;
     }
 
     @Override
@@ -129,18 +104,22 @@ public class PerfilCoordenadorCurso extends Perfil {
         EntityManager em = obtenhaEntityManager();
         StringBuilder consulta = new StringBuilder();
         Integer idCurso = usuarioAutenticado.getPerfilAtual().getCurso().getId();
-        consulta.append(" SELECT r ");
+        //Se for requerimento de Plano e esse for do curso do coordenador. Esse req é feito pelo Administrador do sistema         
+        consulta.append(" SELECT r FROM Requerimento AS r WHERE r.id IN ( ");
+        consulta.append("        SELECT rp.id FROM RequerimentoPlano AS rp ");
+        consulta.append("               WHERE rp.plano.turma.disciplina.curso.id = :idCurso )");
+        consulta.append(" OR r.id IN (  ");
+        consulta.append(" SELECT r.id ");
         consulta.append(" FROM Requerimento as r ");
         consulta.append(" WHERE r.usuario.id IN (SELECT apc.usuario.id ");
         consulta.append("                      FROM AssociacaoPerfilCurso as apc ");
-        consulta.append("                      WHERE apc.perfil.id = :perfilAdmin ");
-        consulta.append("                      OR ((apc.perfil.id = :perfilAluno OR apc.perfil.id = :perfilAlunoPos)  AND apc.curso.id = :idCurso ) ) ORDER BY r.status, r.id DESC");
+        consulta.append("                      WHERE ((apc.perfil.id = :perfilAluno OR apc.perfil.id = :perfilAlunoPos)  AND apc.curso.id = :idCurso ) ) )");
+        consulta.append(" ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("idCurso", idCurso);
         query.setParameter("perfilAluno", EnumPerfil.ALUNO.getCodigo());
         query.setParameter("perfilAlunoPos", EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
-        query.setParameter("perfilAdmin", EnumPerfil.ADMINISTRADOR_SISTEMA.getCodigo());
 
         List<Requerimento> requerimentos = query.getResultList();
         List<Requerimento> requerimentos2 = new ArrayList<Requerimento>();
@@ -165,15 +144,21 @@ public class PerfilCoordenadorCurso extends Perfil {
     public List<RequerimentoPlano> obtenhaRequerimentosPlanos(UsuarioSigera usuarioAutenticado) {
         EntityManager em = obtenhaEntityManager();
         StringBuilder consulta = new StringBuilder();
+        Integer idCurso = usuarioAutenticado.getPerfilAtual().getCurso().getId();
+        Integer idCursoPos = Curso.obtenhaCursoPorPrefixo("Pos").getId();
 
         consulta.append("SELECT r");
         consulta.append(" FROM RequerimentoPlano as r  ");
         consulta.append(" WHERE r.plano.turma.disciplina.curso.id IN (SELECT apc.curso.id ");
         consulta.append("                      FROM AssociacaoPerfilCurso as apc ");
-        consulta.append("                      WHERE apc.curso.id = :idCurso) ORDER BY r.status, r.id DESC");
+        consulta.append("                      WHERE apc.curso.id IN ( :idCurso ");
+        if (idCurso == Curso.obtenhaCursoPorPrefixo("msc").getId() || idCurso == Curso.obtenhaCursoPorPrefixo("dsc").getId()) {
+            consulta.append(" , ").append(idCursoPos);
+        }
+        consulta.append(" )) ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
-        query.setParameter("idCurso", usuarioAutenticado.getPerfilAtual().getCurso().getId());
+        query.setParameter("idCurso", idCurso);
 
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
         List<RequerimentoPlano> planos = query.getResultList();

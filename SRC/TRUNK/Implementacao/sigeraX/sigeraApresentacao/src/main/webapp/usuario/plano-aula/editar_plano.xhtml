@@ -33,10 +33,11 @@
                     <p:commandLink styleClass="btn btn-primary botao-com-margem-direita" 
                                    action ="#{planoBean.reabrirPlano}" value="Reabrir o Plano"/>
                 </h:panelGroup>                     
-
+                
+                <h:panelGroup rendered="#{planoBean.podeVisualizarRequerimentoDessePlano()}">
                 <p:commandLink  styleClass="btn btn-success botao-com-margem-direita"  immediate="true"
                                 value="Visualizar Requerimento" action="#{planoBean.verRequerimento}"/>  
-
+                </h:panelGroup>
                 
                 <h:commandLink styleClass="btn botao-com-margem-direita" value="Imprimir este Plano" action="#{planoBean.imprimir}" target="_blank" immediate="true"/>
                 

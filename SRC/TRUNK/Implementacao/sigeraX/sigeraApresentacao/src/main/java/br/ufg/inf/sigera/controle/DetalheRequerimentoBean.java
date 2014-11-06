@@ -68,6 +68,7 @@ public class DetalheRequerimentoBean {
     private Integer qtdePedidosAcrescimo;
     private Integer qtdePedidosCancelamento;
     private Professor membroSelecionado;
+    private static String paginaOrigem;
 
     public DetalheRequerimentoBean() {
         listaStatus = new ArrayList<EnumStatusRequerimento>();
@@ -272,6 +273,9 @@ public class DetalheRequerimentoBean {
     }
 
     public String voltarLista() {
+        if(paginaOrigem != null && paginaOrigem.contains("requerimentoCurso")){
+            return Paginas.getConsultarRequerimentosCurso();
+        }
         return Paginas.getConsultarRequerimentos();
     }
 
@@ -486,7 +490,7 @@ public class DetalheRequerimentoBean {
             return cancelarAutorizado();
         }
 
-        Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaConferencia, EnumStatusRequerimento.AUTORIZADO.getCodigo());
+        Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaDeferimento, EnumStatusRequerimento.AUTORIZADO.getCodigo());
         this.requerimento.adicionarParecer(parecer);
         if (this.requerimento.salvar()) {
 
@@ -667,7 +671,7 @@ public class DetalheRequerimentoBean {
 
         Turma turmaDessaEmenta = Turma.obtenhaTurmaDisciplina(idDisciplina, buscadorLdap);
         Plano planoDessaEmenta = Plano.obtenhaPlanoTurma(turmaDessaEmenta);
-
+            
         if (planoDessaEmenta != null) {
             planoDessaEmenta.imprimir();
             //caso disciplina não tem plano associado
@@ -753,4 +757,7 @@ public class DetalheRequerimentoBean {
                 || Perfil.usuarioTemPerfilDoCurso(this.requerimento.getUsuario(), EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo(), Curso.obtenhaCursoPorPrefixo("pos").getId());
     }
 
+    public static void definaPaginaOrigem(String urlPagina){
+        paginaOrigem = urlPagina;
+    }    
 }

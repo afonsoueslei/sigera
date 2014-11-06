@@ -6,7 +6,6 @@ import br.ufg.inf.sigera.modelo.ldap.BuscadorLdap;
 import static br.ufg.inf.sigera.modelo.perfil.Perfil.obtenhaEntityManager;
 import br.ufg.inf.sigera.modelo.requerimento.EnumTipoRequerimento;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -66,12 +65,10 @@ public class PerfilCoordenadorGeral extends Perfil {
 
         consulta.append(" SELECT r ");
         consulta.append(" FROM Requerimento as r ");
-        consulta.append(" WHERE r.tipo IN (:tipo1, :tipo2, :tipo3 ) ORDER BY r.status, r.id DESC");
+        consulta.append(" WHERE r.tipo = :tipo1 ORDER BY r.status, r.id DESC");
 
         Query query = em.createQuery(consulta.toString());
-        query.setParameter("tipo1", EnumTipoRequerimento.ACRESCIMO_DISCIPLINAS.getCodigo());
-        query.setParameter("tipo2", EnumTipoRequerimento.CANCELAMENTO_DISCIPLINAS.getCodigo());
-        query.setParameter("tipo3", EnumTipoRequerimento.PLANO.getCodigo());
+        query.setParameter("tipo1", EnumTipoRequerimento.PLANO.getCodigo());
 
         List<Requerimento> requerimentos = query.getResultList();
 

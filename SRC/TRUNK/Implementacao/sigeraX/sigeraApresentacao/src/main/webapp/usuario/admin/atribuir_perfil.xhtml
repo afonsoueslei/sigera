@@ -58,7 +58,7 @@
                                     </h:selectOneMenu>
                                 </p:panel>
                             </div>
-                            
+
                             <h:commandButton styleClass="btn btn-success botao-margem-direita" value="Atribuir perfil" action="#{atribuirPerfilBean.definirPerfilSelecionados(true)}" />
                             <h:commandButton styleClass="btn btn-inverse" value="Remover perfil" action="#{atribuirPerfilBean.definirPerfilSelecionados(false)}" />
                         </div>
@@ -73,9 +73,13 @@
                                      selection="#{atribuirPerfilBean.usuariosSelecionados}"
                                      emptyMessage="Nenhum registro encontrado.">
 
-                            <f:facet name="header">
-                                Lista de Usuários
-                            </f:facet>
+
+                            <f:facet name="header" >                              
+                                <h:commandLink style="color: #0000ff" id="btnAtualizar" action="#{atribuirPerfilBean.atualizarLista()}">                                
+                                    Lista de Usuários
+                                </h:commandLink>
+                            </f:facet>       
+
 
                             <p:column selectionMode="multiple" exportable="false" />
 

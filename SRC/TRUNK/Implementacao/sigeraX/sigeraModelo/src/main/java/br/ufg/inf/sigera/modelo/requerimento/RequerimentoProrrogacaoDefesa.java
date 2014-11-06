@@ -69,8 +69,7 @@ public class RequerimentoProrrogacaoDefesa extends Requerimento {
         // professores membros dessa comissão ( usuários professores com perfil secretario da pos)                      
         int idCurso = this.getCurso().getId();
 
-        Boolean ehPresidente = Perfil.usuarioTemPerfilDoCurso(usuario, EnumPerfil.COORDENADOR_CURSO.getCodigo(), idCurso)
-                && usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo();
+        Boolean ehPresidente = usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo();
 
         Boolean ehProfessor = Perfil.usuarioTemPerfil(usuario, EnumPerfil.PROFESSOR.getCodigo());
         Boolean ehMembroComissao = usuarioEhDaSecretariaDoCurso(usuario) && ehProfessor
@@ -85,9 +84,10 @@ public class RequerimentoProrrogacaoDefesa extends Requerimento {
         if (usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo()
                 && (this.getStatus() == codigoStatusQuePermiteParecer() || this.getStatus() == EnumStatusRequerimento.AUTORIZADO.getCodigo())) {
             return true;
-
         }
-        return this.getStatus() == codigoStatusQuePermiteParecer();
+        //Membro de comissao somente para requerimentos conferidos
+        return perfilPermiteDarParecer(usuario) && this.getStatus() == codigoStatusQuePermiteParecer();
+
     }
 
     @Override

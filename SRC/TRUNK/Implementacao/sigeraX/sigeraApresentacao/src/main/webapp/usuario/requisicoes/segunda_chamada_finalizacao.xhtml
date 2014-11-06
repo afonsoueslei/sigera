@@ -29,7 +29,11 @@
 
 
             <h:outputLabel value="Data em que a prova foi aplicada:" for="data" />                    
-            <p:calendar value="#{segundaChamadaBean.dataProva}" id="data" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" />  
+            <p:calendar value="#{segundaChamadaBean.dataProva}" id="data" locale="pt_BR" pattern="dd/MM/yyyy" placeholder="dd/MM/YYYY" 
+                        mindate="#{calendarioBean.dataInicialSemestre}"
+                        maxdate="#{segundaChamadaBean.validarDataProva()}" 
+                        required="true"
+                        requiredMessage="Indique a data em a prova foi aplicada!"/>
 
             <h:outputLabel value="Justificativa:" for="justificativa" />                    
             <h:inputTextarea  id="justificativa" class="area-justificativa"  value="#{segundaChamadaBean.justificativa}" pt:placeholder="Breve justificativa para sua falta."/>                                          

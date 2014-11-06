@@ -109,14 +109,16 @@ public class RequerimentoCancelamentoDisciplina extends Requerimento {
         Curso cursoUsuario = usuario.getPerfilAtual().getCurso();
         PerfilAlunoPosStrictoSensu p = new PerfilAlunoPosStrictoSensu();
         UsuarioSigera orientador = p.obtenhaOrientador(this.getUsuario(), usuario.getUsuarioLdap().getBuscadorLdap());
-
+        Boolean requerimentoEhDeAlunoRegularDaPos = Perfil.usuarioTemPerfil(this.getUsuario(),EnumPerfil.ALUNO_POS_STRICTO_SENSU.getCodigo());
+        
         if (usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.PROFESSOR.getCodigo()
                 && orientador.getId() == usuario.getId()) {
             return true;
         }
-
+        //nos pedidos de cancelamento feito por alunos regulares da Pos Stricto Sensu o coordenador não dá parecer
         if (perfilUsuario.getId() == EnumPerfil.COORDENADOR_CURSO.getCodigo()
-                && cursoUsuario.getId() == getCurso().getId()) {
+                && cursoUsuario.getId() == getCurso().getId() 
+                && !requerimentoEhDeAlunoRegularDaPos) {
             return true;
         } else {
             return false;

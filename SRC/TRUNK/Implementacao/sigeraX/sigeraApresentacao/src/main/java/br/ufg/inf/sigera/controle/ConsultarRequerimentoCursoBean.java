@@ -145,6 +145,7 @@ public class ConsultarRequerimentoCursoBean {
     }
 
     public String visualizarDetalhes() {        
+        DetalheRequerimentoBean.definaPaginaOrigem(FacesContext.getCurrentInstance().getExternalContext().getRequestPathInfo());
         return "detalhe_requerimento";
     }
     

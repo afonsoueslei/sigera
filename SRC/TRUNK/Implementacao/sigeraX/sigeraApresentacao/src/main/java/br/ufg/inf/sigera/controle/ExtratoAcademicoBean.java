@@ -9,6 +9,7 @@ import br.ufg.inf.sigera.modelo.requerimento.Requerimento;
 import br.ufg.inf.sigera.modelo.requerimento.RequerimentoExtratoAcademico;
 import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
+import br.ufg.inf.sigera.modelo.Curso;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -45,11 +46,17 @@ public class ExtratoAcademicoBean {
 
     public String salvar() {
         Requerimento requerimento = new RequerimentoExtratoAcademico(loginBean.getUsuario(), this.getJustificativa());
-        if (requerimento.salvar()) {
+        Integer idCursoRequerente = requerimento.getCurso().getId();
 
+        if (requerimento.salvar()) {
+            //adição da regra para que professor&secretario(membros comissão) não recebam e-mails desse tipo de requerimento
+            if(requerimento.getCurso().getPrefixo().equalsIgnoreCase("msc") || requerimento.getCurso().getPrefixo().equalsIgnoreCase("dsc")){
+               idCursoRequerente = Curso.obtenhaCursoPorPrefixo("POS").getId();
+            }
+            
             List<UsuarioSigera> destinatarios
                     = AssociacaoPerfilCurso.obtenhaUsuariosDoPerfilCurso(EnumPerfil.SECRETARIA.getCodigo(),
-                            requerimento.getCurso().getId(),
+                            idCursoRequerente,
                             loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap());
 
             if (loginBean.getConfiguracao().isEnviarEmail()) {

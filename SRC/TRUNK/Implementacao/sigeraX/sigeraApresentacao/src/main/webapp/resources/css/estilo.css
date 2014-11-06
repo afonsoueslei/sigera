@@ -69,6 +69,8 @@ html, body {
 }
 
 .botao-com-margem-direita {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
     margin-right: 10px !important;
 }
 
@@ -710,8 +712,8 @@ legend {
 .nav-list-modificado2  { 
     border: 1px solid #BCBCBC !important;
     border-radius: 5px !important;    
-    padding: 0 0 18px 15px !important;
-    height: 140px !important;     
+/*    padding: 0 0 18px 15px !important;*/
+    height: 235px !important;     
     overflow: hidden !important;
     margin-bottom: 30px;
     bottom: 0px !important;

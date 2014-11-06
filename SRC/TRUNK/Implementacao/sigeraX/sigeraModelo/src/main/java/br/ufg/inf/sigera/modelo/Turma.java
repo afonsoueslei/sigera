@@ -182,6 +182,13 @@ public class Turma implements Serializable, Comparable<Turma> {
             UsuarioSigera professor = t.getProfessor().getUsuario();
             professor.setUsuarioLdap(buscadorLdap.obtenhaUsuarioLdap(professor.getId()));
         }
+        //se não encontrar nenhuma turma
+        if (turmas.isEmpty()){
+            Turma tErro = new Turma();
+            tErro.setId(0);
+            return tErro;
+        }
+            
         //returna a turma mais recente
         return turmas.get(turmas.size() - 1);
     }
@@ -213,7 +220,7 @@ public class Turma implements Serializable, Comparable<Turma> {
             }
             consulta.append(" )");
         }
-        consulta.append(" ORDER BY t.disciplina.nome ASC");
+        consulta.append(" ORDER BY t.ano DESC, t.semestre DESC,  t.disciplina.nome ASC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("anoCorrente", anoCorrente);
