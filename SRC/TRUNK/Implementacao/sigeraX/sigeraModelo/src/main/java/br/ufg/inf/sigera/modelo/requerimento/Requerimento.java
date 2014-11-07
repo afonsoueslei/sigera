@@ -472,7 +472,7 @@ public abstract class Requerimento implements Serializable {
     private static EntityManager criarManager() {
 
         try {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
+            EntityManagerFactory emf = Persistencia.criaEntityManagerFactory();
             return emf.createEntityManager();
         } catch (Exception e) {
             System.out.println("Não foi possível criar Entidade de Persistência");

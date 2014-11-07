@@ -6,6 +6,7 @@
 package br.ufg.inf.sigera.modelo.servico;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -19,21 +20,22 @@ import javax.persistence.Persistence;
 public class Persistencia {
 
     private static EntityManager em;
+    private static EntityManagerFactory emf;
 
     public static EntityManager obterManager() {
-        EntityManagerFactory emf;
-//        EntityManager em = null;
+
         try {
-            emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
-            if ( em == null ||  !em.isOpen()) {
+            emf = criaEntityManagerFactory();
+            if (em == null || !em.isOpen()) {
                 em = emf.createEntityManager();
             }
         } catch (Exception e) {
             System.out.println("Não foi possível criar Entidade de Persistência");
+            Logger.getLogger(Persistencia.class.getName()).log(Level.SEVERE, "Não foi possível criar Entidade de Persistência!", e);
         }
         return em;
     }
-    
+
     public static Boolean versaoValida(Object entidade) {
         EntityManager emCopia = obterManager();
         try {
@@ -41,15 +43,16 @@ public class Persistencia {
             Object versaoEdicao = entidade.getClass().getMethod("getVersao", null).invoke(entidade, null);
             //Consulta entidade que esta no banco
             Object idObj = entidade.getClass().getMethod("getId", null).invoke(entidade, null);
-            try{
+            try {
                 entidade = emCopia.find(entidade.getClass(), idObj);
-            }catch(Exception eie){                
+            } catch (Exception eie) {
                 Logger.getLogger(Persistencia.class.getName()).log(Level.SEVERE, "Falha conexão com banco, impossível obter entidade!", eie);
                 return false;
             }
             //Caso entidade não exista no banco, caso de estar salvando pela 1a vez
-            if(entidade==null) 
+            if (entidade == null) {
                 return true;
+            }
             //Versão da entidade que está no banco
             Object versaoBanco = entidade.getClass().getMethod("getVersao", null).invoke(entidade, null);
 
@@ -74,5 +77,24 @@ public class Persistencia {
             return false;
         }
         return false;
+    }
+
+    public static EntityManagerFactory criaEntityManagerFactory() {
+        Conexoes.lerParametros();
+        if (emf == null) {
+            Logger.getLogger("Aplicando propriedades para o persistence.xml ....");
+            Properties configOverrides = new Properties();
+            configOverrides.put("javax.persistence.jdbc.driver", Conexoes.getDRIVE_BANCO());
+            configOverrides.put("javax.persistence.jdbc.url", Conexoes.getSERVIDOR_BANCO() + Conexoes.getPORTA_BANCO() + Conexoes.getNOME_BANCO());
+            configOverrides.put("javax.persistence.jdbc.user", Conexoes.getUSUARIO_BANCO());
+            configOverrides.put("javax.persistence.jdbc.password", Conexoes.getCHAVE_BANCO());
+            configOverrides.put("eclipselink.query-results-cache", Conexoes.getRESULT_CACHE());
+            configOverrides.put("eclipselink.logging.level.sql", Conexoes.getLEVEL_SQL());
+            configOverrides.put("eclipselink.logging.parameters", Conexoes.getLOGGING_PARAMETERS());
+
+            return emf = Persistence.createEntityManagerFactory(Conexoes.getPERSISTENCE_UNIT(), configOverrides);
+        } else {
+            return emf;
+        }
     }
 }

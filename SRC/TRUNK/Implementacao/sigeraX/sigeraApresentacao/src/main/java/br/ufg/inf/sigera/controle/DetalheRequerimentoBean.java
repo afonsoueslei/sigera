@@ -603,7 +603,7 @@ public class DetalheRequerimentoBean {
     }
 
     public String cancelarAutorizado() {
-        if (this.justificativaDeferimento.isEmpty()) {
+        if (this.justificativaDeferimento == null || this.justificativaDeferimento.isEmpty()) {
             this.setJustificativaDeferimento(Mensagens.obtenha("MT.800"));
         }
         Parecer parecer = new Parecer(this.requerimento, loginBean.getUsuario(), this.justificativaDeferimento, EnumStatusRequerimento.CANCELADO.getCodigo());

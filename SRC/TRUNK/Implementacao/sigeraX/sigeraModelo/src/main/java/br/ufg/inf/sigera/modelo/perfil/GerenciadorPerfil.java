@@ -5,6 +5,7 @@ import br.ufg.inf.sigera.modelo.Curso;
 import br.ufg.inf.sigera.modelo.Professor;
 import br.ufg.inf.sigera.modelo.UsuarioSigera;
 import br.ufg.inf.sigera.modelo.ldap.UsuarioLdap;
+import br.ufg.inf.sigera.modelo.servico.Persistencia;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -109,7 +110,7 @@ public class GerenciadorPerfil {
     }
 
     public static Perfil obtenhaPerfil(int id) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
+        EntityManagerFactory emf = Persistencia.criaEntityManagerFactory();
         EntityManager em = emf.createEntityManager();
         Perfil perfil = em.find(Perfil.class, id);
 
@@ -133,7 +134,7 @@ public class GerenciadorPerfil {
     }
 
     private static EntityManager obtenhaEntityManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("br.ufg.inf.sigera");
+        EntityManagerFactory emf = Persistencia.criaEntityManagerFactory();
         return emf.createEntityManager();
     }
 }
