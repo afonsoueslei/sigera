@@ -1,9 +1,87 @@
+/* Smartphones (portrait and landscape) ———– */
+@media only screen
+and (max-width : 480px) {
+    #menu_editar_perfil{
+        display: none !important;
+    }
+    #menu_editar_perfil_reduzido{
+        display: inline-block;
+    }
+}    
+@media only screen
+and (max-width : 600px) {    
+    .largura-pagina{        
+        width: 100% !important;
+    }
+    #tudo2{
+        width: 100% !important;
+    }
+    
+}
+
+
+/* Smartphones (landscape) ———– */
+@media only screen
+and (min-width : 321px) {
+    /* Styles */
+}
+/* Smartphones (portrait) ———– */
+@media only screen
+and (max-width : 320px) {
+    /* Styles */
+}
+/* iPads (portrait and landscape) ———– */
+@media only screen
+and (min-device-width : 768px)
+and (max-device-width : 1024px) {
+    /* Styles */
+}
+/* iPads (landscape) ———– */
+@media only screen
+and (min-device-width : 768px)
+and (max-device-width : 1024px)
+and (orientation : landscape) {
+    /* Styles */
+}
+/* iPads (portrait) ———– */
+@media only screen
+and (min-device-width : 768px)
+and (max-device-width : 1024px)
+and (orientation : portrait) {
+    /* Styles */
+}
+/* Desktops and laptops ———– */
+@media only screen
+and (min-width : 1224px) {
+    /* Styles */
+}
+/* Large screens ———– */
+@media only screen
+and (min-width : 1824px) {
+    /* Styles */
+}
+/* iPhone 4 ———– */
+@media
+only screen and (-webkit-min-device-pixel-ratio : 1.5),
+only screen and (min-device-pixel-ratio : 1.5) {
+    /* Styles */
+}
+
+/*img,
+embed,
+object,
+video {
+    max-width: 100%;
+}*/
+
 html, body {
-    height: 95.8% !important;
+    height: 96.5% !important;
+    min-width: 320px !important;
+    
 }
 
 * html #tudo {
-    height: 95.8% !important;  /*hack para IE6 que trata height como min-height */
+    height: 96.5% !important;  /*hack para IE6 que trata height como min-height */
 }
 
 .dropdown-menu > li > form > a:hover > [class^="icon-"],
@@ -203,9 +281,10 @@ legend {
 }
 
 .cabecalho-titulo-pagina{
-    margin: -26px 0 0 60px;
-    color: #003399;
+    margin: -26px 0 0 50px;
+    color: #003399;     
 }
+
 .form-actions {
     margin-bottom: 10px;
     margin-top: 10px;
@@ -227,18 +306,18 @@ legend {
 }
 
 .imagem-barra-superior {
-    padding-left: 10px;
-    width: 33px !important;
-    height: 33px !important;
+    padding-left: 5px;
+    width: 30px !important;
+    height: 30px !important;
 }
 
 .imagem-barra-superior-home {
 
-    padding-right: 20px;
+    padding-right: 15px;
     border-right: 2px;
     border-style: solid;    
-    width: 33px !important;
-    height: 33px !important;
+    width: 30px !important;
+    height: 30px !important;
 }
 
 .noticias {
@@ -359,7 +438,7 @@ legend {
 }
 
 #conteudo{
-    padding-bottom: 30px;
+    padding-bottom: 100px;
     padding-top: 10px;
 }
 
@@ -371,10 +450,9 @@ legend {
 
 #tudo2{
     background: #FFFFFF;
-    min-height: 93% !important;
-    position: relative !important;
-    padding-bottom: 32px !important;
-    min-width: 360px !important;
+    min-height: 100% !important;
+    position: relative !important;   
+    min-width: 320px !important;
 }
 
 .input-block-level-modificado{
@@ -532,13 +610,9 @@ legend {
     padding:5px;	
 }
 
-.espacar2{
-    padding:1px;	
-}
-
 .largura-pagina{
     width: 80% !important;
-    min-width: 360px !important;
+    min-width: 320px !important;
     margin: 0 auto !important;
 }
 
@@ -547,10 +621,6 @@ legend {
     font-family: "Trebuchet MS","Helvetica neue",Helvetica,Arial,Verdana,sans-serif;
     font-size: 13px;
     margin: 0 !important;      
-}
-
-#logo{
-    text-align: center;
 }
 
 #sidebar1 {
@@ -565,14 +635,16 @@ legend {
 }
 
 #conteudo2{
-    padding-top: 100px;   
+    padding-top: 80px;   
     min-height: 200px;
     background: #ffffff;
+    padding-bottom: 80px; 
 }
 
 #rodape-inf{    
-    position: relative;    
-    width: 100%;
+    position: absolute;    
+    width: 90%;
+    padding: 0 5% 0 5%;
     bottom: 0 !important;
     background-color: #002755;       
     color: white;
@@ -582,6 +654,9 @@ legend {
 
 #cabecalho-inf{
     background-color: #f5ffff;
+    text-align: center;
+    display: flex;
+    width: 100%;
 }
 
 .row-modificado{
@@ -712,7 +787,7 @@ legend {
 .nav-list-modificado2  { 
     border: 1px solid #BCBCBC !important;
     border-radius: 5px !important;    
-/*    padding: 0 0 18px 15px !important;*/
+    /*    padding: 0 0 18px 15px !important;*/
     height: 235px !important;     
     overflow: hidden !important;
     margin-bottom: 30px;

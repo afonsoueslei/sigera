@@ -88,8 +88,7 @@ public class Conexoes {
         Conexoes.setPASTA_PLANOS_DE_AULA(prop.getProperty("PASTA_PLANOS_DE_AULA"));
         Conexoes.setPASTA_REQUERIMENTOS(prop.getProperty("PASTA_REQUERIMENTOS"));
         Conexoes.setPASTA_ANEXOS(prop.getProperty("PASTA_ANEXOS"));
-        Conexoes.setURL_SIGERA(prop.getProperty("URL_SIGERA"));
-        Conexoes.setURL_SIGERA(prop.getProperty("PERSISTENCE_UNIT"));
+        Conexoes.setURL_SIGERA(prop.getProperty("URL_SIGERA"));        
         Conexoes.setRESULT_CACHE(prop.getProperty("RESULT_CACHE"));
         Conexoes.setLEVEL_SQL(prop.getProperty("LEVEL_SQL"));
         Conexoes.setLOGGING_PARAMETERS(prop.getProperty("LOGGING_PARAMETERS"));
