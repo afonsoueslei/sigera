@@ -23,14 +23,19 @@
 
         <div id="tudo2" class="largura-pagina">
 
-            <div id="cabecalho-inf" class=" espacar2">
-                <div id="logo">	        
+            <div id="cabecalho-inf">
+                <div style="width:10%; padding-left: 4px; float:left">
                     <a href="/" title="Acessar o portal do INF"><img src="#{request.contextPath}/resources/img/marca-inf.png" alt="Logo do INF"/></a>
+                </div>
+                <div style="width:80%; float:left">
                     <a rel="home" title="Acessar a p&aacute;gina inicial" href="/sigera"><img alt=" Logo do site." src="#{request.contextPath}/resources/img/sigera.png"/></a>	      
+                </div>
+                <div style="width:10%;">
                     <a class="sem-margem-direita" rel="externo" href="http://www.ufg.br" title="Este link abre uma nova aba ou janela" target="_blank">
                         <img src="#{request.contextPath}/resources/img/marca-ufg.png" alt="Logo da UFG"/></a>
                 </div>
             </div>
+
 
             <div  id="conteudo2" class="row-fluid centralizado"> 
 
@@ -40,17 +45,19 @@
 
             </div>
 
+            <div id="rodape-inf" class="centralizar-texto">
+                <b> Instituto de Inform&aacute;tica (INF) - UFG<br/>
+                    Alameda Palmeiras, Quadra D, C&acirc;mpus Samambaia - Caixa Postal 131 - CEP 74001-970 - Goi&acirc;nia - GO <br/>
+                    Fone: (62) 3521-1181 / Fax: (62) 3521-1182
+                    <br/></b>
+            </div>
+            
         </div>
 
-        <div id="rodape-inf" class="centralizar-texto largura-pagina ">
-            <b> Instituto de Inform&aacute;tica (INF) - UFG<br/>
-                Alameda Palmeiras, Quadra D, C&acirc;mpus Samambaia - Caixa Postal 131 - CEP 74001-970 - Goi&acirc;nia - GO <br/>
-                Fone: (62) 3521-1181 / Fax: (62) 3521-1182
-                <br/></b>
-        </div>
 
         <h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
         <h:outputScript library="js" name="bootstrap.js" />
-        <script src="http://barra.brasil.gov.br/barra.js" type="text/javascript"></script>
+        <script defer="defer" async="async" src="//barra.brasil.gov.br/barra.js" type="text/javascript"></script>
+
     </h:body>
 </html>

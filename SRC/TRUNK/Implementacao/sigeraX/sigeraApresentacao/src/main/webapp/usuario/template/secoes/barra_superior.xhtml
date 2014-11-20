@@ -18,20 +18,26 @@
 
                 <div class="btn-group pull-left">
                     <img src="#{request.contextPath}/resources/img/#{nomeImagem}" alt="#{paginaAtual}" class="imagem-barra-superior" />                    
-                    <h4 class="cabecalho-titulo-pagina">#{paginaAtual}</h4>                        
+                    <h5 class="cabecalho-titulo-pagina">#{paginaAtual}</h5>                        
                 </div>
 
                 <div class="btn-group pull-right">                    
-                    <h:link styleClass="btn btn-primary" 
+                    <h:link id="menu_editar_perfil_reduzido" styleClass="btn btn-primary"                             
                             title="Clique aqui para editar seu perfil."
                             outcome="editar_perfil">
                         <f:param name="uid" value="#{loginBean.usuario.id}"/>
-                        <i class="icon-user icon-white"></i> #{loginBean.usuario.usuarioLdap.cn}                    
+                        <i class="icon-user icon-white"></i>                     
+                    </h:link>
+                    <h:link id="menu_editar_perfil" styleClass="btn btn-primary"                             
+                            title="Clique aqui para editar seu perfil."
+                            outcome="editar_perfil">
+                        <f:param name="uid" value="#{loginBean.usuario.id}"/>
+                        #{loginBean.usuario.usuarioLdap.cn}                    
                     </h:link>
 
                     <p:graphicImage id="imagem" value="/resources/img/cabecalho.png" rendered="false"/>
                     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-                    <ul class="dropdown-menu">                                                    
+                    <ul id="menu_opcoes" class="dropdown-menu">
                         <li> 
                             <pre style="background-color: transparent; border: none; margin:-12px; " >   Logado como: </pre>
                             <h:link outcome="editar_perfil">

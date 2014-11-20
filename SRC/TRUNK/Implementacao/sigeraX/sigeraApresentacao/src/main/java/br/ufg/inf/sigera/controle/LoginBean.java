@@ -244,8 +244,7 @@ public class LoginBean {
     }
 
     private boolean redirecionePaginaConsultarRequerimentos() {
-        return this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA.getCodigo()
-                || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA_GRADUACAO.getCodigo()
+        return this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.SECRETARIA.getCodigo()                
                 || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.COORDENADOR_ESTAGIO.getCodigo()
                 || this.usuario.getPerfilAtual().getPerfil().getId() == EnumPerfil.DIRETOR.getCodigo();
     }
