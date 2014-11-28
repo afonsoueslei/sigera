@@ -174,7 +174,7 @@ public class EditarPerfilBean implements Serializable {
                 usuarioEditado.setUsuarioLdap(usuarioLdap);
                 usuarioEditado.getUsuarioLdap().setBuscadorLdap(buscadorLdap);
 
-                if (usuarioLdap.getGrupo().equals(EnumGrupo.ALUNO) && usuarioEditado.getPerfis().isEmpty()) {
+                if (usuarioLdap.getGrupo().equals(EnumGrupo.ALUNO) && (usuarioEditado.getPerfis() == null || usuarioEditado.getPerfis().isEmpty())) {
                     Collection<AssociacaoPerfilCurso> perfis = new ArrayList<AssociacaoPerfilCurso>();
 
                     //se for aluno regular de Pos Stricto Sensu, cria perfil proprio e associa ao orientador (Administrador = uidNumber 1786)

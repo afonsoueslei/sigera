@@ -21,10 +21,10 @@
 
                     
                     
-                        <input type="button" class="btn btn-danger botao-com-margem-direita" value="Concluir Plano"  
-                               onclick="exibirConfirmacao('#{msgs['MT.205']}', 'form:botao-escondido')" />
+                    <input type="button" class="btn btn-danger botao-com-margem-direita" value="Concluir Plano"  
+                           onclick="exibirConfirmacao('#{msgs['MT.205']}', 'form:botao-escondido')" />
 
-                        <h:commandLink styleClass="botao-escondido" id="botao-escondido" action="#{planoBean.concluir}" />
+                    <h:commandLink styleClass="botao-escondido" id="botao-escondido" action="#{planoBean.concluir}" />
                     
                 </h:panelGroup>
 
@@ -35,15 +35,19 @@
                 </h:panelGroup>                     
                 
                 <h:panelGroup rendered="#{planoBean.podeVisualizarRequerimentoDessePlano()}">
-                <p:commandLink  styleClass="btn btn-success botao-com-margem-direita"  immediate="true"
-                                value="Visualizar Requerimento" action="#{planoBean.verRequerimento}"/>  
+                    <p:commandLink  styleClass="btn btn-success botao-com-margem-direita"  immediate="true"
+                                    value="Visualizar Requerimento" action="#{planoBean.verRequerimento}"/>  
                 </h:panelGroup>
                 
                 <h:commandLink styleClass="btn botao-com-margem-direita" value="Imprimir este Plano" action="#{planoBean.imprimir}" target="_blank" immediate="true"/>
-                
-            </div>                        
 
-            <p:tabView id="tabView" style=" font-size:  12px; margin-bottom: 10px;" activeIndex="#{planoBean.activeIndex}">  
+            </div>             
+            <!--informação do STATUS do requerimento-->
+            <div style="color:#0000ff; border-style: solid; border-width:2px; border-color: #0000ff; padding-left: 10px; padding-bottom: 5px; padding-top: 5px; border-radius: 5px; margin-bottom: 10px;">                
+                <b > #{planoBean.statusRequerimentoAssociadoAoPlano()} : </b>  é o status em que se encontra o requerimento associado a este plano. 
+            </div>
+        
+            <p:tabView id="tabView" style=" font-size:  12px; margin-bottom: 10px;" activeIndex="#{planoBean.activeIndex}">                  
                 <!--TAB PRINCIPAL - Não editável-->
                 <p:tab title="Principal" >  
                     <h:outputLabel value="Professor:" for="professor" styleClass="margin-bottom-reduzida"/>

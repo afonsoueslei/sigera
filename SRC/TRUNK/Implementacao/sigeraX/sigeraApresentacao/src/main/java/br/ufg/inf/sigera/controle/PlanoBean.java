@@ -30,6 +30,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 @ManagedBean
 @SessionScoped
@@ -166,16 +167,18 @@ public class PlanoBean implements Serializable {
     }
 
     public PlanoDataModel getDataModelPlanos() {
-        try {
-            List<RequerimentoPlano> requerimentosPlanosBuscados = this.loginBean.getUsuario().obtenhaRequerimentosPlanos();
-            this.planosTela = new ArrayList<PlanoTela>();
-            for (RequerimentoPlano p : requerimentosPlanosBuscados) {
-                this.planosTela.add(new AdaptadorPlanoTela(p.getPlano()));
+        if (dataModelPlanos == null) {
+            try {
+                List<RequerimentoPlano> requerimentosPlanosBuscados = this.loginBean.getUsuario().obtenhaRequerimentosPlanos();
+                this.planosTela = new ArrayList<PlanoTela>();
+                for (RequerimentoPlano p : requerimentosPlanosBuscados) {
+                    this.planosTela.add(new AdaptadorPlanoTela(p.getPlano()));
+                }
+                this.dataModelPlanos = new PlanoDataModel(this.planosTela);
+            } catch (Exception ie) {
+                Paginas.redirecionePaginaErro();
+                Logger.getLogger(PlanoBean.class.getName()).log(Level.SEVERE, null, ie);
             }
-            this.dataModelPlanos = new PlanoDataModel(this.planosTela);
-        } catch (Exception ie) {
-            Paginas.redirecionePaginaErro();
-            Logger.getLogger(PlanoBean.class.getName()).log(Level.SEVERE, null, ie);
         }
         return dataModelPlanos;
     }
@@ -456,7 +459,10 @@ public class PlanoBean implements Serializable {
         RequerimentoPlano requerimento = Plano.buscarRequerimentoDessePlano(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), this.planoSelecionado);
         return Paginas.getAbrirRequerimentoID() + requerimento.getId();
     }
-
+    public String statusRequerimentoAssociadoAoPlano (){
+        return EnumStatusRequerimento.obtenha(Plano.buscarRequerimentoDessePlano(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), this.planoSelecionado).getStatus()).getNome().toUpperCase();
+    }
+    
     private boolean validarRequerimento() {
         if (this.turmasSelecionadas == null
                 || this.turmasSelecionadas.size() < 1) {
@@ -491,7 +497,9 @@ public class PlanoBean implements Serializable {
     public String strTotalAulas() {
         Integer total = 0;
         for (ItemCronograma i : this.planoEditavel.getItensCronograma()) {
-            total += i.getNumeroAulas();
+            if (i.getNumeroAulas() != null) {
+                total += i.getNumeroAulas();
+            }
         }
         return Integer.toString(total);
     }
@@ -529,10 +537,15 @@ public class PlanoBean implements Serializable {
     public Boolean podeVisualizarRequerimentoDessePlano() {
         //Se for um coordenador de MSC ou DSC vendo um plano da POS então ele não irá ver o requerimento associado
         //isso é ele não poderá dar o parecer que ficará a cargo do coordenador da POS ou do Coordenador Geral
-        if (loginBean.getUsuario().getPerfilAtual().getCurso() != null && 
-            this.planoEditavel.getTurma().getDisciplina().getCurso().getId() == loginBean.getUsuario().getPerfilAtual().getCurso().getId()){
+        if (loginBean.getUsuario().getPerfilAtual().getCurso() != null
+                && this.planoEditavel.getTurma().getDisciplina().getCurso().getId() == loginBean.getUsuario().getPerfilAtual().getCurso().getId()) {
             return false;
         }
         return true;
+    }
+    
+    public String atualizarLista(){
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("planoBean");        
+        return Paginas.getPlanoAula();
     }
 }
