@@ -29,10 +29,13 @@
                                  rowStyleClass="#{plano.status ne 'Aberto' ? 'destacado' : null}">
 
 
-                        <f:facet name="header">  
-                            Listagem de Planos de Aula
-                        </f:facet>
-
+                         <f:facet name="header" >                              
+                             <h:commandLink style="color: #0000ff" id="btnAtualizar" action="#{planoBean.atualizarLista()}"
+                                           title="Clique aqui para atualizar a lista de Planos de Aula.">
+                                Listagem de Planos de Aula
+                            </h:commandLink>
+                        </f:facet>    
+                                              
                         <p:column styleClass="centralizar-texto" 
                                   sortBy="#{plano.numeroRequerimentoPlanoAssociado}"
                                   filterBy="#{plano.numeroRequerimentoPlanoAssociado}"
@@ -64,6 +67,8 @@
                         </p:column>
 
                         <p:column styleClass="centralizar-texto" 
+                                  filterBy="#{plano.nomeDisciplina}"
+                                  filterMatchMode="startsWith"
                                   sortBy="#{plano.nomeDisciplina}">
                             <f:facet name="header">  
                                 <h:outputText value="Disciplina" />

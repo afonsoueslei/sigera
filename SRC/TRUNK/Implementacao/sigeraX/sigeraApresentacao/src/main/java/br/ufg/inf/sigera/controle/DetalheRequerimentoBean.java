@@ -577,8 +577,10 @@ public class DetalheRequerimentoBean {
     }
 
     public String cancelar() {
+        Date dataFechamentoPorCancelamento = new Date();
         if (this.requerimento != null && this.requerimento.getStatus() == EnumStatusRequerimento.ABERTO.getCodigo()) {
             this.requerimento.setStatus(EnumStatusRequerimento.CANCELADO.getCodigo());
+            this.requerimento.setDataFechamento(dataFechamentoPorCancelamento);
 
             //Se usuário é o proprio aluno que abriu o requerimento.
             if (this.requerimento.getUsuario().getId() == this.loginBean.getUsuario().getId()) {
