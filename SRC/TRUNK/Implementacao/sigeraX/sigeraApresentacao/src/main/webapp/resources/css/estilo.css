@@ -1,4 +1,3 @@
-/* Smartphones (portrait and landscape) ———– */
 @media only screen
 and (max-width : 480px) {
     #menu_editar_perfil{
@@ -15,64 +14,9 @@ and (max-width : 600px) {
     }
     #tudo2{
         width: 100% !important;
-    }
-    
+    }    
 }
 
-
-/* Smartphones (landscape) ———– */
-@media only screen
-and (min-width : 321px) {
-    /* Styles */
-}
-/* Smartphones (portrait) ———– */
-@media only screen
-and (max-width : 320px) {
-    /* Styles */
-}
-/* iPads (portrait and landscape) ———– */
-@media only screen
-and (min-device-width : 768px)
-and (max-device-width : 1024px) {
-    /* Styles */
-}
-/* iPads (landscape) ———– */
-@media only screen
-and (min-device-width : 768px)
-and (max-device-width : 1024px)
-and (orientation : landscape) {
-    /* Styles */
-}
-/* iPads (portrait) ———– */
-@media only screen
-and (min-device-width : 768px)
-and (max-device-width : 1024px)
-and (orientation : portrait) {
-    /* Styles */
-}
-/* Desktops and laptops ———– */
-@media only screen
-and (min-width : 1224px) {
-    /* Styles */
-}
-/* Large screens ———– */
-@media only screen
-and (min-width : 1824px) {
-    /* Styles */
-}
-/* iPhone 4 ———– */
-@media
-only screen and (-webkit-min-device-pixel-ratio : 1.5),
-only screen and (min-device-pixel-ratio : 1.5) {
-    /* Styles */
-}
-
-/*img,
-embed,
-object,
-video {
-    max-width: 100%;
-}*/
 
 html, body {
     height: 96.5% !important;
@@ -423,7 +367,7 @@ legend {
 }
 
 #rodape{
-    position: relative;
+    position: absolute;
     bottom: 0 !important;
     padding: 4px 3%;
     background: #005EB4;
@@ -440,10 +384,11 @@ legend {
 #conteudo{
     padding-bottom: 100px;
     padding-top: 10px;
+    min-height: 100%;
 }
 
 #tudo{
-    min-height: 95% !important;
+    min-height: 100% !important;
     position: relative !important;
     margin-top: 3%  !important;
 }
@@ -650,6 +595,7 @@ legend {
     color: white;
     font-size: 0.9em;
     line-height: 16px !important;
+    margin-bottom: -19px !important;
 }
 
 #cabecalho-inf{

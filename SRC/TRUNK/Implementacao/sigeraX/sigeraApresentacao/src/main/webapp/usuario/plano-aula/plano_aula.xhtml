@@ -26,8 +26,7 @@
                                  emptyMessage="#{msgs['MT.401']}"
                                  filteredValue="#{planoBean.planosFiltrados}"                                 
                                  rowsPerPageTemplate="10,20,30,#{planoBean.planosTela.size() > 30 ? planoBean.planosTela.size(): ''}"
-                                 rowStyleClass="#{plano.status ne 'Aberto' ? 'destacado' : null}">
-
+                                 rowStyleClass="#{plano.status eq 'Deferido' or plano.status eq 'Indeferido' or plano.status eq 'Cancelado' ? 'apagado' : plano.status ne 'Aberto' ? 'destacado' : null}" >                                 
 
                          <f:facet name="header" >                              
                              <h:commandLink style="color: #0000ff" id="btnAtualizar" action="#{planoBean.atualizarLista()}"

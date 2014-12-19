@@ -104,7 +104,7 @@ public class ItemCronograma {
     }
 
     public void setProcedimentoDidatico(String procedimentoDidatico) {
-        this.procedimentoDidatico = procedimentoDidatico;
+        this.procedimentoDidatico = procedimentoDidatico.toUpperCase();
     }
 
     public String getTopico() {
@@ -118,7 +118,12 @@ public class ItemCronograma {
     public void salvar(ItemCronograma i) {
         EntityManager em = Persistencia.obterManager();
         em.getTransaction().begin();
-        em.merge(i);        
+        if (i.id== 0) {
+            em.persist(i);            
+        } else {
+            em.merge(i);
+        }
+        em.flush();
         em.getTransaction().commit();
     }
 
@@ -129,6 +134,7 @@ public class ItemCronograma {
             ItemCronograma ic;
             ic = em.merge(this);
             em.remove(ic);
+            em.flush();
             em.getTransaction().commit();
             return true;
         } catch (RollbackException e) {

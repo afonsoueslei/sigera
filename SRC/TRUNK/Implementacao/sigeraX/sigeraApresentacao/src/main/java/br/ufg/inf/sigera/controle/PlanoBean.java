@@ -168,17 +168,17 @@ public class PlanoBean implements Serializable {
 
     public PlanoDataModel getDataModelPlanos() {
         if (dataModelPlanos == null) {
-            try {
-                List<RequerimentoPlano> requerimentosPlanosBuscados = this.loginBean.getUsuario().obtenhaRequerimentosPlanos();
-                this.planosTela = new ArrayList<PlanoTela>();
-                for (RequerimentoPlano p : requerimentosPlanosBuscados) {
-                    this.planosTela.add(new AdaptadorPlanoTela(p.getPlano()));
-                }
-                this.dataModelPlanos = new PlanoDataModel(this.planosTela);
-            } catch (Exception ie) {
-                Paginas.redirecionePaginaErro();
-                Logger.getLogger(PlanoBean.class.getName()).log(Level.SEVERE, null, ie);
+        try {
+            List<RequerimentoPlano> requerimentosPlanosBuscados = this.loginBean.getUsuario().obtenhaRequerimentosPlanos();
+            this.planosTela = new ArrayList<PlanoTela>();
+            for (RequerimentoPlano p : requerimentosPlanosBuscados) {
+                this.planosTela.add(new AdaptadorPlanoTela(p.getPlano()));
             }
+            this.dataModelPlanos = new PlanoDataModel(this.planosTela);
+        } catch (Exception ie) {
+            Paginas.redirecionePaginaErro();
+            Logger.getLogger(PlanoBean.class.getName()).log(Level.SEVERE, null, ie);
+        }
         }
         return dataModelPlanos;
     }
@@ -274,14 +274,14 @@ public class PlanoBean implements Serializable {
         getDataModelPlanos();
     }
 
-    //Salva requerimento Plano para turmas que não tinham plano e foram selecionadas
     public String salvar() {
-        if (!validarRequerimento()) {
+        if (validarRequerimento()) {
             return Paginas.getTurmasSemPlano();
         }
         for (TurmaTela t : turmasSelecionadas) {
-            Plano p = Plano.buscarPlanoExistenteEmSemestresAnteriores(t.getTurma());
+            Plano p = new Plano(t.getTurma());
             Plano.salvar(p);
+            copiarDadosPlanoExistente(p);
 
             RequerimentoPlano reqPlano = new RequerimentoPlano(loginBean.getUsuario(), p);
             reqPlano.salvar();
@@ -289,7 +289,7 @@ public class PlanoBean implements Serializable {
 
             gerenciadorEmail.adicionarEmailRequerimento(reqPlano, professorDestinatario, "EhPlano");
         }
-
+        
         if (loginBean.getConfiguracao().isEnviarEmail()) {
             gerenciadorEmail.enviarEmails();
             Sessoes.limparBeans();
@@ -297,6 +297,24 @@ public class PlanoBean implements Serializable {
 
         mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT002, EnumTipoRequerimento.PLANO.getNome()), Paginas.getPlanoAula());
         return Paginas.getPlanoAula();
+    }
+
+    public void copiarDadosPlanoExistente(Plano p) {
+        Plano pCopiaDados = Plano.buscarPlanoExistenteEmSemestresAnteriores(p.getTurma());
+        if (pCopiaDados.getTurma() != null) {
+            p.setCriterioAvaliacao(pCopiaDados.getCriterioAvaliacao());
+            p.setDataRealizacaoProvas(pCopiaDados.getDataRealizacaoProvas());
+            p.setPrograma(pCopiaDados.getPrograma());
+            p.setObjetivosEspecificos(pCopiaDados.getObjetivosEspecificos());
+            p.setRelacaoOutrasDisciplinas(pCopiaDados.getRelacaoOutrasDisciplinas());
+            p.setBibliografiaSugerida(pCopiaDados.getBibliografiaSugerida());
+            if (pCopiaDados.getItensCronograma() != null && pCopiaDados.getItensCronograma().size() > 0) {
+                for (ItemCronograma iC : pCopiaDados.getItensCronograma()) {
+                    p.getItensCronograma().add(new ItemCronograma(p, iC.getInicio(), iC.getNumeroAulas(), iC.getProcedimentoDidatico(), iC.getTopico()));
+                }
+            }
+            Plano.salvar(p);
+        }
     }
 
     public String salvarEdicaoPlano() {
@@ -324,7 +342,7 @@ public class PlanoBean implements Serializable {
         }
         //O totalAulas atual + numero de aulas acrescentadas deve ser <= Carga Horaria Total        
         if (this.totalAulas() + horasAcrescentadas > totalCargaHoraria) {
-            mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.524"), Paginas.getEditarItemCronograma());
+            mensagemDeTela.criar(FacesMessage.SEVERITY_ERROR, Mensagens.obtenha("MT.524"), Paginas.getEditarItemCronograma());
             return Paginas.getEditarItemCronograma();
         }
         if (this.itemSelecionado != null) {
@@ -341,6 +359,9 @@ public class PlanoBean implements Serializable {
     public String concluir() {
 
         if (essePlanoPodeSerConcluido()) {
+            //Inclusão dessa linha para não ocorrer de um plano ser concluído se ter sido salvo.
+            Plano.salvar(this.planoEditavel);
+
             RequerimentoPlano requerimento = Plano.buscarRequerimentoDessePlano(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), this.planoSelecionado);
 
             if (requerimento.getPlano() != null) {
@@ -352,6 +373,7 @@ public class PlanoBean implements Serializable {
             }
             List<UsuarioSigera> destinatarios = criarDestinatarios();
 
+            
             if (!destinatarios.isEmpty() && loginBean.getConfiguracao().isEnviarEmail()) {
                 gerenciadorEmail.adicionarEmailRequerimento(requerimento, destinatarios);
                 gerenciadorEmail.enviarEmails();
@@ -359,6 +381,7 @@ public class PlanoBean implements Serializable {
             }
             //emitir messagem de plano concluído
             mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha("MT.519"), Paginas.getEditarPlano());
+            Sessoes.limparBeans();
             return Paginas.getAbrirRequerimentoID() + requerimento.getId();
         }
         return Paginas.getEditarPlano();
@@ -379,7 +402,7 @@ public class PlanoBean implements Serializable {
         }
         //enviar e-mail para professor relacionado ao plano
         UsuarioSigera professor = this.planoSelecionado.getTurma().getProfessor().getUsuario();
-
+        
         if (loginBean.getConfiguracao().isEnviarEmail()) {
             gerenciadorEmail.adicionarEmailRequerimento(requerimento, professor);
             gerenciadorEmail.enviarEmails();
@@ -459,10 +482,11 @@ public class PlanoBean implements Serializable {
         RequerimentoPlano requerimento = Plano.buscarRequerimentoDessePlano(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), this.planoSelecionado);
         return Paginas.getAbrirRequerimentoID() + requerimento.getId();
     }
-    public String statusRequerimentoAssociadoAoPlano (){
+
+    public String statusRequerimentoAssociadoAoPlano() {
         return EnumStatusRequerimento.obtenha(Plano.buscarRequerimentoDessePlano(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), this.planoSelecionado).getStatus()).getNome().toUpperCase();
     }
-    
+
     private boolean validarRequerimento() {
         if (this.turmasSelecionadas == null
                 || this.turmasSelecionadas.size() < 1) {
@@ -543,9 +567,9 @@ public class PlanoBean implements Serializable {
         }
         return true;
     }
-    
-    public String atualizarLista(){
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("planoBean");        
+
+    public String atualizarLista() {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("planoBean");
         return Paginas.getPlanoAula();
     }
 }
