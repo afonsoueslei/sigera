@@ -186,9 +186,9 @@ public class Plano implements Serializable, Comparable<Plano> {
         StringBuilder consulta = new StringBuilder();
 
         consulta.append(" SELECT t ");
-        consulta.append(" FROM Turma as t  ");        
+        consulta.append(" FROM Turma as t  ");
         consulta.append(" WHERE ( ( t.ano = :ano AND t.semestre >= :semestre ) ");
-        consulta.append(" OR t.ano > :ano )");                
+        consulta.append(" OR t.ano > :ano )");
         consulta.append(" AND t.id not in");
         consulta.append(" ( SELECT p.turma.id ");
         consulta.append(" FROM Plano as p ) ORDER BY t.disciplina.nome ASC");
@@ -216,7 +216,7 @@ public class Plano implements Serializable, Comparable<Plano> {
         consulta.append(" OR ( p.turma.ano = :ano ");
         consulta.append(" AND p.turma.semestre < :semestre)) ");
         consulta.append(" AND p.turma.disciplina.nome = :disciplina ");
-        consulta.append(" AND p.turma.disciplina.curso.id = :curso ");
+        consulta.append(" AND p.turma.disciplina.curso.id = :curso ORDER BY p.turma.ano, p.turma.semestre DESC");
 
         Query query = em.createQuery(consulta.toString());
         query.setParameter("ano", t.getAno());
@@ -224,30 +224,11 @@ public class Plano implements Serializable, Comparable<Plano> {
         query.setParameter("disciplina", t.getDisciplina().getNome());
         query.setParameter("curso", t.getDisciplina().getCurso().getId());
 
-        List<Plano> planos = query.getResultList();
-
-        if (planos.size() > 0) {
-            for (Plano p : planos) {
-                if (p.turma.getNome().equalsIgnoreCase(t.getNome())) {
-                    p.setTurma(t);
-                    //apagar os indices antigos de plano e de ItemCronograma copiados dos planos que já existiam 
-                    for (ItemCronograma item : p.itensCronograma) {
-                        item.getPlano().setId(0);
-                        item.setId(0);
-                    }
-
-                    return new Plano(p);
-                }
-            }
-            //apagar os indices antigos de plano e de ItemCronograma copiados dos planos que já existiam
-            for (ItemCronograma item : planos.get(0).itensCronograma) {
-                item.getPlano().setId(0);
-                item.setId(0);
-            }
-            planos.get(0).setTurma(t);
-            return new Plano(planos.get(0));
+        List<Plano> planos = query.getResultList();        
+        if (planos.size() > 0) {         
+            return planos.get(0);
         } else {
-            return new Plano(t);
+            return new Plano();
         }
     }
 
@@ -316,7 +297,7 @@ public class Plano implements Serializable, Comparable<Plano> {
                 && this.getCriterioAvaliacao() != null && !"".equalsIgnoreCase(this.getCriterioAvaliacao())
                 && this.getDataRealizacaoProvas() != null && !"".equalsIgnoreCase(this.getDataRealizacaoProvas())
                 && this.getBibliografiaSugerida() != null && !"".equalsIgnoreCase(this.getBibliografiaSugerida())
-                && this.getItensCronograma().size() > 0) {         
+                && this.getItensCronograma().size() > 0) {
             return false;
         }
         return true;
@@ -369,7 +350,7 @@ public class Plano implements Serializable, Comparable<Plano> {
         String realPath = servletContext.getRealPath("") + "/resources/relatorios";
         String dataHora = Long.toString(new Date().getTime());
 
-        String caminhoArquivoPDF = Conexoes.getPASTA_PLANOS_DE_AULA() + dataHora+"-PLA-"+planoId + "-" + nomeProfessor.trim() + ".pdf";
+        String caminhoArquivoPDF = Conexoes.getPASTA_PLANOS_DE_AULA() + dataHora + "-PLA-" + planoId + "-" + nomeProfessor.trim() + ".pdf";
 
         File arquivoPdf = new File(caminhoArquivoPDF);
         BufferedInputStream input = null;
@@ -417,12 +398,12 @@ public class Plano implements Serializable, Comparable<Plano> {
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Plano.class.getName()).log(Level.WARNING, "Impossível conectar ao driver JDBC do Mysql!", ex);
-        }catch(SQLException sqlex){
-            Logger.getLogger(Plano.class.getName()).log(Level.WARNING, "Impossível obter coneção como banco!", sqlex);            
-        }catch(JRException jrex){
+        } catch (SQLException sqlex) {
+            Logger.getLogger(Plano.class.getName()).log(Level.WARNING, "Impossível obter coneção como banco!", sqlex);
+        } catch (JRException jrex) {
             Logger.getLogger(Plano.class.getName()).log(Level.WARNING, "Erro ao criar objeto JasperReport", jrex);
         }
-        
+
     }
-       
+
 }

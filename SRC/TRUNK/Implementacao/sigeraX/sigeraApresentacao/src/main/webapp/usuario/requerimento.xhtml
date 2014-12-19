@@ -24,19 +24,19 @@
                         <ui:insert name="controles_parecer">
                             <ui:include src="requerimento_controles_parecer.xhtml"></ui:include>
                         </ui:insert>
-                            
+
                         <ui:insert name="dados-basicos-requerimento">
                             <ui:include src="requerimento_dados_basicos.xhtml"></ui:include>                            
                         </ui:insert>
-                        
+
                         <ui:insert name="lista-de-pareceres">
                             <ui:include src="requerimento_pareceres.xhtml"></ui:include>                            
                         </ui:insert>
-                        
+
                         <ui:insert name="dados-adicionais-requerimento">
                             <ui:include src="requerimento_dados_adicionais.xhtml"></ui:include>
                         </ui:insert>                                                
-                        
+
                         <!-- Botões de controle (cancelar, voltar à página principal, etc.)-->
                         <div class="form-actions">                            
                             <h:panelGroup rendered="#{detalheRequerimentoBean.requerimentoEhPlano()}">
@@ -47,11 +47,15 @@
                                     <f:setPropertyActionListener target="#{detalheRequerimentoBean.requerimento.plano}" 
                                                                  value="#{detalheRequerimentoBean.requerimento.plano}" />
                                 </h:commandLink>
-                            </h:panelGroup>            
+
+                                <h:commandButton styleClass="btn btn-primary botao-com-margem-direita" value="Voltar à lista de planos" action="#{planoBean.voltarListaPlanos()}" /> 
+                            </h:panelGroup>                                                        
+
+                            <h:panelGroup rendered="#{!detalheRequerimentoBean.requerimentoEhPlano()}">
+                                <h:commandButton styleClass="btn btn-primary botao-com-margem-direita" value="Voltar à lista de requerimentos" action="#{detalheRequerimentoBean.voltarLista}" /> 
+                            </h:panelGroup>
 
                             <h:commandLink styleClass="btn btn-inverse botao-com-margem-direita" value="Imprimir comprovante" action="#{detalheRequerimentoBean.imprimirComprovanteRequerimento()}" target="_blank" immediate="true"/>
-
-                            <h:commandButton styleClass="btn btn-primary botao-com-margem-direita" value="Voltar à lista de requerimentos" action="#{detalheRequerimentoBean.voltarLista}" /> 
 
                             <h:panelGroup rendered="#{detalheRequerimentoBean.usuarioPodeCancelar()}">
                                 <input  type="button" class="btn btn-danger botao-com-margem-direita" value="Cancelar o requerimento"  

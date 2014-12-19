@@ -73,8 +73,8 @@ public class PerfilAdministrador extends Perfil {
     @Override
     public List<RequerimentoPlano> obtenhaRequerimentosPlanos(UsuarioSigera usuarioAutenticado) {
         BuscadorLdap buscadorLdap = usuarioAutenticado.getUsuarioLdap().getBuscadorLdap();
-        EntityManager em = obtenhaEntityManager();
-        String consulta = " SELECT r FROM RequerimentoPlano as r ORDER BY r.id DESC";
+        EntityManager em = obtenhaEntityManager();        
+        String consulta = " SELECT r FROM RequerimentoPlano as r ORDER BY r.status, r.id DESC";
         Query query = em.createQuery(consulta);
         List<RequerimentoPlano> planos = query.getResultList();
         for (RequerimentoPlano p : planos) {
