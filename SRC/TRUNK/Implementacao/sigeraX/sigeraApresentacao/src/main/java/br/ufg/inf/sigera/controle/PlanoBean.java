@@ -275,7 +275,7 @@ public class PlanoBean implements Serializable {
     }
 
     public String salvar() {
-        if (validarRequerimento()) {
+        if (!validarRequerimento()) {
             return Paginas.getTurmasSemPlano();
         }
         for (TurmaTela t : turmasSelecionadas) {
