@@ -117,14 +117,20 @@ public class ItemCronograma {
 
     public void salvar(ItemCronograma i) {
         EntityManager em = Persistencia.obterManager();
-        em.getTransaction().begin();
-        if (i.id== 0) {
-            em.persist(i);            
-        } else {
-            em.merge(i);
+        try {
+            em.getTransaction().begin();
+            if (i.id == 0) {
+                em.persist(i);
+            } else {
+                em.merge(i);
+            }
+            em.flush();
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
-        em.flush();
-        em.getTransaction().commit();
     }
 
     public Boolean remover() {
@@ -139,6 +145,9 @@ public class ItemCronograma {
             return true;
         } catch (RollbackException e) {
             return false;
+        }
+        finally{
+            em.close();
         }
     }
 
