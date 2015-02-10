@@ -265,6 +265,7 @@ public class Plano implements Serializable, Comparable<Plano> {
             em.merge(p);
         }
         em.getTransaction().commit();
+        em.close();        
     }
 
     public static Plano obtenhaPlano(int id) {
