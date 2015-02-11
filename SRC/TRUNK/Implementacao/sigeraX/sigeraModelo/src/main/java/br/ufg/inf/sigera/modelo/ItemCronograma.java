@@ -25,7 +25,7 @@ public class ItemCronograma {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @JoinColumn(name = "plano_id", referencedColumnName = "id")
-    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     private Plano plano;
     @Column(name = "inicio")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
@@ -116,6 +116,7 @@ public class ItemCronograma {
     }
 
     public void salvar(ItemCronograma i) {
+
         EntityManager em = Persistencia.obterManager();
         try {
             em.getTransaction().begin();
@@ -125,11 +126,10 @@ public class ItemCronograma {
                 em.merge(i);
             }
             em.flush();
-            em.getTransaction().commit();
+            em.getTransaction().commit();            
+            em.close();
         } catch (Exception e) {
             em.getTransaction().rollback();
-        } finally {
-            em.close();
         }
     }
 
@@ -145,7 +145,7 @@ public class ItemCronograma {
             return true;
         } catch (RollbackException e) {
             return false;
-        }
+    }
         finally{
             em.close();
         }

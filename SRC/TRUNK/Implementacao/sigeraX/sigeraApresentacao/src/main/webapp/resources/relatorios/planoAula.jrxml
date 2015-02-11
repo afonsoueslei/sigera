@@ -276,7 +276,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{disciplina_nome}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="411" y="231" width="62" height="16" uuid="865c43c2-7517-46ba-867f-febcd199c2cd"/>
+				<reportElement x="473" y="231" width="62" height="16" uuid="865c43c2-7517-46ba-867f-febcd199c2cd"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -288,7 +288,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{disciplina_carga_horaria_pratica}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="473" y="231" width="62" height="16" uuid="17909267-935b-4b01-964f-5790d4a20891"/>
+				<reportElement x="411" y="231" width="62" height="16" uuid="17909267-935b-4b01-964f-5790d4a20891"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
