@@ -19,7 +19,7 @@ public class AutorizacaoAcertoMatricula extends FiltroUrlBase {
             LoginBean loginBean = (LoginBean) session.getAttribute("loginBean");
             Configuracao configuracao = loginBean.getConfiguracao();
 
-            if (configuracao != null && configuracao.permiteRequererAcrescimoOuCancelamentoDisciplinas()) {
+            if (configuracao != null && ( configuracao.permiteRequererAcrescimoOuCancelamentoDisciplinas() || configuracao.permiteRequererAcrescimoOuCancelamentoDisciplinasPos()) ) {
                 chain.doFilter(req, resp);
             } else {
                 RequestDispatcher paginaPrincipal = request.getRequestDispatcher("/faces/usuario/principal.xhtml");

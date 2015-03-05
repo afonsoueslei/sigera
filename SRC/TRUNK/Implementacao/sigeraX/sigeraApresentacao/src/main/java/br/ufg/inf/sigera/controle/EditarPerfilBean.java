@@ -89,7 +89,11 @@ public class EditarPerfilBean implements Serializable {
         Integer uidInteiro;
         try {
             uid = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("uid");
-            uidInteiro = Integer.parseInt(uid);
+            if (uid == null) {
+                uidInteiro = loginBean.getUsuario().getId();
+            } else {
+                uidInteiro = Integer.parseInt(uid);
+            }
         } catch (NumberFormatException nfe) {
             uidInteiro = loginBean.getUsuario().getId();
             Logger.getLogger(EditarPerfilBean.class.getName()).log(Level.INFO, "Paramêtro passado não é um número válido.", nfe);

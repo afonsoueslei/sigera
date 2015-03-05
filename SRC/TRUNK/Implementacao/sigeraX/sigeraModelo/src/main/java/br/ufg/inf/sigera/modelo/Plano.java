@@ -26,6 +26,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -71,7 +72,8 @@ public class Plano implements Serializable, Comparable<Plano> {
     private String bibliografiaSugerida;
     @Column(name = "programa")
     private String programa;
-    @OneToMany(mappedBy = "plano", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "plano", cascade = CascadeType.ALL, fetch = FetchType.LAZY  )
     @PrivateOwned
     private Collection<ItemCronograma> itensCronograma;
 
@@ -224,8 +226,8 @@ public class Plano implements Serializable, Comparable<Plano> {
         query.setParameter("disciplina", t.getDisciplina().getNome());
         query.setParameter("curso", t.getDisciplina().getCurso().getId());
 
-        List<Plano> planos = query.getResultList();        
-        if (planos.size() > 0) {         
+        List<Plano> planos = query.getResultList();
+        if (planos.size() > 0) {
             return planos.get(0);
         } else {
             return new Plano();
@@ -252,20 +254,23 @@ public class Plano implements Serializable, Comparable<Plano> {
             requerimentoDoPlano.getUsuario().setUsuarioLdap(usuarioLdap);
             requerimentoDoPlano.getPlano().getTurma().getProfessor().getUsuario().setUsuarioLdap(professorTurma);
         }
-
         return requerimentoDoPlano;
     }
 
     public static void salvar(Plano p) {
         EntityManager em = Persistencia.obterManager();
-        em.getTransaction().begin();
-        if (p.id == 0) {
-            em.persist(p);
-        } else {
-            em.merge(p);
+        try {
+            em.getTransaction().begin();
+            if (p.id == 0) {
+                em.persist(p);
+            } else {
+                em.merge(p);
+            }
+            em.getTransaction().commit();
+            em.close();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
         }
-        em.getTransaction().commit();
-        em.close();        
     }
 
     public static Plano obtenhaPlano(int id) {

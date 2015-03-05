@@ -180,7 +180,7 @@ public class AutenticacaoLdap {
                     if (atributos.size() > 0) {
                         usuarios.add(constroiUsuario(atributos));
                     } else {
-                        System.out.println("Fallha! Registro não possui nenhum atributo.");
+                        System.out.println("Fallha! Registro nao possui nenhum atributo.");
                     }
 
                 }
@@ -207,7 +207,7 @@ public class AutenticacaoLdap {
                 if (usuario.getUidNumber() != null) {
                     mapa.put(Integer.valueOf(usuario.getUidNumber()), usuario);
                 } else {
-                    System.out.println("Falha: Usuario: " + usuario.getUid() + " não possui UidNumber");
+                    System.out.println("Falha: Usuario: " + usuario.getUid() + " nao possui UidNumber");
                 }
             }
 
