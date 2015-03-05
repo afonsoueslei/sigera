@@ -127,7 +127,7 @@ public class Autenticacao {
 
             usuario.setUsuarioLdap(usuarioLdap);
             usuario.salvar();
-
+            System.out.println(" >>>>>> Usuario " + usuario.getNome().toUpperCase() + " acabou de ENTRAR no sistema! <<<<<<" );
             return usuario;
 
         } catch (javax.persistence.PersistenceException ex) {

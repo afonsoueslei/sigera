@@ -20,6 +20,7 @@ import br.ufg.inf.sigera.modelo.requerimento.RequerimentoPlano;
 import br.ufg.inf.sigera.controle.servico.MensagensTela;
 import br.ufg.inf.sigera.controle.servico.Paginas;
 import br.ufg.inf.sigera.controle.servico.Sessoes;
+import br.ufg.inf.sigera.modelo.Parecer;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -365,7 +366,10 @@ public class PlanoBean implements Serializable {
             RequerimentoPlano requerimento = Plano.buscarRequerimentoDessePlano(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), this.planoSelecionado);
 
             if (requerimento.getPlano() != null) {
-                requerimento.setStatus(EnumStatusRequerimento.CONCLUIDO.getCodigo());
+                                
+                Parecer parecer = new Parecer(requerimento, loginBean.getUsuario(), "O plano de ensino foi CONCLUÍDO e aguarda um parecer!", EnumStatusRequerimento.CONCLUIDO.getCodigo());
+                requerimento.adicionarParecer(parecer);            
+                
                 requerimento.salvar();
             } else {
                 mensagemDeTela.criar(FacesMessage.SEVERITY_INFO, Mensagens.obtenha(MT522), Paginas.getEditarPlano());
@@ -392,7 +396,10 @@ public class PlanoBean implements Serializable {
         RequerimentoPlano requerimento = Plano.buscarRequerimentoDessePlano(loginBean.getUsuario().getUsuarioLdap().getBuscadorLdap(), this.planoSelecionado);
         //mudar estatus do Requerimento do Plano - para ABERTO se ele existir
         if (requerimento.getPlano() != null) {
-            requerimento.setStatus(EnumStatusRequerimento.ABERTO.getCodigo());
+                                    
+            Parecer parecer = new Parecer(requerimento, loginBean.getUsuario(), "O plano de ensino foi REABERTO para nova edição!", EnumStatusRequerimento.ABERTO.getCodigo());
+            requerimento.adicionarParecer(parecer);            
+
             //persisti o requerimento no BD
             requerimento.salvar();
         } else {

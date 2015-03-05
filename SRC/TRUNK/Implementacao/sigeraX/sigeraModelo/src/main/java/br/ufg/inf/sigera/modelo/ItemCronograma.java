@@ -1,12 +1,14 @@
 package br.ufg.inf.sigera.modelo;
 
 import br.ufg.inf.sigera.modelo.servico.Persistencia;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,14 +21,16 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "itemcronograma")
-public class ItemCronograma {
+public class ItemCronograma implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @JoinColumn(name = "plano_id", referencedColumnName = "id")
-    @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
+    
+    @ManyToOne(cascade = CascadeType.REFRESH, optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "plano_id", referencedColumnName = "id", updatable = true)
     private Plano plano;
+    
     @Column(name = "inicio")
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date inicio;
@@ -116,8 +120,8 @@ public class ItemCronograma {
     }
 
     public void salvar(ItemCronograma i) {
-
         EntityManager em = Persistencia.obterManager();
+        i.setPlano(plano);
         try {
             em.getTransaction().begin();
             if (i.id == 0) {
